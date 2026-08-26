@@ -1,0 +1,7 @@
+node_modules/
+android/app/build/
+android/build/
+android/.gradle/
+ios/App/Pods/
+*.jks
+android/gradle-8.14.3-all.zip

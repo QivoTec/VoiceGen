@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JLTJKHQ15G"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-JLTJKHQ15G');
+</script>
+<title>AudLabs — AI Voice Generation Platform</title>
+<meta name="description" content="AudLabs is an AI-powered voice generation and Text to Speech platform for creators. Generate professional voiceovers, clone any voice, and download instantly.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cormorant+Garamond:wght@300;400;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/png" href="/logo.png">
+<!-- Open Graph -->
+<meta property="og:title" content="AudLabs — AI Voice Generation for YouTube Creators">
+<meta property="og:description" content="Turn any script into a professional voiceover in under 30 seconds. 190+ AI voices across 9 languages. Free to start — no card required.">
+<meta property="og:image" content="https://audlabs.io/og-image.png">
+<meta property="og:url" content="https://audlabs.io">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="AudLabs">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@AudLabs">
+<meta name="twitter:title" content="AudLabs — AI Voice Generation for Content Creators.">
+<meta name="twitter:description" content="Turn any script into a professional voiceover in under 30 seconds. 190+ AI voices across 9 languages. Free to start — no card required.">
+<meta name="twitter:image" content="https://audlabs.io/og-image.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#080c14;color:#fff;overflow-x:hidden;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;background:rgba(8,12,20,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,0.06);}
+.nav-logo{display:flex;align-items:center;gap:12px;}
+.nav-logo-icon{width:38px;height:38px;background:linear-gradient(135deg,#0a1628,#0d2050);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,100,255,0.3);}
+
+.nav-brand{font-family:'Space Mono',monospace;font-size:15px;letter-spacing:0.15em;color:#fff;font-weight:700;}
+.nav-links{display:flex;align-items:center;gap:8px;}
+.nav-signin{background:linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.22);color:#fff;padding:9px 22px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.2),0 0 0 3px rgba(255,255,255,0.03),inset 0 1px 0 rgba(255,255,255,0.15);}
+.nav-signin::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.12),rgba(255,255,255,0));border-radius:8px 8px 0 0;pointer-events:none;}
+.nav-signin:hover{border-color:rgba(201,168,76,0.6);color:#c9a84c;transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,0.25),0 0 0 3px rgba(201,168,76,0.12),inset 0 1px 0 rgba(255,255,255,0.15);}
+.nav-getstarted{background:linear-gradient(180deg,#e8c97a 0%,#c9a84c 45%,#b8934a 100%);border:1px solid rgba(184,147,74,0.5);color:#111;padding:9px 22px;border-radius:8px;font-family:'Inter',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.2s;text-decoration:none;position:relative;overflow:hidden;box-shadow:0 3px 10px rgba(201,168,76,0.35),0 0 0 3px rgba(201,168,76,0.12),inset 0 1px 0 rgba(255,255,255,0.5);}
+.nav-getstarted::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.35),rgba(255,255,255,0));border-radius:8px 8px 0 0;pointer-events:none;}
+.nav-getstarted:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 6px 18px rgba(201,168,76,0.45),0 0 0 3px rgba(201,168,76,0.18),inset 0 1px 0 rgba(255,255,255,0.5);}
+
+
+/* HERO */
+body{background:#ffffff;}
+nav{background:#080c14;}
+footer{background:#080c14;}
+.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden;background:#ffffff;}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 90% 70% at 50% 0%,rgba(0,100,255,0.16),transparent),radial-gradient(ellipse 60% 40% at 80% 60%,rgba(201,168,76,0.1),transparent),linear-gradient(180deg,#f5f8ff 0%,#ffffff 65%);}
+.hero-content{position:relative;max-width:800px;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:20px;padding:6px 16px;font-size:12px;color:#a8863a;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:28px;}
+.hero-title{font-family:'Cormorant Garamond',serif;font-size:clamp(40px,7vw,80px);font-weight:300;line-height:1.1;margin-bottom:16px;color:#1a1a1a;}
+.hero-title em{color:#c9a84c;font-style:italic;}
+.hero-title strong{font-weight:600;}
+.hero-subtitle{font-size:clamp(16px,2vw,20px);color:rgba(0,0,0,0.6);line-height:1.7;margin-bottom:12px;font-weight:400;opacity:0;transform:translateY(20px);animation:statFadeIn 0.6s ease 0.3s forwards;}
+.hero-sub2{font-size:15px;color:rgba(0,0,0,0.4);margin-bottom:40px;line-height:1.6;opacity:0;transform:translateY(20px);animation:statFadeIn 0.6s ease 0.5s forwards;}
+.hero-sub2 span{color:#a8863a;font-weight:500;}
+.hero-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:48px;opacity:0;transform:translateY(20px);animation:statFadeIn 0.6s ease 0.7s forwards;}
+.btn-primary{background:linear-gradient(180deg,#e8c97a 0%,#c9a84c 45%,#b8934a 100%);color:#111;padding:15px 36px;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:700;text-decoration:none;transition:all 0.2s;border:1px solid rgba(184,147,74,0.5);cursor:pointer;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(201,168,76,0.35),0 0 0 3px rgba(201,168,76,0.12),inset 0 1px 0 rgba(255,255,255,0.5);}
+.btn-primary::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.35),rgba(255,255,255,0));border-radius:10px 10px 0 0;pointer-events:none;}
+.btn-primary:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,0.45),0 0 0 3px rgba(201,168,76,0.18),inset 0 1px 0 rgba(255,255,255,0.5);}
+.btn-secondary{background:linear-gradient(180deg,#ffffff 0%,#f5f5f5 100%);color:#1a1a1a;padding:15px 36px;border-radius:10px;font-family:'Inter',sans-serif;font-size:15px;font-weight:500;text-decoration:none;transition:all 0.2s;border:1px solid rgba(0,0,0,0.15);cursor:pointer;position:relative;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06),0 0 0 3px rgba(0,0,0,0.03),inset 0 1px 0 rgba(255,255,255,0.8);}
+.btn-secondary::before{content:"";position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.6),rgba(255,255,255,0));border-radius:10px 10px 0 0;pointer-events:none;}
+.btn-secondary:hover{border-color:rgba(201,168,76,0.6);color:#a8863a;transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,0.08),0 0 0 3px rgba(201,168,76,0.1),inset 0 1px 0 rgba(255,255,255,0.8);}
+
+
+
+.hero-stats{display:flex;gap:40px;justify-content:center;flex-wrap:wrap;}
+.stat{text-align:center;opacity:0;transform:translateY(20px);animation:statFadeIn 0.6s ease forwards;}
+.stat:nth-child(1){animation-delay:0.1s;}
+.stat:nth-child(2){animation-delay:0.2s;}
+.stat:nth-child(3){animation-delay:0.3s;}
+.stat:nth-child(4){animation-delay:0.4s;}
+@keyframes statFadeIn{to{opacity:1;transform:translateY(0);}}
+.stat-num{font-family:'Space Mono',monospace;font-size:36px;font-weight:700;color:#a8863a;text-shadow:none;}
+.stat-label{font-size:12px;color:rgba(0,0,0,0.5);margin-top:6px;text-transform:uppercase;letter-spacing:0.1em;}
+
+
+/* FEATURES */
+.section{padding:100px 24px;background:#ffffff;}
+.section-inner{max-width:1100px;margin:0 auto;}
+.section-label{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.25em;color:#a8863a;text-transform:uppercase;margin-bottom:16px;text-align:center;}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,52px);font-weight:300;text-align:center;margin-bottom:16px;color:#1a1a1a;}
+.section-title em{color:#c9a84c;font-style:italic;}
+.section-sub{font-size:16px;color:rgba(0,0,0,0.5);text-align:center;max-width:600px;margin:0 auto 60px;line-height:1.7;}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:24px;}
+.feature-card{background:#ffffff;border:1.5px solid #e0e0e0;border-radius:16px;padding:32px;transition:all 0.2s;box-shadow:0 2px 12px rgba(0,0,0,0.04);}
+.feature-card:hover{background:#fffdf7;border-color:rgba(201,168,76,0.4);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,0.08);}
+
+.feature-icon{width:48px;height:48px;background:linear-gradient(135deg,rgba(201,168,76,0.15),rgba(201,168,76,0.05));border:1px solid rgba(201,168,76,0.25);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:20px;}
+.feature-title{font-size:17px;font-weight:600;color:#1a1a1a;margin-bottom:10px;}
+.feature-desc{font-size:14px;color:rgba(0,0,0,0.55);line-height:1.7;}
+
+/* WHO */
+.who-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:48px;}
+.who-card{background:#ffffff;border:1.5px solid #e0e0e0;border-radius:12px;padding:24px;text-align:center;transition:all 0.2s;box-shadow:0 2px 10px rgba(0,0,0,0.04);}
+.who-card:hover{border-color:rgba(201,168,76,0.5);background:#fffdf7;transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.07);}
+
+.who-icon{font-size:32px;margin-bottom:12px;}
+.who-title{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:6px;}
+.who-desc{font-size:12px;color:rgba(0,0,0,0.45);line-height:1.6;}
+
+/* PRICING PREVIEW */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px;margin-top:48px;}
+.pricing-card{background:#ffffff;border:1.5px solid #e0e0e0;border-radius:16px;padding:28px;text-align:center;box-shadow:0 2px 12px rgba(0,0,0,0.04);transition:all 0.2s;}
+.pricing-card:hover{box-shadow:0 10px 28px rgba(0,0,0,0.07);transform:translateY(-3px);}
+.pricing-card.popular{background:#fffdf7;border-color:rgba(201,168,76,0.6);border-width:2px;position:relative;box-shadow:0 6px 20px rgba(201,168,76,0.12);}
+
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#111;font-size:10px;font-weight:700;padding:4px 14px;border-radius:10px;white-space:nowrap;}
+.pricing-name{font-size:14px;font-weight:600;color:rgba(0,0,0,0.55);margin-bottom:8px;text-transform:uppercase;letter-spacing:0.08em;}
+.pricing-credits{font-family:'Space Mono',monospace;font-size:28px;font-weight:700;color:#a8863a;margin-bottom:4px;}
+.pricing-sub{font-size:12px;color:rgba(0,0,0,0.35);margin-bottom:16px;}
+.pricing-price{font-size:20px;font-weight:700;color:#1a1a1a;}
+
+
+/* CTA */
+.cta-section{padding:100px 24px;text-align:center;background:linear-gradient(180deg,#ffffff,#fffdf7,#ffffff);}
+.cta-title{font-family:'Cormorant Garamond',serif;font-size:clamp(32px,5vw,56px);font-weight:300;margin-bottom:16px;color:#1a1a1a;}
+.cta-title em{color:#c9a84c;font-style:italic;}
+.cta-sub{font-size:16px;color:rgba(0,0,0,0.55);margin-bottom:40px;max-width:500px;margin-left:auto;margin-right:auto;line-height:1.7;}
+
+/* FOOTER */
+footer{padding:48px 40px 32px;border-top:1px solid rgba(255,255,255,0.06);}
+.footer-inner{max-width:1100px;margin:0 auto;}
+.footer-top{display:flex;align-items:flex-start;justify-content:space-between;gap:40px;flex-wrap:wrap;margin-bottom:40px;}
+.footer-brand{max-width:280px;}
+.footer-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.footer-desc{font-size:13px;color:rgba(255,255,255,0.4);line-height:1.7;}
+.footer-links h4{font-size:12px;font-weight:600;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;}
+.footer-links a{display:block;font-size:13px;color:rgba(255,255,255,0.4);text-decoration:none;margin-bottom:10px;transition:color 0.15s;}
+.footer-links a:hover{color:#c9a84c;}
+.footer-social{display:flex;gap:12px;margin-top:8px;}
+.social-btn{display:inline-flex;align-items:center;justify-content:center;text-decoration:none;transition:opacity 0.2s;margin-right:4px;}
+.social-btn:hover{opacity:0.7;}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.06);}
+.footer-copy{font-size:12px;color:rgba(255,255,255,0.3);}
+.footer-bottom-links{display:flex;gap:20px;}
+.footer-bottom-links a{font-size:12px;color:rgba(255,255,255,0.3);text-decoration:none;transition:color 0.15s;}
+.footer-bottom-links a:hover{color:#c9a84c;}
+
+@media(max-width:768px){
+nav{padding:12px 16px;}
+.nav-brand{font-size:12px;}
+.nav-signin{padding:7px 14px;font-size:12px;}
+.nav-getstarted{padding:7px 14px;font-size:12px;}
+.hero-stats{gap:24px;}
+.footer-top{flex-direction:column;}
+.footer-bottom{flex-direction:column;text-align:center;}
+}
+</style>
+<link rel="canonical" href="https://audlabs.io/">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2851644269126796"
+     crossorigin="anonymous"></script>
+</head>
+<body>
+
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <img src="/logo.png" style="width:32px;height:32px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,100,255,0.3));">
+    <span class="nav-brand">AudLabs</span>
+  </div>
+  <div class="nav-links">
+    <a href="/blog" class="nav-signin">Blog</a>
+    <a href="https://app.audlabs.io/login" class="nav-signin">Sign In</a>
+    <a href="https://app.audlabs.io/login" class="nav-getstarted">Get Started</a>
+  </div>
+
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">✦ AI-Powered Voice Generation</div>
+    <h1 class="hero-title">
+      One Platform.<br><em>Infinite</em> <strong>Possibilities.</strong>
+    </h1>
+    <p class="hero-subtitle">Pick from the best natural-sounding AI voices and generate professional speech at your own convenience — in seconds.</p>
+    <p class="hero-sub2">
+      Built for <span>YouTubers</span> · <span>Video Editors</span> · <span>Podcasters</span> · <span>Content Creators</span> · <span>Marketers</span>
+    </p>
+    <div class="hero-btns">
+  <a href="https://app.audlabs.io/login" class="btn-primary">🎙 Start Generating For Free</a>
+  <a href="#features" class="btn-secondary">Learn More</a>
+</div>
+<div style="max-width:800px;margin:32px auto;">
+  <p style="font-size:12px;font-weight:600;color:#c9a84c;text-transform:uppercase;letter-spacing:0.15em;text-align:center;margin-bottom:10px;">▶ Watch How It Works</p>
+  <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);border:2px solid #c9a84c;">
+    <iframe 
+      src="https://player.vimeo.com/video/1208328068?badge=0&autopause=0&player_id=0&app_id=58479&quality=1080p&title=0&byline=0&portrait=0&logo=0" 
+      style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;border-radius:16px;" 
+      allow="autoplay; fullscreen; picture-in-picture" 
+      allowfullscreen>
+    </iframe>
+  </div>
+</div>
+<div class="hero-stats">
+      <div class="stat"><div class="stat-num">190+</div><div class="stat-label">AI Voices</div></div>
+      <div class="stat"><div class="stat-num">10+</div><div class="stat-label">Languages </div></div>
+      <div class="stat"><div class="stat-num">100%</div><div class="stat-label">Free to Start</div></div>
+      <div class="stat"><div class="stat-num">5000/Monthly</div><div class="stat-label">Free Credits</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Everything You Need to<br><em>Create Professional Audio</em></h2>
+    <p class="section-sub">AudLabs is an AI-powered voice generation and Text to Speech platform for creators. Generate professional voiceovers, clone any voice, and download instantly.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🎙</div>
+        <div class="feature-title">190+  Natural AI Voices.</div>
+        <div class="feature-desc">Choose from 190+  premium AI voices — male and female — all engineered to sound natural, expressive and professional.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Instant Voice Cloning.</div>
+        <div class="feature-desc">Upload a voice sample of at least 10 seconds and clone it instantly. Use your own voice or any voice you have rights to.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📥</div>
+        <div class="feature-title">Instant MP3 Download.</div>
+        <div class="feature-desc">Every voiceover you generate is available for instant download in high quality MP3 format — no waiting, no processing delays.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💳</div>
+        <div class="feature-title">Easy Credit Purchase.</div>
+        <div class="feature-desc">Top up your credits via bank transfer, USDT crypto or card payment. Supports multiple currencies and countries.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌍</div>
+        <div class="feature-title">10+ Languages Supported.</div>
+        <div class="feature-desc">Generate voiceovers in over 10 languages including English, French, Spanish, Arabic, Hindi, Swahili and many more.</div>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <div class="feature-title">Affordable Credits.</div>
+        <div class="feature-desc">Start free with 5000 credits on signup. Pay only for what you use — no monthly subscriptions.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHO IS IT FOR -->
+<section class="section" style="padding-top:0;">
+  <div class="section-inner">
+    <div class="section-label">Who Is It For</div>
+    <h2 class="section-title">Built for <em>Every Creator</em></h2>
+    <p class="section-sub">Whether you make YouTube videos, podcasts, ads or presentations — AudLabs has the voice for you.</p>
+    <div class="who-grid">
+      <div class="who-card"><div class="who-icon">🎬</div><div class="who-title">YouTubers</div><div class="who-desc">Generate faceless documentary and commentary voiceovers in seconds.</div></div>
+      <div class="who-card"><div class="who-icon">🎧</div><div class="who-title">Podcasters</div><div class="who-desc">Create intros, outros and full podcast episodes with AI voices.</div></div>
+      <div class="who-card"><div class="who-icon">✂️</div><div class="who-title">Video Editors</div><div class="who-desc">Add professional narration to any video project instantly.</div></div>
+      <div class="who-card"><div class="who-icon">📢</div><div class="who-title">Marketers</div><div class="who-desc">Generate ad voiceovers and promotional content at scale.</div></div>
+      <div class="who-card"><div class="who-icon">📚</div><div class="who-title">Educators</div><div class="who-desc">Turn course content and lessons into engaging audio.</div></div>
+      <div class="who-card"><div class="who-icon">✍️</div><div class="who-title">Content Creators</div><div class="who-desc">Bring your scripts and stories to life with natural AI voices.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING PREVIEW -->
+<section class="section" style="padding-top:0;">
+  <div class="section-inner">
+    <div class="section-label">Simple Pricing</div>
+    <h2 class="section-title">Affordable for <em>Everyone</em></h2>
+    <p class="section-sub">Pay once, keep your credits. No subscriptions, no expiry. Start free with 5,000 credits and top up whenever you need more.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-credits">5000/Monthly</div>
+        <div class="pricing-sub">Credits on signup</div>
+        <div class="pricing-price">$0</div>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Starter</div>
+        <div class="pricing-credits">700,000</div>
+        <div class="pricing-sub">Lifetime Credits</div>
+        <div class="pricing-price">$6</div>
+      </div>
+      <div class="pricing-card popular">
+        <div class="pricing-badge">POPULAR</div>
+        <div class="pricing-name">Standard</div>
+        <div class="pricing-credits">1,600,000</div>
+        <div class="pricing-sub">Lifetime Credits</div>
+        <div class="pricing-price">$12</div>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Studio</div>
+        <div class="pricing-credits">4,000,000</div>
+        <div class="pricing-sub">Lifetime Credits</div>
+        <div class="pricing-price">$24</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="cta-title">Ready to Create Your<br><em>Perfect Voiceover?</em></h2>
+  <p class="cta-sub">Join 1,000+ creators already using AudLabs. Get 5000 free credits when you sign up today.</p>
+  <a href="https://app.audlabs.io/login" class="btn-primary" style="font-size:16px;padding:16px 48px;">🎙 Get Started</a>
+</section>
+
+<!-- USERS COUNTER -->
+<section style="padding:60px 24px;background:#ffffff;text-align:center;border-top:1px solid #ebebeb;">
+<div style="max-width:900px;margin:0 auto;">
+<p style="font-size:13px;font-weight:600;color:#a8863a;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:16px;">Trusted Worldwide</p>
+<h2 style="font-size:48px;font-weight:700;color:#1a1a1a;font-family:'Space Mono',monospace;margin-bottom:8px;"><span id="users-counter">0</span>+ Creators</h2>
+<p style="font-size:16px;color:rgba(0,0,0,0.55);margin-bottom:48px;">are already generating professional voiceovers with AudLabs</p>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:24px;max-width:700px;margin:0 auto;">
+<div style="background:#ffffff;border-radius:12px;padding:24px;border:2px solid #d8d8d8;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+<div style="font-size:32px;font-weight:700;color:#a8863a;font-family:'Space Mono',monospace;">190+</div>
+<div style="font-size:13px;color:rgba(0,0,0,0.5);margin-top:6px;">AI Voices</div>
+</div>
+<div style="background:#ffffff;border-radius:12px;padding:24px;border:2px solid #d8d8d8;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+<div style="font-size:32px;font-weight:700;color:#a8863a;font-family:'Space Mono',monospace;">10+</div>
+<div style="font-size:13px;color:rgba(0,0,0,0.5);margin-top:6px;">Languages</div>
+</div>
+<div style="background:#ffffff;border-radius:12px;padding:24px;border:2px solid #d8d8d8;box-shadow:0 4px 16px rgba(0,0,0,0.08);">
+<div style="font-size:32px;font-weight:700;color:#a8863a;font-family:'Space Mono',monospace;">$6</div>
+<div style="font-size:13px;color:rgba(0,0,0,0.5);margin-top:6px;">Starting Price</div>
+</div>
+
+</div>
+</div>
+</section>
+
+
+<!-- COMPARISON TABLE -->
+<section style="padding:80px 24px;background:#fafafa;">
+<div style="max-width:900px;margin:0 auto;">
+<p style="font-size:13px;font-weight:600;color:#a8863a;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:16px;text-align:center;">Why AudLabs</p>
+<h2 style="font-size:36px;font-weight:700;color:#1a1a1a;text-align:center;margin-bottom:48px;">AudLabs vs Others</h2>
+<div style="overflow-x:auto;border-radius:16px;border:2px solid #d8d8d8;box-shadow:0 6px 24px rgba(0,0,0,0.1);">
+<table style="width:100%;border-collapse:collapse;background:#ffffff;">
+
+<thead>
+<tr style="background:#f3f3f3;">
+<th style="padding:16px 20px;text-align:left;font-size:13px;color:rgba(0,0,0,0.5);font-weight:600;text-transform:uppercase;letter-spacing:0.08em;">Feature</th>
+<th style="padding:16px 20px;text-align:center;font-size:14px;color:#a8863a;font-weight:700;">AudLabs</th>
+<th style="padding:16px 20px;text-align:center;font-size:13px;color:rgba(0,0,0,0.5);font-weight:600;">ElevenLabs</th>
+<th style="padding:16px 20px;text-align:center;font-size:13px;color:rgba(0,0,0,0.5);font-weight:600;">Murf AI</th>
+</tr>
+</thead>
+<tbody>
+<tr style="border-bottom:1px solid #ebebeb;">
+<td style="padding:16px 20px;font-size:14px;color:#333;">Starting Price</td>
+<td style="padding:16px 20px;text-align:center;font-size:14px;color:#27ae60;font-weight:700;">$6/month</td>
+<td style="padding:16px 20px;text-align:center;font-size:14px;color:rgba(0,0,0,0.45);">$22/month</td>
+<td style="padding:16px 20px;text-align:center;font-size:14px;color:rgba(0,0,0,0.45);">$29/month</td>
+</tr>
+<tr style="border-bottom:1px solid #ebebeb;background:#fafafa;">
+<td style="padding:16px 20px;font-size:14px;color:#333;">Voice Cloning</td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#e8f5e9"/><path d="M6 10.5l2.5 2.5L14 7" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#e8f5e9"/><path d="M6 10.5l2.5 2.5L14 7" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+</tr>
+<tr style="border-bottom:1px solid #ebebeb;">
+<td style="padding:16px 20px;font-size:14px;color:#333;">Free Credits Monthly</td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#e8f5e9"/><path d="M6 10.5l2.5 2.5L14 7" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+</tr>
+<tr style="border-bottom:1px solid #ebebeb;background:#fafafa;">
+<td style="padding:16px 20px;font-size:14px;color:#333;">Script To Videos</td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#e8f5e9"/><path d="M6 10.5l2.5 2.5L14 7" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+</tr>
+<tr style="border-bottom:1px solid #ebebeb;background:#fafafa;">
+<td style="padding:16px 20px;font-size:14px;color:#333;">Affiliate Program</td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#e8f5e9"/><path d="M6 10.5l2.5 2.5L14 7" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+</tr>
+<tr style="background:#fafafa;">
+<td style="padding:16px 20px;font-size:14px;color:#333;">NGN Bank Transfer</td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#e8f5e9"/><path d="M6 10.5l2.5 2.5L14 7" stroke="#27ae60" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+<td style="padding:16px 20px;text-align:center;"><svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="display:inline-block;"><circle cx="10" cy="10" r="9" fill="#fdeaea"/><path d="M7 7l6 6M13 7l-6 6" stroke="#e74c3c" stroke-width="2" stroke-linecap="round"/></svg></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+
+<!-- TESTIMONIALS -->
+<section class="section" style="background:#ffffff;padding:80px 20px;">
+  <div style="max-width:1100px;margin:0 auto;">
+    <div style="text-align:center;margin-bottom:48px;">
+      <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.2em;color:#a8863a;text-transform:uppercase;margin-bottom:12px;">What Creators Say</div>
+      <h2 style="font-size:36px;font-weight:300;color:#1a1a1a;font-family:'Cormorant Garamond',serif;margin-bottom:12px;">Trusted by <em>Creators Worldwide</em></h2>
+    </div>
+
+    <div style="position:relative;">
+      <!-- Carousel Track -->
+      <div id="testimonial-track" style="overflow:hidden;">
+        <div id="testimonial-inner" style="display:flex;transition:transform 0.5s ease;gap:24px;">
+
+          <!-- Testimonial 1 -->
+          <div style="min-width:100%;max-width:100%;background:#ffffff;border:2px solid #d8d8d8;border-radius:16px;padding:36px;box-sizing:border-box;box-shadow:0 6px 24px rgba(0,0,0,0.1);">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <div style="width:44px;height:44px;background:linear-gradient(135deg,#c9a84c,#e8c97a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#111;flex-shrink:0;">E</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#1a1a1a;">Excel</div>
+                <div style="display:flex;gap:3px;margin-top:3px;">
+                  <span style="color:#c9a84c;font-size:13px;">★★★★</span><span style="color:#444;font-size:13px;">★</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-size:15px;color:#555;line-height:1.8;margin:0;">"I tried using AudLabs when I wanted a voiceover for an AI generated video I was working on for a local brand and it was working fine. It's a great platform."</p>
+          </div>
+
+          <!-- Testimonial 2 -->
+          <div style="min-width:100%;max-width:100%;background:#ffffff;border:2px solid #d8d8d8;border-radius:16px;padding:36px;box-sizing:border-box;box-shadow:0 6px 24px rgba(0,0,0,0.1);">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <div style="width:44px;height:44px;background:linear-gradient(135deg,#c9a84c,#e8c97a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#111;flex-shrink:0;">C</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#1a1a1a;">Choice</div>
+                <div style="display:flex;gap:3px;margin-top:3px;">
+                  <span style="color:#c9a84c;font-size:13px;">★★★★★</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-size:15px;color:#555;line-height:1.8;margin:0;">"I used the audio voice on AudLabs for my video and the videos actually performed well."</p>
+          </div>
+
+          <!-- Testimonial 3 -->
+          <div style="min-width:100%;max-width:100%;background:#ffffff;border:2px solid #d8d8d8;border-radius:16px;padding:36px;box-sizing:border-box;box-shadow:0 6px 24px rgba(0,0,0,0.1);">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+              <div style="width:44px;height:44px;background:linear-gradient(135deg,#c9a84c,#e8c97a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:#111;flex-shrink:0;">M</div>
+              <div>
+                <div style="font-size:14px;font-weight:600;color:#1a1a1a;">Mobolaji</div>
+                <div style="display:flex;gap:3px;margin-top:3px;">
+                  <span style="color:#c9a84c;font-size:13px;">★★★★★</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-size:15px;color:#555;line-height:1.8;margin:0;">"Thanks for the app, it's very cheap, helpful and the voices on the platform are really great."</p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Navigation Buttons -->
+      <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:28px;">
+        <button onclick="moveTestimonial(-1)" style="width:40px;height:40px;border-radius:50%;background:#1a1a1a;border:1.5px solid #333;color:#c9a84c;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.background='#c9a84c';this.style.color='#111'" onmouseout="this.style.background='#1a1a1a';this.style.color='#c9a84c'">‹</button>
+        <div id="testimonial-dots" style="display:flex;gap:8px;">
+          <div onclick="goToTestimonial(0)" style="width:8px;height:8px;border-radius:50%;background:#c9a84c;cursor:pointer;transition:all 0.2s;"></div>
+          <div onclick="goToTestimonial(1)" style="width:8px;height:8px;border-radius:50%;background:#333;cursor:pointer;transition:all 0.2s;"></div>
+          <div onclick="goToTestimonial(2)" style="width:8px;height:8px;border-radius:50%;background:#333;cursor:pointer;transition:all 0.2s;"></div>
+        </div>
+        <button onclick="moveTestimonial(1)" style="width:40px;height:40px;border-radius:50%;background:#1a1a1a;border:1.5px solid #333;color:#c9a84c;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;" onmouseover="this.style.background='#c9a84c';this.style.color='#111'" onmouseout="this.style.background='#1a1a1a';this.style.color='#c9a84c'">›</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+var tCurrent = 0;
+var tTotal = 3;
+var tAutoPlay;
+
+function moveTestimonial(dir){
+  tCurrent = (tCurrent + dir + tTotal) % tTotal;
+  updateTestimonial();
+  resetAutoPlay();
+}
+
+function goToTestimonial(index){
+  tCurrent = index;
+  updateTestimonial();
+  resetAutoPlay();
+}
+
+function updateTestimonial(){
+  var inner = document.getElementById("testimonial-inner");
+  if(inner) inner.style.transform = "translateX(calc(-"+tCurrent+"00% - "+tCurrent*24+"px))";
+  var dots = document.getElementById("testimonial-dots").children;
+  for(var i=0;i<dots.length;i++){
+    dots[i].style.background = i===tCurrent ? "#c9a84c" : "#333";
+  }
+}
+
+function resetAutoPlay(){
+  clearInterval(tAutoPlay);
+  tAutoPlay = setInterval(function(){ moveTestimonial(1); }, 4000);
+}
+
+// Auto play
+tAutoPlay = setInterval(function(){ moveTestimonial(1); }, 4000);
+</script>
+
+<!-- FAQ SECTION -->
+<section style="padding:80px 24px;background:#ffffff;">
+<div style="max-width:700px;margin:0 auto;">
+<p style="font-size:13px;font-weight:600;color:#a8863a;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:16px;text-align:center;">FAQ</p>
+<h2 style="font-size:36px;font-weight:700;color:#1a1a1a;text-align:center;margin-bottom:48px;">Frequently Asked Questions</h2>
+
+<div style="display:flex;flex-direction:column;gap:16px;">
+
+<div class="faq-item" style="background:#ffffff;border-radius:12px;border:2px solid #d8d8d8;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.07);">
+<button onclick="toggleFaq(this)" style="width:100%;padding:20px 24px;background:transparent;border:none;color:#1a1a1a;font-size:15px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;">
+Is AudLabs really free to start?
+<span style="color:#c9a84c;font-size:20px;transition:transform 0.3s;">+</span>
+</button>
+<div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:#666;line-height:1.7;">
+Yes! You get 5,000 free credits when you sign up — no credit card required. You also get 5,000 free credits every month just for being an AudLabs user.
+</div>
+</div>
+
+<div class="faq-item" style="background:#ffffff;border-radius:12px;border:2px solid #d8d8d8;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.07);">
+<button onclick="toggleFaq(this)" style="width:100%;padding:20px 24px;background:transparent;border:none;color:#1a1a1a;font-size:15px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;">
+Can I use AudLabs voiceovers on YouTube?
+<span style="color:#c9a84c;font-size:20px;transition:transform 0.3s;">+</span>
+</button>
+<div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:#666;line-height:1.7;">
+Absolutely! All voiceovers generated on AudLabs can be used for commercial purposes including YouTube videos, podcasts, ads and any other content you create.
+</div>
+</div>
+
+<div class="faq-item" style="background:#ffffff;border-radius:12px;border:2px solid #d8d8d8;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.07);">
+<button onclick="toggleFaq(this)" style="width:100%;padding:20px 24px;background:transparent;border:none;color:#1a1a1a;font-size:15px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;">
+What is voice cloning?
+<span style="color:#c9a84c;font-size:20px;transition:transform 0.3s;">+</span>
+</button>
+<div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:#666;line-height:1.7;">
+Voice cloning lets you upload a sample of any voice and AudLabs will replicate it. You can then generate unlimited voiceovers using that cloned voice. It costs 10,000 credits to clone a voice.
+</div>
+</div>
+
+<div class="faq-item" style="background:#ffffff;border-radius:12px;border:2px solid #d8d8d8;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.07);">
+<button onclick="toggleFaq(this)" style="width:100%;padding:20px 24px;background:transparent;border:none;color:#1a1a1a;font-size:15px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;">
+How do credits work?
+<span style="color:#c9a84c;font-size:20px;transition:transform 0.3s;">+</span>
+</button>
+<div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:#666;line-height:1.7;">
+1 credit = 1 character. So a 500 character script costs 500 credits. The Starter plan gives you 500,000 credits for just $6 — enough for hundreds of voiceovers.
+</div>
+</div>
+
+<div class="faq-item" style="background:#ffffff;border-radius:12px;border:2px solid #d8d8d8;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.07);">
+<button onclick="toggleFaq(this)" style="width:100%;padding:20px 24px;background:transparent;border:none;color:#1a1a1a;font-size:15px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;">
+Can I pay with Nigerian Naira?
+<span style="color:#c9a84c;font-size:20px;transition:transform 0.3s;">+</span>
+</button>
+<div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:#666;line-height:1.7;">
+Yes! You can pay via Nigerian bank transfer, card payment in your local currency, or USDT crypto. We support 50+ countries and currencies.
+</div>
+</div>
+
+<div class="faq-item" style="background:#ffffff;border-radius:12px;border:2px solid #d8d8d8;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.07);">
+<button onclick="toggleFaq(this)" style="width:100%;padding:20px 24px;background:transparent;border:none;color:#1a1a1a;font-size:15px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;">
+What languages does AudLabs support?
+<span style="color:#c9a84c;font-size:20px;transition:transform 0.3s;">+</span>
+</button>
+<div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:#666;line-height:1.7;">
+AudLabs currently supports English, French, Spanish, German, Italian, Russian, Portuguese, Ukrainian and Afrikaans — with more languages coming soon.
+</div>
+</div>
+
+<div class="faq-item" style="background:#ffffff;border-radius:12px;border:2px solid #d8d8d8;overflow:hidden;box-shadow:0 4px 16px rgba(0,0,0,0.07);">
+<button onclick="toggleFaq(this)" style="width:100%;padding:20px 24px;background:transparent;border:none;color:#1a1a1a;font-size:15px;font-weight:600;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-family:Inter,sans-serif;">
+How does the affiliate program work?
+<span style="color:#c9a84c;font-size:20px;transition:transform 0.3s;">+</span>
+</button>
+<div class="faq-answer" style="display:none;padding:0 24px 20px;font-size:14px;color:#666;line-height:1.7;">
+Share your affiliate link and earn 10% lifetime commission on every payment the users you recommend AudLabs to make. There is no limit — the more you refer the more you earn.
+</div>
+</div>
+
+</div>
+</div>
+</section>
+
+<script>
+// Counter animation
+function animateCounter(el, target, duration){
+var start = 0;
+var increment = target / (duration / 16);
+var timer = setInterval(function(){
+start += increment;
+if(start >= target){
+el.textContent = target;
+clearInterval(timer);
+} else {
+el.textContent = Math.floor(start);
+}
+}, 16);
+}
+var counterAnimated = false;
+var counterEl = document.getElementById("users-counter");
+setTimeout(function(){
+counterEl = document.getElementById("users-counter");
+function checkCounter(){
+if(counterAnimated || !counterEl) return;
+var rect = counterEl.getBoundingClientRect();
+if(rect.top < window.innerHeight){
+counterAnimated = true;
+animateCounter(counterEl, 1000, 2000);
+}
+}
+window.addEventListener("scroll", checkCounter);
+checkCounter();
+}, 800);
+
+function toggleFaq(btn){
+var answer = btn.nextElementSibling;
+var icon = btn.querySelector("span");
+var isOpen = answer.style.display === "block";
+document.querySelectorAll(".faq-answer").forEach(function(a){ a.style.display="none"; });
+document.querySelectorAll(".faq-item button span").forEach(function(i){ i.textContent="+"; i.style.transform="rotate(0deg)"; });
+if(!isOpen){
+answer.style.display = "block";
+icon.textContent = "−";
+icon.style.transform = "rotate(0deg)";
+}
+}
+</script>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <img src="/logo.png" style="width:28px;height:28px;object-fit:contain;filter:drop-shadow(0 4px 16px rgba(0,100,255,0.3));">
+          <span style="font-family:'Space Mono',monospace;font-size:14px;font-weight:700;color:#fff;letter-spacing:0.15em;">AudLabs</span>
+        </div>
+
+
+        <p class="footer-desc">AI-powered voice generation and Text to Speech platform for creators worldwide.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Platform</h4>
+        <a href="https://app.audlabs.io/login">Get Started</a>
+        <a href="https://app.audlabs.io/login">Sign In</a>
+        <a href="#features">Features</a>
+      </div>
+      <div class="footer-links">
+        <h4>Legal</h4>
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/contact">Contact Us</a>
+      </div>
+
+      <div class="footer-links">
+        <h4>Community</h4>
+        <div class="footer-social">
+          <a href="https://x.com/AudLabs" target="_blank" class="social-btn" title="Follow on X" style="color:#fff;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          </a>
+          <a href="https://youtube.com/@AudLabs" target="_blank" class="social-btn" title="YouTube Channel" style="color:#FF0000;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+          </a>
+          <a href="https://t.me/AudLabs" target="_blank" class="social-btn" title="Telegram Channel" style="color:#29A8E8;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+          </a>
+          <a href="mailto:hello@audlabs.io" class="social-btn" title="Email us" style="color:#c9a84c;">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2026 AudLabs. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="/privacy-policy">Privacy Policy</a>
+        <a href="/status">Platform Status</a>
+        <a href="/blog">Blog</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<button id="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display:none;position:fixed;bottom:24px;left:16px;width:60px;height:60px;background:linear-gradient(180deg,#e8c97a 0%,#c9a84c 45%,#b8934a 100%);border:1px solid rgba(184,147,74,0.5);border-radius:50%;cursor:pointer;z-index:999;font-size:26px;color:#111;box-shadow:0 4px 16px rgba(201,168,76,0.4),inset 0 1px 0 rgba(255,255,255,0.5);transition:all 0.2s;position:fixed;overflow:hidden;">
+<span style="position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.3),rgba(255,255,255,0));border-radius:50% 50% 0 0;pointer-events:none;"></span>
+<span style="position:relative;z-index:1;">↑</span>
+</button>
+<script>
+var scrollBtn = document.getElementById('scroll-top');
+window.addEventListener('scroll', function(){
+  if(window.scrollY > 300){
+    scrollBtn.style.display = 'flex';
+    scrollBtn.style.alignItems = 'center';
+    scrollBtn.style.justifyContent = 'center';
+  } else {
+    scrollBtn.style.display = 'none';
+  }
+});
+</script>
+
+<!-- WhatsApp Float Button -->
+<a href="https://wa.me/2348168139368" target="_blank" id="whatsapp-float" style="position:fixed;bottom:24px;right:24px;width:56px;height:56px;background:linear-gradient(180deg,#3fd66b 0%,#25D366 45%,#1cab52 100%);border:1px solid rgba(28,171,82,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(37,211,102,0.45),inset 0 1px 0 rgba(255,255,255,0.4);z-index:9999;text-decoration:none;transition:all 0.3s;position:fixed;overflow:hidden;" onmouseover="this.style.transform='scale(1.1)'" onmouseout="this.style.transform='scale(1)'">
+<div style="position:absolute;top:0;left:0;right:0;height:50%;background:linear-gradient(180deg,rgba(255,255,255,0.3),rgba(255,255,255,0));border-radius:50% 50% 0 0;pointer-events:none;"></div>
+<svg width="28" height="28" viewBox="0 0 24 24" fill="#fff" style="position:relative;z-index:1;"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<script>
+(function(){
+  var urlParams = new URLSearchParams(window.location.search);
+  var ref = urlParams.get("ref");
+  if(ref){
+    localStorage.setItem("vg-ref", ref);
+    sessionStorage.setItem("vg-ref", ref);
+    document.querySelectorAll('a[href="https://app.audlabs.io/login"]').forEach(function(a){
+      a.href = "https://app.audlabs.io/login?ref=" + ref;
+    });
+  }
+})();
+</script>
+</body>
+</html>
+

@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AudLabs Admin</title>
+<link rel="icon" type="image/png" href="/logo.png">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Inter,sans-serif;background:#080c15;color:#fff;min-height:100vh;}
+body.light{background:#f5f5f5;color:#1a1a1a;}
+#login-screen{display:flex;align-items:center;justify-content:center;min-height:100vh;}
+.login-card{background:#111;border-radius:16px;padding:48px;width:100%;max-width:400px;text-align:center;border:1px solid #222;}
+body.light .login-card{background:#fff;border-color:#ebebeb;}
+.login-card h1{font-size:24px;color:#c9a84c;margin-bottom:8px;}
+.login-card p{font-size:13px;color:#555;margin-bottom:32px;}
+.pass-wrap{position:relative;margin-bottom:16px;}
+.login-input{width:100%;padding:14px;background:#1a1a1a;border:1.5px solid #222;border-radius:8px;color:#fff;font-size:14px;font-family:Inter,sans-serif;outline:none;}
+body.light .login-input{background:#fafafa;border-color:#ebebeb;color:#1a1a1a;}
+.login-input:focus{border-color:#c9a84c;}
+.eye-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;color:#555;cursor:pointer;font-size:16px;}
+.login-btn{width:100%;padding:14px;background:#c9a84c;border:none;border-radius:8px;color:#111;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;}
+#dashboard{display:none;padding:24px;max-width:1400px;margin:0 auto;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;flex-wrap:wrap;gap:12px;}
+.topbar h1{font-size:22px;color:#c9a84c;font-family:Space Mono,monospace;}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:24px;}
+.stat-card{background:#111;border-radius:12px;padding:20px;border:1px solid #222;}
+body.light .stat-card{background:#fff;border-color:#ebebeb;}
+.stat-value{font-size:28px;font-weight:700;color:#c9a84c;font-family:Space Mono,monospace;}
+.stat-label{font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.1em;margin-top:6px;}
+.section{background:#111;border-radius:12px;padding:24px;border:1px solid #222;margin-bottom:24px;}
+body.light .section{background:#fff;border-color:#ebebeb;}
+.section h2{font-size:13px;font-weight:600;color:#c9a84c;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;}
+.search-input{width:100%;padding:10px 14px;background:#1a1a1a;border:1.5px solid #222;border-radius:8px;color:#fff;font-size:13px;font-family:Inter,sans-serif;outline:none;margin-bottom:16px;}
+body.light .search-input{background:#fafafa;border-color:#ebebeb;color:#1a1a1a;}
+.search-input:focus{border-color:#c9a84c;}
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:11px;color:#555;text-transform:uppercase;letter-spacing:0.08em;padding:8px 10px;border-bottom:1px solid #1a1a1a;}
+body.light th{border-color:#ebebeb;}
+td{padding:10px;font-size:13px;color:#ccc;border-bottom:1px solid #1a1a1a;}
+body.light td{color:#555;border-color:#ebebeb;}
+tr:hover td{background:#1a1a1a;}
+body.light tr:hover td{background:#f9f9f9;}
+.badge{padding:2px 8px;border-radius:10px;font-size:11px;font-weight:600;}
+.badge-gold{background:rgba(201,168,76,0.2);color:#c9a84c;}
+.badge-green{background:rgba(39,174,96,0.2);color:#27ae60;}
+.badge-grey{background:rgba(255,255,255,0.1);color:#888;}
+.action-btn{padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;border:none;font-family:Inter,sans-serif;margin-right:4px;}
+.btn-add{background:rgba(39,174,96,0.2);color:#27ae60;}
+.btn-del{background:rgba(231,76,60,0.2);color:#e74c3c;}
+.btn-view{background:rgba(201,168,76,0.2);color:#c9a84c;}
+.topbar-btns{display:flex;gap:8px;align-items:center;}
+.tb-btn{background:#1a1a1a;border:1px solid #333;color:#888;padding:8px 14px;border-radius:8px;cursor:pointer;font-family:Inter,sans-serif;font-size:12px;}
+body.light .tb-btn{background:#f5f5f5;border-color:#ebebeb;color:#555;}
+.tb-btn:hover{border-color:#c9a84c;color:#c9a84c;}
+/* Modal */
+#modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;}
+#modal-overlay.show{display:flex;}
+.modal{background:#111;border-radius:16px;padding:32px;width:100%;max-width:480px;border:1px solid #222;}
+body.light .modal{background:#fff;border-color:#ebebeb;}
+.modal h3{font-size:16px;font-weight:600;color:#c9a84c;margin-bottom:20px;}
+.modal input{width:100%;padding:12px;background:#1a1a1a;border:1.5px solid #222;border-radius:8px;color:#fff;font-size:14px;font-family:Inter,sans-serif;outline:none;margin-bottom:14px;}
+body.light .modal input{background:#fafafa;border-color:#ebebeb;color:#1a1a1a;}
+.modal input:focus{border-color:#c9a84c;}
+.modal-btns{display:flex;gap:10px;margin-top:8px;}
+.modal-btn{flex:1;padding:12px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;}
+.modal-btn-primary{background:#c9a84c;color:#111;}
+.modal-btn-secondary{background:#1a1a1a;border:1px solid #333;color:#888;}
+body.light .modal-btn-secondary{background:#f5f5f5;border-color:#ebebeb;}
+@media(max-width:768px){
+.stats-grid{grid-template-columns:repeat(2,1fr);}
+table{font-size:11px;}
+td,th{padding:6px 4px;}
+.action-btn{padding:3px 6px;font-size:10px;}
+.topbar{flex-direction:column;align-items:flex-start;gap:10px;}
+.topbar-btns{flex-wrap:wrap;gap:6px;}
+.tb-btn{padding:6px 10px;font-size:11px;}
+#dashboard{padding:12px;}
+.section{padding:16px;}
+.stats-grid .stat-card{padding:16px;}
+th:nth-child(4),td:nth-child(4),
+th:nth-child(7),td:nth-child(7),
+th:nth-child(8),td:nth-child(8),
+th:nth-child(10),td:nth-child(10),
+th:nth-child(11),td:nth-child(11){display:none;}
+.modal{padding:20px;margin:16px;}
+}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+</head>
+<body>
+
+<div id="login-screen">
+<div class="login-card">
+<div style="font-size:48px;margin-bottom:16px;">⚡</div>
+<h1>AudLabs Admin</h1>
+<p>Enter your admin password to access the dashboard</p>
+<div class="pass-wrap">
+<input type="password" class="login-input" id="admin-pass" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()">
+<button class="eye-btn" onclick="togglePassVis()" id="eye-btn">👁</button>
+</div>
+<button class="login-btn" onclick="adminLogin()">Access Dashboard</button>
+<div id="login-err" style="color:#e74c3c;font-size:12px;margin-top:12px;"></div>
+</div>
+</div>
+<div id="campaign-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:9999;align-items:center;justify-content:center;">
+<div style="background:#1a1a1a;border-radius:16px;padding:32px;max-width:400px;width:90%;text-align:center;">
+<h3 style="color:#fff;margin-bottom:8px;">📧 Send Campaign Email</h3>
+<p style="color:#888;font-size:13px;margin-bottom:24px;">Choose how you want to send the campaign email.</p>
+<div style="display:flex;flex-direction:column;gap:10px;">
+<button onclick="executeCampaign(true)" style="background:#1a6fc4;border:none;color:#fff;padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">🧪 Send Test to My Email</button>
+<button onclick="executeCampaign(false)" style="background:linear-gradient(135deg,#c9a84c,#e8c97a);border:none;color:#111;padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">🚀 Send to ALL Users</button>
+<button onclick="document.getElementById('campaign-modal').style.display='none'" style="background:transparent;border:1px solid #333;color:#888;padding:12px;border-radius:8px;font-size:14px;cursor:pointer;">Cancel</button>
+</div>
+</div>
+</div>
+<div id="campaign-result" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:#fff;padding:12px 24px;border-radius:10px;font-size:13px;font-weight:500;z-index:9999;"></div>
+
+<div id="dashboard">
+<div class="topbar">
+<h1>⚡ AudLabs Admin</h1>
+<div class="topbar-btns">
+<span id="last-updated" style="font-size:11px;color:#555;"></span>
+<button class="tb-btn" onclick="loadStats()">↻ Refresh</button>
+<button class="tb-btn" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<button class="tb-btn" onclick="adminLogout()">Sign Out</button>
+<button class="tb-btn" id="campaign-btn" onclick="sendCampaign()" style="background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#111;border:none;">📧 Send Campaign</button><button class="tb-btn" id="leaderboard-btn" onclick="rebuildLeaderboard()" style="background:linear-gradient(135deg,#1a6fc4,#2389e8);color:#fff;border:none;">🏆 Rebuild Leaderboard</button>
+<button class="tb-btn" onclick="checkTeamExpiry()" style="background:#e74c3c;color:#fff;border:none;">⏰ Check Team Expiry</button>
+<button class="tb-btn" onclick="openSendNotification()" style="background:#8e44ad;color:#fff;border:none;">🔔 Send Notification</button>
+<button class="tb-btn" onclick="sendMonthlyEmails()" style="background:#27ae60;color:#fff;border:none;">📧 Send Monthly Emails</button>
+<button class="tb-btn" onclick="generateBlogPost()" style="background:#8e44ad;color:#fff;border:none;">✍️ Generate Blog Post</button>
+<button class="tb-btn" onclick="fixHasPurchased()" style="background:#555;color:#fff;border:none;">🔧 Fix Paying Users</button>
+<button class="tb-btn" onclick="cleanHasPurchased()" style="background:#e74c3c;color:#fff;border:none;">🧹 Clean False Paying</button>
+
+</div>
+</div>
+
+<div class="stats-grid">
+<div class="stat-card">
+<div class="stat-value" id="stat-total-users">—</div>
+<div class="stat-label">Total Users</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="stat-paying-users">—</div>
+<div class="stat-label">Paying Users</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="stat-total-gen">—</div>
+<div class="stat-label">Total Voiceovers</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="stat-total-chars">—</div>
+<div class="stat-label">Characters Generated</div>
+</div>
+<div class="stat-card" style="grid-column:span 2;">
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+<div class="stat-label">Est. Revenue (USD)</div>
+<div style="display:flex;gap:4px;">
+<button class="action-btn btn-view" onclick="setRevenuePeriod('all')" id="rev-all" style="padding:3px 8px;font-size:10px;">All</button>
+<button class="action-btn btn-grey" onclick="setRevenuePeriod('30d')" id="rev-30d" style="padding:3px 8px;font-size:10px;">30d</button>
+<button class="action-btn btn-grey" onclick="setRevenuePeriod('7d')" id="rev-7d" style="padding:3px 8px;font-size:10px;">7d</button>
+<button class="action-btn btn-grey" onclick="setRevenuePeriod('24h')" id="rev-24h" style="padding:3px 8px;font-size:10px;">24h</button>
+</div>
+</div>
+<div class="stat-value" id="stat-total-revenue">—</div>
+<div style="font-size:11px;color:#555;margin-top:4px;" id="stat-revenue-period">All time since launch</div>
+</div>
+<div class="stat-card">
+<div class="stat-value" id="stat-top-voice">—</div>
+<div class="stat-label">Top Voice</div>
+</div>
+<div class="stat-card" style="border:1px solid rgba(231,76,60,0.3);background:rgba(231,76,60,0.05);">
+<div class="stat-value" id="stat-total-commissions" style="color:#e74c3c;">₦0</div>
+<div class="stat-label">Total Commissions To Be Paid</div>
+</div>
+<div class="stat-card" style="border:1px solid rgba(39,174,96,0.3);background:rgba(39,174,96,0.05);">
+<div class="stat-value" id="stat-online-users" style="color:#27ae60;">0</div>
+<div class="stat-label">🟢 Online Now</div>
+</div>
+
+</div>
+
+<div class="section">
+<h2>🎙 Top 10 Most Used Voices</h2>
+
+<div id="top-voices-list"><div style="color:#555;font-size:13px;">Loading...</div></div>
+</div>
+
+<div class="section">
+<h2>⚡ MiniMax Quota Status</h2>
+<div id="minimax-quota-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
+<div style="color:#555;font-size:13px;">Loading...</div>
+</div>
+</div>
+
+<div class="section">
+<h2>👥 All Users — <span id="users-count">0</span> total</h2>
+<input type="text" class="search-input" id="user-search" placeholder="🔍 Search by email, name or UID..." oninput="filterUsers(this.value)">
+<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">
+<button onclick="showAllUsers()" id="filter-all" class="action-btn btn-view" style="padding:6px 14px;font-size:12px;">All Users</button>
+<button onclick="showPayingUsers()" id="filter-paying" class="action-btn btn-add" style="padding:6px 14px;font-size:12px;">💰 Paying Users</button>
+<button onclick="showInactiveUsers()" id="filter-inactive" class="action-btn btn-del" style="padding:6px 14px;font-size:12px;">😴 Inactive Users</button>
+<button onclick="showReferrers()" id="filter-referrers" class="action-btn" style="padding:6px 14px;font-size:12px;background:rgba(201,168,76,0.2);color:#c9a84c;">👥 Top Referrers</button>
+</div>
+
+<div style="overflow-x:auto;">
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Email</th>
+<th>Name</th>
+<th>UID</th>
+<th>Credits</th>
+<th>Voiceovers</th>
+<th>Chars</th>
+<th>Referrals</th>
+<th>Commission</th>
+<th>Team</th>
+<th>Referred</th>
+<th>Joined</th>
+<th>Actions</th>
+</tr>
+</thead>
+<tbody id="users-tbody"></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<!-- Modal -->
+<div id="modal-overlay">
+<div class="modal">
+<h3 id="modal-title">Action</h3>
+<div id="modal-body"></div>
+<div class="modal-btns">
+<button class="modal-btn modal-btn-secondary" onclick="closeModal()">Cancel</button>
+<button class="modal-btn modal-btn-primary" id="modal-confirm-btn" onclick="confirmModal()">Confirm</button>
+</div>
+</div>
+</div>
+
+<button id="scroll-top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" style="display:none;position:fixed;bottom:24px;right:24px;width:44px;height:44px;background:#c9a84c;border:none;border-radius:50%;color:#111;font-size:20px;cursor:pointer;z-index:999;box-shadow:0 4px 16px rgba(201,168,76,0.4);">↑</button>
+<script>
+var adminPassword = "";
+var allUsers = [];
+var currentAction = null;
+var isDark = true;
+
+function togglePassVis(){
+var inp = document.getElementById("admin-pass");
+inp.type = inp.type === "password" ? "text" : "password";
+}
+
+function toggleTheme(){
+isDark = !isDark;
+document.body.className = isDark ? "" : "light";
+document.getElementById("theme-btn").textContent = isDark ? "🌙 Dark" : "☀️ Light";
+}
+
+function adminLogin(){
+var pass = document.getElementById("admin-pass").value;
+if(!pass){ document.getElementById("login-err").textContent = "Please enter password"; return; }
+adminPassword = pass;
+document.getElementById("login-err").textContent = "Loading...";
+loadStats();
+}
+
+function adminLogout(){
+adminPassword = "";
+document.getElementById("dashboard").style.display = "none";
+document.getElementById("login-screen").style.display = "flex";
+document.getElementById("admin-pass").value = "";
+document.getElementById("login-err").textContent = "";
+}
+
+var campaignBatchStart = 0;
+var campaignRunning = false;
+
+async function sendCampaignBatch(start){
+  var res = await fetch("/api/send-campaign", {
+    method: "POST",
+    headers: {
+      "x-admin-secret": "audlabs-admin-2026",
+      "x-batch-start": String(start),
+      "x-campaign-id": "campaign-features-august-2026"
+    }
+  });
+  return await res.json();
+}
+
+async function sendCampaign(){
+  if(campaignRunning){ alert("Campaign already running!"); return; }
+  var mode = document.getElementById("campaign-mode")?.value || "test";
+  if(mode === "all"){
+    if(!confirm("Send campaign to ALL users? This cannot be undone.")) return;
+  }
+  campaignRunning = true;
+  var btn = document.getElementById("campaign-btn");
+  btn.disabled = true;
+  if(mode === "test"){
+    btn.textContent = "Sending test...";
+    try {
+      var res = await fetch("/api/send-campaign", {
+        method: "POST",
+        headers: {
+          "x-admin-secret": "audlabs-admin-2026",
+          "x-test-mode": "true",
+          "x-campaign-id": "campaign-features-august-2026"
+        }
+      });
+      var data = await res.json();
+      alert("Test sent! " + JSON.stringify(data));
+    } catch(e){ alert("Error: "+e.message); }
+    campaignRunning = false;
+    btn.disabled = false;
+    btn.textContent = "📧 Send Campaign";
+    return;
+  }
+  // Send to all in batches of 100
+  var start = 0;
+  var totalSent = 0;
+  var totalFailed = 0;
+  while(true){
+    btn.textContent = "Sending batch " + start + "...";
+    try {
+      var data = await sendCampaignBatch(start);
+      totalSent += data.sent || 0;
+      totalFailed += data.failed || 0;
+      console.log("Batch done:", data);
+      if(!data.sent || data.sent < 100) break; // Last batch
+      start += 100;
+      await new Promise(function(r){ setTimeout(r, 5000); }); // 2 second pause between batches
+    } catch(e){
+      alert("Batch failed at "+start+": "+e.message);
+      break;
+    }
+  }
+  campaignRunning = false;
+  btn.disabled = false;
+  btn.textContent = "📧 Send Campaign";
+  alert("Campaign complete! Sent: "+totalSent+" Failed: "+totalFailed);
+}
+async function cleanHasPurchased(){
+  if(!confirm("This will remove hasPurchased from users who have never actually paid. Continue?")) return;
+  var btn = document.querySelector('[onclick="cleanHasPurchased()"]');
+  if(btn){ btn.textContent = "🧹 Cleaning..."; btn.disabled = true; }
+  try {
+    var res = await fetch("/api/clean-haspurchased", {
+      method: "POST",
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    alert("Done! Cleaned: " + data.cleaned + " users. Total paid UIDs found: " + data.totalPaid);
+    loadStats();
+  } catch(e){
+    alert("Error: " + e.message);
+  } finally {
+    if(btn){ btn.textContent = "🧹 Clean False Paying"; btn.disabled = false; }
+  }
+}
+
+
+async function fixHasPurchased(){
+  if(!confirm("This will scan all users and mark paying users correctly. Continue?")) return;
+  var btn = document.querySelector('[onclick="fixHasPurchased()"]');
+  if(btn){ btn.textContent = "🔧 Fixing..."; btn.disabled = true; }
+  try {
+    var res = await fetch("/api/fix-haspurchased", {
+      method: "POST",
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    alert("Done! Fixed: " + data.fixed + " users");
+    loadStats();
+  } catch(e){
+    alert("Error: " + e.message);
+  } finally {
+    if(btn){ btn.textContent = "🔧 Fix Paying Users"; btn.disabled = false; }
+  }
+}
+
+
+async function generateBlogPost(){
+  var title = prompt("Article title:");
+  if(!title) return;
+  var slug = title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+  var excerpt = prompt("Short excerpt (2 sentences):");
+  if(!excerpt) return;
+  var content = prompt("Paste full article HTML content:");
+  if(!content) return;
+  var tagsStr = prompt("Tags (comma separated, e.g: YouTube,AI,Voice):");
+  var tags = tagsStr ? tagsStr.split(",").map(function(t){ return t.trim(); }) : [];
+  var imageFile = prompt("Banner image filename (e.g: top-10-youtube-niches-2026.jpg) — leave blank for none:");
+  var image = imageFile ? "/blog-images/" + imageFile.trim() : "";
+  try {
+    var res = await fetch("/api/save-blog-post", {
+      method: "POST",
+      headers: {"x-admin-secret": "audlabs-admin-2026", "Content-Type": "application/json"},
+      body: JSON.stringify({ title, slug, excerpt, content, tags, image })
+    });
+    var data = await res.json();
+    if(data.success){
+      alert("✅ Article published!\n\nView at: audlabs.io/blog/" + data.slug);
+    } else {
+      alert("Error: " + data.error);
+    }
+  } catch(e){
+    alert("Error: " + e.message);
+  }
+}
+
+
+async function sendMonthlyEmails(){
+  if(!confirm("Send monthly emails to all users now?")) return;
+  try {
+    var res = await fetch("/api/monthly-emails", {
+      method: "POST",
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    alert("Done! Sent: " + data.emailsSent + " | Failed: " + data.emailsFailed);
+  } catch(e){
+    alert("Error: " + e.message);
+  }
+}
+
+function openSendNotification(){
+  var targetUid = prompt("Send to specific user UID (leave blank to send to ALL users):");
+  var title = prompt("Notification title:");
+  if(!title) return;
+  var message = prompt("Notification message:");
+  if(!message) return;
+  fetch("/api/send-notification", {
+    method: "POST",
+    headers: {"x-admin-secret": "audlabs-admin-2026", "Content-Type": "application/json"},
+    body: JSON.stringify({ title, message, targetUid: targetUid || null })
+  }).then(function(r){ return r.json(); }).then(function(data){
+    if(data.success) alert("Notification sent successfully!");
+    else alert("Error: " + data.error);
+  }).catch(function(e){ alert("Error: " + e.message); });
+}
+
+async function checkTeamExpiry(){
+try {
+var res = await fetch("/api/check-team-expiry", {
+method: "POST",
+headers: {"x-admin-secret": "audlabs-admin-2026"}
+});
+var data = await res.json();
+alert("Done! Expired: " + data.expired + " | Warned: " + data.warned);
+} catch(e){
+alert("Error: " + e.message);
+}
+}
+window.openUserDetail = async function(uid){
+  try {
+    var res = await fetch("/api/admin-user-detail?uid="+uid, {
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    if(!data.success) return alert("Error: "+data.error);
+    var u = data.user;
+    var modal = document.createElement("div");
+    modal.style.cssText = "position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:flex-start;justify-content:center;padding:12px;overflow-y:auto;";
+    modal.innerHTML = '<div style="background:#111;border-radius:16px;padding:20px;max-width:600px;width:100%;border:1px solid #222;margin:12px auto;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">'+
+      '<h2 style="color:#c9a84c;font-size:16px;margin:0;">User Details</h2>'+
+      '<button onclick="this.closest(\'div[style*=fixed]\').remove()" style="background:none;border:none;color:#555;font-size:20px;cursor:pointer;">✕</button>'+
+      '</div>'+
+      '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px;">'+
+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">EMAIL</div><div style="font-size:13px;color:#ddd;">'+u.email+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">NAME</div><div style="font-size:13px;color:#ddd;">'+(u.displayName||"—")+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;grid-column:1/-1;"><div style="font-size:11px;color:#555;margin-bottom:4px;">UID</div><div style="font-size:11px;color:#888;font-family:monospace;word-break:break-all;">'+uid+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">REFERRAL CODE</div><div style="font-size:13px;color:#c9a84c;">'+(u.referralCode||"—")+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">REFERRAL RATE</div><div style="font-size:13px;color:#ddd;">'+(u.referralRate||10)+'%</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">CREDITS</div><div style="font-size:16px;font-weight:700;color:#c9a84c;">'+(u.credits||0).toLocaleString()+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">TOTAL GENERATIONS</div><div style="font-size:16px;font-weight:700;color:#ddd;">'+(u.totalGenerations||0).toLocaleString()+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">TOTAL CHARACTERS</div><div style="font-size:13px;color:#ddd;">'+(u.totalCharacters||0).toLocaleString()+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">REFERRALS MADE</div><div style="font-size:16px;font-weight:700;color:'+(u.referralCount>0?'#c9a84c':'#555')+'">'+(u.referralCount||0)+'</div></div>'+
+            '<div style="background:#1a1a1a;border-radius:8px;padding:14px;grid-column:1/-1;"><div style="font-size:11px;color:#555;margin-bottom:4px;">LOCATION</div><div style="font-size:13px;color:#ddd;">'+(u.location ? (u.location.city+", "+u.location.state+", "+u.location.country) : "Unknown")+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;grid-column:1/-1;"><div style="font-size:11px;color:#555;margin-bottom:4px;">SIGNED UP VIA</div><div style="font-size:13px;color:#c9a84c;">'+(u.trafficSource||"Direct / Unknown")+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">HAS PURCHASED</div><div style="font-size:13px;color:'+(u.hasPurchased?'#27ae60':'#e74c3c')+'">'+(u.hasPurchased?'✅ Yes':'❌ No')+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">TEAM</div><div style="font-size:13px;color:#ddd;">'+(u.teamId?u.teamRole+" — "+u.teamId:"No team")+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">REFERRED BY</div><div style="font-size:13px;color:#ddd;">'+(u.referredBy||"Organic")+'</div></div>'+
+      '<div style="background:#1a1a1a;border-radius:8px;padding:14px;"><div style="font-size:11px;color:#555;margin-bottom:4px;">JOINED</div><div style="font-size:13px;color:#ddd;">'+(u.createdAt?new Date(u.createdAt._seconds?u.createdAt._seconds*1000:u.createdAt).toLocaleString():"—")+'</div></div>'+
+      '</div>'+
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;">'+
+      '<button onclick="this.closest(\'div[style*=fixed]\').remove();openAddCredits(\''+uid+'\',\''+u.email+'\')" style="background:#c9a84c;border:none;color:#111;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">+ Add Credits</button>'+
+      '<button onclick="this.closest(\'div[style*=fixed]\').remove();openDeductCredits(\''+uid+'\',\''+u.email+'\')" style="background:#1a6fc4;border:none;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">- Deduct Credits</button>'+
+      '<button onclick="this.closest(\'div[style*=fixed]\').remove();openDeleteUser(\''+uid+'\',\''+u.email+'\')" style="background:#e74c3c;border:none;color:#fff;padding:10px 16px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">Delete User</button>'+
+      '</div>'+
+      '</div>';
+    document.body.appendChild(modal);
+  } catch(e){ alert("Error: "+e.message); }
+};
+
+async function rebuildLeaderboard(){
+var btn = document.getElementById("leaderboard-btn");
+btn.disabled = true;
+btn.textContent = "Rebuilding...";
+try {
+var res = await fetch("/api/rebuild-leaderboard", {
+method: "POST",
+headers: {
+"x-cron-secret": "audlabs-monthly-2026"
+}
+});
+var data = await res.json();
+if(data.success){
+alert("Leaderboard rebuilt successfully! " + data.count + " creators updated.");
+} else {
+alert("Error: " + (data.error || "Unknown error"));
+}
+} catch(e){
+alert("Error: " + e.message);
+} finally {
+btn.disabled = false;
+btn.textContent = "🏆 Rebuild Leaderboard";
+}
+}
+
+async function sendCampaign(){
+document.getElementById("campaign-modal").style.display = "flex";
+}
+
+async function executeCampaign(testMode){
+document.getElementById("campaign-modal").style.display = "none";
+var btn = document.getElementById("campaign-btn");
+btn.disabled = true;
+btn.textContent = testMode ? "Sending test..." : "Sending... please wait";
+try {
+var res = await fetch("/api/send-campaign", {
+method: "POST",
+headers: {
+"x-admin-secret": "audlabs-admin-2026",
+"x-test-mode": testMode ? "true" : "false"
+}
+});
+var data = await res.json();
+if(data.success){
+document.getElementById("campaign-result").textContent = "✅ Done! Sent: " + data.sent + " | Failed: " + data.failed;
+document.getElementById("campaign-result").style.display = "block";
+setTimeout(function(){ document.getElementById("campaign-result").style.display = "none"; }, 5000);
+} else {
+document.getElementById("campaign-result").textContent = "❌ Error: " + (data.error || "Unknown error");
+document.getElementById("campaign-result").style.display = "block";
+}
+} catch(e){
+document.getElementById("campaign-result").textContent = "❌ Error: " + e.message;
+document.getElementById("campaign-result").style.display = "block";
+} finally {
+btn.disabled = false;
+btn.textContent = "📧 Send Campaign";
+}
+}
+async function loadStats(){
+try {
+var res = await fetch("/api/admin-stats", {
+headers: { "x-admin-password": adminPassword }
+});
+if(res.status === 401){
+document.getElementById("login-err").textContent = "Wrong password. Try again.";
+return;
+}
+var data = await res.json();
+if(!data.success) throw new Error(data.error||"Failed");
+document.getElementById("login-screen").style.display = "none";
+document.getElementById("dashboard").style.display = "block";
+document.getElementById("login-err").textContent = "";
+allUsers = data.users || [];
+document.getElementById("stat-total-users").textContent = data.totalUsers.toLocaleString();
+document.getElementById("stat-total-gen").textContent = data.totalGenerations.toLocaleString();
+document.getElementById("stat-total-chars").textContent = (data.totalCharacters/1000000).toFixed(1)+"M";
+revenueData = {
+all: parseFloat(data.totalRevenue)||0,
+"30d": parseFloat(data.revenue30d)||0,
+"7d": parseFloat(data.revenue7d)||0,
+"24h": parseFloat(data.revenue24h)||0
+};
+setRevenuePeriod("all");
+document.getElementById("stat-top-voice").textContent = data.topVoices[0] ? data.topVoices[0].name : "—";
+document.getElementById("users-count").textContent = data.totalUsers.toLocaleString();
+var payingUsers = allUsers.filter(function(u){ return u.totalGenerations > 0; }).length;
+document.getElementById("stat-paying-users").textContent = payingUsers.toLocaleString();
+var commEl = document.getElementById("stat-total-commissions");
+if(commEl) commEl.textContent = "₦"+(data.totalCommissions||0).toLocaleString();
+var vList = document.getElementById("top-voices-list");
+if(data.topVoices.length){
+vList.innerHTML = data.topVoices.map(function(v,i){
+return '<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #1a1a1a;">'+
+'<div style="width:24px;height:24px;background:#c9a84c;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#111;">'+(i+1)+'</div>'+
+'<div style="flex:1;font-size:13px;">'+v.name+'</div>'+
+'<div style="font-size:13px;font-weight:700;color:#c9a84c;">'+v.count.toLocaleString()+'</div>'+
+'</div>';
+}).join("");
+}
+renderUsers(allUsers);
+loadTeams();
+loadRevenueChart('7d');
+loadOnlineCount();
+setInterval(loadOnlineCount, 60000);
+loadMinimaxQuota();
+setInterval(loadMinimaxQuota, 300000);
+document.getElementById("last-updated").textContent = "Updated: "+new Date().toLocaleTimeString();
+} catch(e){
+document.getElementById("login-err").textContent = "Error: "+e.message;
+}
+}
+
+function renderUsers(users){
+var tbody = document.getElementById("users-tbody");
+tbody.innerHTML = users.map(function(u,i){
+var date = u.createdAt ? new Date(u.createdAt).toLocaleDateString() : "—";
+var teamBadge = u.teamId ? '<span class="badge badge-gold">'+(u.teamRole||"member")+'</span>' : '<span class="badge badge-grey">—</span>';
+var creditColor = u.credits > 10000 ? "#27ae60" : u.credits > 1000 ? "#c9a84c" : "#e74c3c";
+var referredBadge = u.referredBy ? '<span class="badge badge-green">referred</span>' : '<span class="badge badge-grey">organic</span>';
+var chars = (u.totalCharacters||0).toLocaleString();
+var uid = u.id || "—";
+var shortUid = uid.slice(0,8)+"...";
+var referrals = u.referralCount||0;
+var commission = "₦"+(u.referralEarningsNGN||0).toLocaleString();
+return '<tr onclick="openUserDetail(\''+uid+'\')" style="cursor:pointer;">'+
+'<td style="color:#555;">'+(i+1)+'</td>'+
+'<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+u.email+'</td>'+
+'<td style="color:#888;white-space:nowrap;">'+(u.displayName||"—")+'</td>'+
+'<td style="font-family:monospace;font-size:11px;color:#555;" title="'+uid+'">'+shortUid+'</td>'+
+'<td style="color:'+creditColor+';font-weight:600;">'+u.credits.toLocaleString()+'</td>'+
+'<td>'+u.totalGenerations.toLocaleString()+'</td>'+
+'<td>'+chars+'</td>'+
+'<td style="color:'+(referrals>0?'#c9a84c':'#888')+';font-weight:'+(referrals>0?'700':'400')+'">'+(referrals>0?'👥 '+referrals:referrals)+'</td>'+
+'<td style="color:'+(u.referralEarningsNGN>0?'#27ae60':'#888')+';font-weight:'+(u.referralEarningsNGN>0?'700':'400')+'">'+commission+'</td>'+
+'<td>'+teamBadge+'</td>'+
+'<td>'+referredBadge+'</td>'+
+'<td style="color:#555;white-space:nowrap;">'+date+'</td>'+
+'<td style="white-space:nowrap;" onclick="event.stopPropagation()">'+
+'<button class="action-btn btn-add" onclick="openAddCredits(\''+u.id+'\',\''+u.email+'\')">+ Credits</button>'+
+'<button class="action-btn btn-view" onclick="openDeductCredits(\''+u.id+'\',\''+u.email+'\')">- Credits</button>'+
+'<button class="action-btn btn-del" onclick="openDeleteUser(\''+u.id+'\',\''+u.email+'\')">Delete</button>'+
+'</td>'+
+'</tr>';
+}).join("");
+}
+
+var revenueChart = null;
+async function loadRevenueChart(period){
+  try {
+    var res = await fetch("/api/admin-revenue-chart?period="+period, {
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    if(!data.success) return;
+    var ctx = document.getElementById("revenue-chart").getContext("2d");
+    if(revenueChart) revenueChart.destroy();
+    revenueChart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: data.labels,
+        datasets: [{
+          label: "Revenue (USD)",
+          data: data.values,
+          backgroundColor: "rgba(201,168,76,0.5)",
+          borderColor: "#c9a84c",
+          borderWidth: 2,
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: { color: "#888", callback: function(v){ return "$"+v; } },
+            grid: { color: "#1a1a1a" }
+          },
+          x: {
+            ticks: { color: "#888" },
+            grid: { color: "#1a1a1a" }
+          }
+        }
+      }
+    });
+  } catch(e){ console.warn("Chart error:", e); }
+}
+
+async function loadMinimaxQuota(){
+  try {
+    var res = await fetch("/api/minimax-quota?t=" + Date.now(), {
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    if(!data.success) return;
+    var list = document.getElementById("minimax-quota-list");
+    list.innerHTML = data.accounts.map(function(acc){
+      var statusColor = acc.status === "active" ? "#27ae60" : acc.status === "limited" ? "#e74c3c" : "#888";
+      var statusText = acc.status === "active" ? "✅ Active" : acc.status === "limited" ? "⛔ Limited" : "❌ Error";
+      return '<div style="background:#1a1a1a;border-radius:10px;padding:14px;border:1px solid #222;">'+
+        '<div style="font-size:12px;font-weight:600;color:#ddd;margin-bottom:4px;">'+acc.name+'</div>'+
+        '<div style="font-size:10px;color:#888;margin-bottom:8px;">'+(acc.email||"—")+'</div>'+
+        '<div style="font-size:11px;color:'+statusColor+';font-weight:600;">'+statusText+'</div>'+
+        '</div>';
+
+    }).join("");
+  } catch(e){ console.warn("Quota load error:", e); }
+}
+
+
+async function loadOnlineCount(){
+  try {
+    var res = await fetch("/api/online-count", {
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    var el = document.getElementById("stat-online-users");
+    if(el) el.textContent = data.count||0;
+  } catch(e){}
+}
+
+async function loadTeams(){
+  try {
+    var res = await fetch("/api/admin-teams", {
+      headers: {"x-admin-secret": "audlabs-admin-2026"}
+    });
+    var data = await res.json();
+    if(!data.success) return;
+    var list = document.getElementById("teams-list");
+    if(!data.teams.length){ list.innerHTML = '<div style="color:#555;font-size:13px;">No active teams</div>'; return; }
+    list.innerHTML = data.teams.map(function(t){
+      var renewal = t.nextRenewal ? new Date(t.nextRenewal._seconds*1000).toLocaleDateString() : "No expiry";
+      var daysLeft = t.nextRenewal ? Math.floor((new Date(t.nextRenewal._seconds*1000) - new Date()) / (1000*60*60*24)) : null;
+      var renewalColor = daysLeft !== null ? (daysLeft <= 3 ? "#e74c3c" : daysLeft <= 7 ? "#c9a84c" : "#27ae60") : "#555";
+      return '<div style="background:#1a1a1a;border-radius:10px;padding:16px;border:1px solid #222;">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">'+
+        '<div style="font-size:14px;font-weight:600;color:#ddd;">'+t.teamName+'</div>'+
+        '<span style="background:rgba(39,174,96,0.2);color:#27ae60;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;">'+t.status.toUpperCase()+'</span>'+
+        '</div>'+
+        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;">'+
+        '<div style="background:#111;border-radius:6px;padding:10px;"><div style="font-size:10px;color:#555;margin-bottom:2px;">PLAN</div><div style="font-size:12px;color:#c9a84c;font-weight:600;">'+t.plan+' — $'+t.price+'/mo</div></div>'+
+        '<div style="background:#111;border-radius:6px;padding:10px;"><div style="font-size:10px;color:#555;margin-bottom:2px;">MEMBERS</div><div style="font-size:12px;color:#ddd;font-weight:600;">'+(t.members||[]).length+' / '+t.maxMembers+'</div></div>'+
+        '<div style="background:#111;border-radius:6px;padding:10px;"><div style="font-size:10px;color:#555;margin-bottom:2px;">RENEWAL</div><div style="font-size:12px;color:'+renewalColor+';font-weight:600;">'+renewal+(daysLeft!==null?' ('+daysLeft+'d)':'')+'</div></div>'+
+        '<div style="background:#111;border-radius:6px;padding:10px;"><div style="font-size:10px;color:#555;margin-bottom:2px;">ADMIN</div><div style="font-size:11px;color:#888;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+t.adminEmail+'</div></div>'+
+        '</div>'+
+        '</div>';
+    }).join("");
+  } catch(e){ console.warn("Teams load error:", e); }
+}
+
+function showAllUsers(){
+  renderUsers(allUsers);
+  document.getElementById("users-count").textContent = allUsers.length.toLocaleString();
+}
+
+function showPayingUsers(){
+  var paying = allUsers.filter(function(u){ 
+    return (u.hasPurchased === true && (
+      u.totalCharacters > 1000 || 
+      u.credits > 10000 ||
+      u.totalGenerations > 2
+    )) || (u.teamId && u.teamId !== "");
+  });
+
+
+
+  renderUsers(paying);
+  document.getElementById("users-count").textContent = paying.length.toLocaleString() + " paying";
+}
+
+
+
+
+
+function showInactiveUsers(){
+  var inactive = allUsers.filter(function(u){ return (u.totalGenerations||0) === 0; });
+  renderUsers(inactive);
+  document.getElementById("users-count").textContent = inactive.length.toLocaleString() + " inactive";
+}
+
+function showReferrers(){
+  var referrers = allUsers.filter(function(u){ return (u.referralCount||0) > 0; });
+  referrers.sort(function(a,b){ return (b.referralCount||0) - (a.referralCount||0); });
+  renderUsers(referrers);
+  document.getElementById("users-count").textContent = referrers.length.toLocaleString() + " referrers";
+}
+
+function filterUsers(query){
+if(!query){ renderUsers(allUsers); return; }
+var filtered = allUsers.filter(function(u){
+return (u.email||"").toLowerCase().includes(query.toLowerCase()) ||
+(u.displayName||"").toLowerCase().includes(query.toLowerCase()) ||
+(u.id||"").toLowerCase().includes(query.toLowerCase());
+});
+renderUsers(filtered);
+}
+
+
+function openDeductCredits(uid, email){
+currentAction = {type:"deduct_credits", uid:uid, email:email};
+document.getElementById("modal-title").textContent = "Deduct Credits from "+email;
+document.getElementById("modal-body").innerHTML = '<input type="number" id="modal-input" placeholder="Credits to deduct (e.g. 5000)" min="1">';
+document.getElementById("modal-confirm-btn").textContent = "Deduct Credits";
+document.getElementById("modal-confirm-btn").style.background = "#e74c3c";
+document.getElementById("modal-overlay").classList.add("show");
+}
+function openAddCredits(uid, email){
+currentAction = {type:"add_credits", uid:uid, email:email};
+document.getElementById("modal-title").textContent = "Add Credits to "+email;
+document.getElementById("modal-body").innerHTML = '<input type="number" id="modal-input" placeholder="Credits to add (e.g. 50000)" min="1">';
+document.getElementById("modal-confirm-btn").textContent = "Add Credits";
+document.getElementById("modal-overlay").classList.add("show");
+}
+
+function openDeleteUser(uid, email){
+currentAction = {type:"delete_user", uid:uid, email:email};
+document.getElementById("modal-title").textContent = "Delete User";
+document.getElementById("modal-body").innerHTML = '<p style="color:#e74c3c;font-size:13px;margin-bottom:16px;">Are you sure you want to delete <strong>'+email+'</strong>? This cannot be undone.</p>';
+document.getElementById("modal-confirm-btn").textContent = "Delete User";
+document.getElementById("modal-confirm-btn").style.background = "#e74c3c";
+document.getElementById("modal-overlay").classList.add("show");
+}
+
+function closeModal(){
+document.getElementById("modal-overlay").classList.remove("show");
+document.getElementById("modal-confirm-btn").style.background = "#c9a84c";
+currentAction = null;
+}
+
+async function confirmModal(){
+if(!currentAction) return;
+var btn = document.getElementById("modal-confirm-btn");
+btn.disabled = true;
+btn.textContent = "Processing...";
+try {
+if(currentAction.type === "add_credits"){
+var amount = parseInt(document.getElementById("modal-input").value);
+if(!amount || amount < 1){ alert("Please enter a valid amount"); btn.disabled=false; btn.textContent="Add Credits"; return; }
+var res = await fetch("/api/admin-add-credits", {
+method: "POST",
+headers: {"Content-Type":"application/json","x-admin-password":adminPassword},
+body: JSON.stringify({uid: currentAction.uid, credits: amount})
+});
+var data = await res.json();
+if(data.success){ alert("✅ "+amount.toLocaleString()+" credits added to "+currentAction.email); closeModal(); loadStats(); }
+else throw new Error(data.error);
+} else if(currentAction.type === "deduct_credits"){
+var amount = parseInt(document.getElementById("modal-input").value);
+if(!amount || amount < 1){ alert("Please enter a valid amount"); btn.disabled=false; btn.textContent="Deduct Credits"; return; }
+var res = await fetch("/api/admin-deduct-credits", {
+method: "POST",
+headers: {"Content-Type":"application/json","x-admin-password":adminPassword},
+body: JSON.stringify({uid: currentAction.uid, credits: amount})
+});
+var data = await res.json();
+if(data.success){ alert("✅ "+amount.toLocaleString()+" credits deducted from "+currentAction.email); closeModal(); loadStats(); }
+else throw new Error(data.error);
+} else if(currentAction.type === "delete_user"){
+var res2 = await fetch("/api/admin-delete-user", {
+method: "POST",
+headers: {"Content-Type":"application/json","x-admin-password":adminPassword},
+body: JSON.stringify({uid: currentAction.uid})
+});
+var data2 = await res2.json();
+if(data2.success){ alert("✅ User deleted: "+currentAction.email); closeModal(); loadStats(); }
+else throw new Error(data2.error);
+}
+} catch(e){ alert("Error: "+e.message); }
+btn.disabled = false;
+btn.textContent = currentAction && currentAction.type === "add_credits" ? "Add Credits" : "Delete User";
+}
+
+var revenueData = {all:0, "30d":0, "7d":0, "24h":0};
+
+function setRevenuePeriod(period){
+["all","30d","7d","24h"].forEach(function(p){
+var btn = document.getElementById("rev-"+p);
+if(!btn) return;
+btn.className = p === period ? "action-btn btn-view" : "action-btn btn-grey";
+btn.style.padding = "3px 8px";
+btn.style.fontSize = "10px";
+});
+var labels = {all:"All time since launch", "30d":"Last 30 days", "7d":"Last 7 days", "24h":"Last 24 hours"};
+document.getElementById("stat-total-revenue").textContent = "$"+(revenueData[period]||0).toFixed(2);
+document.getElementById("stat-revenue-period").textContent = labels[period];
+}
+window.addEventListener("scroll", function(){
+var btn = document.getElementById("scroll-top-btn");
+if(btn) btn.style.display = window.scrollY > 300 ? "block" : "none";
+});
+</script>
+</div>
+</body>
+</html>

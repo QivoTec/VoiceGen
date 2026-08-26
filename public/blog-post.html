@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="page-title">AudLabs Blog</title>
+<meta name="description" id="page-desc" content="AudLabs Blog">
+<link rel="icon" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Georgia:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#fff;color:#1a1a1a;font-family:Inter,sans-serif;}
+.header{background:#080c14;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo img{width:32px;height:32px;object-fit:contain;}
+.logo-text{font-size:18px;font-weight:700;color:#c9a84c;letter-spacing:1px;}
+.nav-links{display:flex;align-items:center;gap:20px;}
+.nav-links a{font-size:13px;color:#888;text-decoration:none;transition:color 0.15s;}
+.nav-links a:hover{color:#c9a84c;}
+.nav-cta{background:#c9a84c;color:#111 !important;padding:8px 18px;border-radius:8px;font-weight:600 !important;}
+.hero{background:#080c14;padding:48px 24px;}
+.hero-inner{max-width:760px;margin:0 auto;}
+.back-link{font-size:13px;color:#555;text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:20px;transition:color 0.15s;}
+.back-link:hover{color:#c9a84c;}
+.post-tags{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
+.post-tag{font-size:11px;font-weight:600;color:#c9a84c;background:rgba(201,168,76,0.1);padding:3px 10px;border-radius:100px;border:1px solid rgba(201,168,76,0.2);}
+.hero h1{font-size:32px;font-weight:700;color:#fff;line-height:1.3;margin-bottom:16px;}
+.post-meta{font-size:13px;color:#555;display:flex;align-items:center;gap:12px;}
+.container{max-width:760px;margin:0 auto;padding:48px 24px;}
+.article-content{font-size:16px;line-height:1.8;color:#333;}
+.article-content h2{font-size:22px;font-weight:700;color:#1a1a1a;margin:32px 0 14px;}
+.article-content h3{font-size:18px;font-weight:600;color:#1a1a1a;margin:24px 0 10px;}
+.article-content p{margin-bottom:18px;}
+.article-content ul, .article-content ol{margin:0 0 18px 24px;}
+.article-content li{margin-bottom:8px;}
+.article-content strong{color:#1a1a1a;font-weight:600;}
+.article-content a{color:#c9a84c;text-decoration:none;}
+.article-content a:hover{text-decoration:underline;}
+.cta-box{background:#080c14;border-radius:12px;padding:32px;text-align:center;margin:40px 0;}
+.cta-box h3{font-size:20px;font-weight:700;color:#fff;margin-bottom:8px;}
+.cta-box p{font-size:14px;color:#888;margin-bottom:20px;}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#111;font-size:14px;font-weight:700;padding:12px 28px;border-radius:10px;text-decoration:none;}
+.divider{border:none;border-top:1px solid #ebebeb;margin:40px 0;}
+.related-title{font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:0.15em;margin-bottom:20px;}
+.related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.related-card{border:1px solid #ebebeb;border-radius:10px;padding:16px;text-decoration:none;color:inherit;display:block;transition:all 0.2s;}
+.related-card:hover{border-color:#c9a84c;transform:translateY(-2px);}
+.related-card-title{font-size:14px;font-weight:600;color:#1a1a1a;margin-bottom:6px;line-height:1.4;}
+.related-card-excerpt{font-size:12px;color:#888;line-height:1.5;}
+.footer{background:#080c14;padding:32px 24px;text-align:center;margin-top:60px;}
+.footer p{font-size:13px;color:#555;}
+.footer a{color:#c9a84c;text-decoration:none;}
+.loading{text-align:center;padding:80px;color:#888;}
+@media(max-width:600px){
+  .hero h1{font-size:24px;}
+  .nav-links{gap:12px;}
+  .cta-box{padding:24px 16px;}
+}
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2851644269126796"
+     crossorigin="anonymous"></script>
+<link rel="canonical" id="canonical-link" href="https://audlabs.io/blog">
+</head>
+<body>
+
+
+<div class="header">
+
+  <a href="https://audlabs.io" class="logo">
+    <img src="/logo.png" alt="AudLabs">
+    <span class="logo-text">AudLabs</span>
+  </a>
+  <div class="nav-links">
+    <a href="https://t.me/audlabs" target="_blank" title="Join our Telegram" style="display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:8px;background:#e8f4fd;color:#229ED9;text-decoration:none;margin-right:8px;transition:opacity 0.15s;" onmouseover="this.style.opacity='0.75'" onmouseout="this.style.opacity='1'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 000 12a12 12 0 0012 12 12 12 0 0012-12A12 12 0 0012 0a12 12 0 00-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 01.171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+    </a>
+    <a href="https://app.audlabs.io" class="nav-cta">Try Free →</a>
+  </div>
+
+
+</div>
+
+<div class="hero" id="post-hero" style="display:none;">
+  <div class="hero-inner">
+    <a href="/blog" class="back-link">← Back to Blog</a>
+    <div class="post-tags" id="post-tags"></div>
+    <h1 id="post-title-el"></h1>
+    <div class="post-meta" id="post-meta"></div>
+  </div>
+</div>
+<div id="post-banner-wrap" style="display:none;max-width:900px;margin:0 auto;padding:0 24px;">
+  <img id="post-banner-img" src="" alt="" style="width:100%;border-radius:12px;margin-top:-20px;margin-bottom:32px;display:block;max-height:420px;object-fit:cover;">
+</div>
+
+
+<div class="container">
+  <div class="loading" id="loading">Loading article...</div>
+  <div id="post-content" style="display:none;">
+    <div class="article-content" id="article-body"></div>
+    <div class="cta-box">
+      <h3>Ready to create professional voiceovers?</h3>
+      <p>Join 1,000+ YouTube creators using AudLabs. Your first voiceovers are completely free.</p>
+      <a href="https://app.audlabs.io" class="cta-btn">Try AudLabs Free — No Card Needed</a>
+    </div>
+    <hr class="divider">
+    <div class="related-title">More Articles</div>
+    <div class="related-grid" id="related-posts"></div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>© 2026 AudLabs. All rights reserved. · <a href="/privacy-policy">Privacy Policy</a> · <a href="/status">Status</a></p>
+</div>
+
+<script>
+const slug = window.location.pathname.replace("/blog/","").replace(/\//g,"");
+
+async function loadPost(){
+  try {
+    const res = await fetch("/api/blog-post/" + slug);
+    const data = await res.json();
+    if(!data.success){ document.getElementById("loading").textContent = "Article not found."; return; }
+    const post = data.post;
+    // Update meta
+    document.getElementById("page-title").textContent = post.title + " — AudLabs Blog";
+    document.getElementById("page-desc").content = post.metaDescription || post.excerpt;
+    // Show hero
+    document.getElementById("post-hero").style.display = "block";
+    document.getElementById("post-title-el").textContent = post.title;
+    const tags = (post.tags||[]).map(function(t){ return '<span class="post-tag">'+t+'</span>'; }).join("");
+    document.getElementById("post-tags").innerHTML = tags;
+    const date = post.createdAt ? new Date(post.createdAt._seconds*1000).toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"}) : "";
+    document.getElementById("post-meta").innerHTML = '<span>📅 '+date+'</span><span>· 5 min read</span>';
+    if(post.image){
+      document.getElementById("post-banner-img").src = post.image;
+      document.getElementById("post-banner-img").alt = post.title;
+      document.getElementById("post-banner-wrap").style.display = "block";
+    }
+    // Show content
+
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("post-content").style.display = "block";
+    document.getElementById("article-body").innerHTML = post.content;
+    // Load related posts
+    loadRelated(post.id);
+  } catch(e){
+    document.getElementById("loading").textContent = "Failed to load article. Please try again.";
+  }
+}
+
+async function loadRelated(currentId){
+  try {
+    const res = await fetch("/api/blog-posts");
+    const data = await res.json();
+    const related = (data.posts||[]).filter(function(p){ return p.id !== currentId; }).slice(0,3);
+    if(!related.length) return;
+    document.getElementById("related-posts").innerHTML = related.map(function(p){
+      return '<a href="/blog/'+p.slug+'" class="related-card">'+
+        '<div class="related-card-title">'+p.title+'</div>'+
+        '<div class="related-card-excerpt">'+p.excerpt+'</div>'+
+        '</a>';
+    }).join("");
+  } catch(e){}
+}
+
+loadPost();
+</script>
+</body>
+</html>
+
+
+
+
+

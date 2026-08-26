@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AudLabs API Documentation</title>
+<link rel="icon" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{margin:0;padding:0;background:#f7f7f7;font-family:'Inter',sans-serif;}
+
+#vg-app{min-height:100vh;background:#f0f0f0;}
+#vg.dark-mode #vg-app{background:#141414;}
+
+.vg-sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:#111;display:flex;flex-direction:column;z-index:200;transform:translateX(-100%);transition:transform 0.3s ease;}
+.vg-sidebar.open{transform:translateX(0);}
+@media(min-width:769px){.vg-sidebar{transform:translateX(0);}}
+.vg-sb-logo{padding:24px 20px 20px;border-bottom:1px solid #222;display:flex;align-items:center;gap:10px;}
+.vg-sb-logotext{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.2em;color:#c9a84c;font-weight:700;}
+.vg-sb-sub{font-size:10px;color:#555;letter-spacing:0.1em;margin-top:2px;}
+.vg-sb-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.vg-sb-section{font-size:10px;letter-spacing:0.2em;color:#444;text-transform:uppercase;padding:12px 8px 6px;font-family:'Space Mono',monospace;}
+.vg-sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all 0.15s;color:#888;font-size:13px;font-weight:500;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;text-decoration:none;}
+.vg-sb-item:hover{background:#1a1a1a;color:#ddd;}
+.vg-sb-item.active{background:#1e1a10;color:#c9a84c;}
+.vg-sb-footer{padding:16px 12px;border-top:1px solid #1a1a1a;}
+.vg-sb-close{display:none;background:none;border:none;color:#666;cursor:pointer;padding:4px;margin-left:auto;}
+@media(max-width:768px){.vg-sb-close{display:flex;}}
+
+.vg-main{margin-left:0;min-height:100vh;background:#f7f7f7;}
+#vg.dark-mode .vg-main{background:#141414;}
+@media(min-width:769px){.vg-main{margin-left:260px;}}
+.vg-topbar{background:#fff;border-bottom:1px solid #ebebeb;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+#vg.dark-mode .vg-topbar{background:#111;border-color:#222;}
+.vg-topbar-title{font-size:18px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#vg.dark-mode .vg-topbar-title{color:#f0ece0;}
+@media(max-width:600px){.vg-topbar-title{font-size:14px;}.vg-topbar{padding:14px 16px;}}
+.vg-hamburger{display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:4px;color:#555;}
+@media(min-width:769px){.vg-hamburger{display:none;}}
+.vg-theme-btn{display:flex;align-items:center;gap:6px;background:none;border:1.5px solid #ebebeb;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:#555;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+#vg.dark-mode .vg-theme-btn{border-color:#2a2a2a;color:#aaa;}
+.vg-theme-btn:hover{border-color:#c9a84c;color:#c9a84c;}
+.vg-content{padding:32px 40px;max-width:840px;}
+@media(max-width:768px){.vg-content{padding:20px 16px;}}
+.vg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;}
+.vg-overlay.show{display:block;}
+
+h1{font-size:26px;font-weight:700;color:#1a1a1a;margin-bottom:8px;}
+#vg.dark-mode h1{color:#f0ece0;}
+.page-sub{font-size:14px;color:#888;margin-bottom:28px;line-height:1.7;}
+h2{font-size:19px;font-weight:700;color:#1a1a1a;margin:40px 0 14px;padding-top:40px;border-top:1px solid #ebebeb;}
+#vg.dark-mode h2{color:#f0ece0;border-color:#2a2a2a;}
+h2:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+h3{font-size:14px;font-weight:600;color:#1a1a1a;margin:22px 0 10px;}
+#vg.dark-mode h3{color:#f0ece0;}
+p{font-size:14px;color:#777;line-height:1.8;margin-bottom:14px;}
+#vg.dark-mode p{color:#999;}
+
+.endpoint{background:#fff;border:1px solid #ebebeb;border-radius:10px;padding:18px 20px;margin-bottom:18px;}
+#vg.dark-mode .endpoint{background:#1e1e1e;border-color:#2a2a2a;}
+.endpoint-head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.method{padding:3px 10px;border-radius:4px;font-size:11px;font-weight:700;font-family:'Space Mono',monospace;}
+.method-post{background:rgba(39,174,96,0.15);color:#27ae60;}
+.method-get{background:rgba(52,152,219,0.15);color:#3498db;}
+.endpoint-url{font-size:13px;font-family:'Space Mono',monospace;color:#c9a84c;}
+.endpoint-desc{font-size:13px;color:#999;margin:0;}
+
+.code-block{background:#fafafa;border:1px solid #ebebeb;border-radius:8px;padding:16px;margin:10px 0;overflow-x:auto;position:relative;}
+#vg.dark-mode .code-block{background:#161616;border-color:#2a2a2a;}
+.code-block pre{font-size:11.5px;font-family:'Space Mono',monospace;color:#555;line-height:1.8;white-space:pre;}
+#vg.dark-mode .code-block pre{color:#aaa;}
+.code-lang{font-size:10px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.copy-code{position:absolute;top:12px;right:12px;background:#fff;border:1px solid #ebebeb;color:#999;padding:4px 10px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+#vg.dark-mode .copy-code{background:#2a2a2a;border-color:#333;color:#aaa;}
+.copy-code:hover{border-color:#c9a84c;color:#c9a84c;}
+
+.param-table{width:100%;border-collapse:collapse;margin:12px 0;}
+.param-table th{font-size:10.5px;font-weight:700;color:#bbb;text-transform:uppercase;letter-spacing:0.1em;padding:9px 10px;text-align:left;border-bottom:1px solid #ebebeb;}
+#vg.dark-mode .param-table th{border-color:#2a2a2a;}
+.param-table td{font-size:12.5px;padding:9px 10px;border-bottom:1px solid #ebebeb;color:#888;vertical-align:top;}
+#vg.dark-mode .param-table td{border-color:#2a2a2a;color:#999;}
+.param-table tr:last-child td{border-bottom:none;}
+.param-table td:first-child{font-family:'Space Mono',monospace;color:#c9a84c;font-size:12px;}
+.tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;}
+.tag-required{background:rgba(231,76,60,0.1);color:#e74c3c;}
+.tag-optional{background:#f7f7f7;color:#bbb;border:1px solid #ebebeb;}
+#vg.dark-mode .tag-optional{background:#1a1a1a;border-color:#2a2a2a;}
+
+.voice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px;margin:12px 0;}
+@media(max-width:600px){.voice-grid{grid-template-columns:1fr;}}
+.voice-card{background:#fff;border:1px solid #ebebeb;border-radius:8px;padding:12px;}
+#vg.dark-mode .voice-card{background:#1e1e1e;border-color:#2a2a2a;}
+.voice-id{font-size:10.5px;font-family:'Space Mono',monospace;color:#c9a84c;margin-bottom:4px;word-break:break-all;}
+.voice-name{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:2px;}
+#vg.dark-mode .voice-name{color:#f0ece0;}
+.voice-meta{font-size:11px;color:#bbb;}
+
+.alert{background:#fffdf7;border:1px solid #f0e5c0;border-radius:8px;padding:14px 16px;margin:14px 0;font-size:13px;color:#888;line-height:1.7;}
+#vg.dark-mode .alert{background:#1a1500;border-color:#3a3000;color:#aaa;}
+.alert strong{color:#c9a84c;}
+
+.cta-btn{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,#c9a84c,#e8c97a);color:#111;font-size:14px;font-weight:700;padding:12px 24px;border-radius:8px;text-decoration:none;margin-top:6px;}
+</style>
+</head>
+<body>
+<div id="vg">
+<div id="vg-app">
+  <div class="vg-overlay" id="vg-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="vg-sidebar" id="vg-sidebar">
+    <div class="vg-sb-logo">
+      <img src="/logo.png" style="width:36px;height:36px;object-fit:contain;flex-shrink:0;">
+      <div style="flex:1;">
+        <div class="vg-sb-logotext">AudLabs</div>
+        <div class="vg-sb-sub">API Docs</div>
+      </div>
+      <button class="vg-sb-close" onclick="toggleSidebar()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav class="vg-sb-nav">
+      <div class="vg-sb-section">Getting Started</div>
+      <a href="#intro" class="vg-sb-item active" onclick="setActive(this)">Introduction</a>
+      <a href="#auth" class="vg-sb-item" onclick="setActive(this)">Authentication</a>
+      <a href="#base-url" class="vg-sb-item" onclick="setActive(this)">Base URL</a>
+      <div class="vg-sb-section">Endpoints</div>
+      <a href="#generate" class="vg-sb-item" onclick="setActive(this)">Generate Voice</a>
+      <a href="#voices" class="vg-sb-item" onclick="setActive(this)">List Voices</a>
+      <a href="#balance" class="vg-sb-item" onclick="setActive(this)">Check Balance</a>
+      <div class="vg-sb-section">Reference</div>
+      <a href="#voice-ids" class="vg-sb-item" onclick="setActive(this)">Voice IDs</a>
+      <a href="#errors" class="vg-sb-item" onclick="setActive(this)">Error Codes</a>
+      <a href="#pricing" class="vg-sb-item" onclick="setActive(this)">Pricing</a>
+      <div class="vg-sb-section">Links</div>
+      <a href="https://platform.audlabs.io" class="vg-sb-item">🔑 Developer Portal</a>
+      <a href="https://audlabs.io" class="vg-sb-item">🌐 Main Site</a>
+    </nav>
+    <div class="vg-sb-footer">
+      <div style="font-size:11px;color:#555;text-align:center;">AudLabs API v1</div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="vg-main">
+    <div class="vg-topbar">
+      <button class="vg-hamburger" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div style="flex:1;text-align:center;min-width:0;">
+        <div class="vg-topbar-title">API Documentation</div>
+      </div>
+      <button class="vg-theme-btn" onclick="toggleTheme()"><span id="theme-icon">🌙</span><span id="theme-label">Dark</span></button>
+    </div>
+
+    <div class="vg-content">
+      <h1 id="intro">AudLabs API</h1>
+      <p class="page-sub">The AudLabs API gives developers programmatic access to 190+ professional AI voices. Generate natural-sounding speech for any application — simple REST API, no complex setup required.</p>
+      <a href="https://platform.audlabs.io" class="cta-btn">Get Your API Key →</a>
+
+      <div style="height:24px;"></div>
+
+      <h2 id="auth">Authentication</h2>
+
+      <p>All API requests require your API key passed as a request header. Get your key from the <a href="https://platform.audlabs.io" style="color:#c9a84c;">Developer Portal</a>.</p>
+      <div class="code-block">
+        <div class="code-lang">Header</div>
+        <button class="copy-code" onclick="copyCode(this)">Copy</button>
+        <pre>x-api-key: aud_your_api_key_here
+
+// Or as Bearer token:
+Authorization: Bearer aud_your_api_key_here</pre>
+      </div>
+      <div class="alert"><strong>Keep your API key secret.</strong> Never expose it in client-side JavaScript, mobile app code, or public repositories. Use it only in server-side code.</div>
+
+      <h2 id="base-url">Base URL</h2>
+      <div class="code-block">
+        <pre style="color:#c9a84c;">https://app.audlabs.io/api/v1</pre>
+      </div>
+
+      <h2 id="generate">Generate Voice</h2>
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method method-post">POST</span>
+          <span class="endpoint-url">/api/v1/generate</span>
+        </div>
+        <p class="endpoint-desc">Convert text to speech. Returns an MP3 audio file as binary data.</p>
+      </div>
+
+      <h3>Request Body</h3>
+      <table class="param-table">
+        <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+        <tr><td>text</td><td><span class="tag tag-required">required</span></td><td>The text to convert to speech. Maximum 50,000 characters per request.</td></tr>
+        <tr><td>voice_id</td><td><span class="tag tag-required">required</span></td><td>The voice to use. See Voice IDs section below.</td></tr>
+        <tr><td>speed</td><td><span class="tag tag-optional">optional</span></td><td>Speech speed. Range: 0.5 to 2.0. Default: 1.0</td></tr>
+        <tr><td>pitch</td><td><span class="tag tag-optional">optional</span></td><td>Pitch adjustment. Range: -12 to 12. Default: 0</td></tr>
+        <tr><td>volume</td><td><span class="tag tag-optional">optional</span></td><td>Volume level. Range: 0.1 to 2.0. Default: 1.0</td></tr>
+        <tr><td>format</td><td><span class="tag tag-optional">optional</span></td><td>Output format. Options: mp3, wav. Default: mp3</td></tr>
+      </table>
+
+      <h3>JavaScript Example</h3>
+      <div class="code-block">
+        <div class="code-lang">JavaScript</div>
+        <button class="copy-code" onclick="copyCode(this)">Copy</button>
+        <pre>const response = await fetch('https://app.audlabs.io/api/v1/generate', {
+  method: 'POST',
+  headers: {
+    'x-api-key': 'aud_your_api_key_here',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    text: 'Hello world. This is a test of the AudLabs API.',
+    voice_id: 'English_CaptivatingStoryteller',
+    speed: 1.0,
+    format: 'mp3'
+  })
+});
+
+const audioBlob = await response.blob();
+const audioUrl = URL.createObjectURL(audioBlob);
+const audio = new Audio(audioUrl);
+audio.play();</pre>
+      </div>
+
+      <h3>Python Example</h3>
+      <div class="code-block">
+        <div class="code-lang">Python</div>
+        <button class="copy-code" onclick="copyCode(this)">Copy</button>
+        <pre>import requests
+
+response = requests.post(
+  'https://app.audlabs.io/api/v1/generate',
+  headers={
+    'x-api-key': 'aud_your_api_key_here',
+    'Content-Type': 'application/json'
+  },
+  json={
+    'text': 'Hello world. This is a test of the AudLabs API.',
+    'voice_id': 'English_CaptivatingStoryteller',
+    'speed': 1.0
+  }
+)
+
+with open('output.mp3', 'wb') as f:
+  f.write(response.content)</pre>
+      </div>
+
+      <h3>Response Headers</h3>
+      <table class="param-table">
+        <tr><th>Header</th><th>Description</th></tr>
+        <tr><td>Content-Type</td><td>audio/mpeg for MP3, audio/wav for WAV</td></tr>
+        <tr><td>X-Characters-Used</td><td>Number of characters consumed by this request</td></tr>
+        <tr><td>X-Credits-Remaining</td><td>Your remaining monthly credit balance</td></tr>
+      </table>
+
+      <h2 id="voices">List Voices</h2>
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-url">/api/v1/voices</span>
+        </div>
+        <p class="endpoint-desc">Returns a list of all available voices with their IDs and metadata.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-lang">JavaScript</div>
+        <button class="copy-code" onclick="copyCode(this)">Copy</button>
+        <pre>const response = await fetch('https://app.audlabs.io/api/v1/voices', {
+  headers: { 'x-api-key': 'aud_your_api_key_here' }
+});
+const data = await response.json();
+console.log(data.voices);</pre>
+      </div>
+
+      <h2 id="balance">Check Balance</h2>
+      <div class="endpoint">
+        <div class="endpoint-head">
+          <span class="method method-get">GET</span>
+          <span class="endpoint-url">/api/v1/balance</span>
+        </div>
+        <p class="endpoint-desc">Returns your current monthly credit balance and usage statistics.</p>
+      </div>
+      <div class="code-block">
+        <div class="code-lang">Response</div>
+        <pre>{
+  "success": true,
+  "credits": 4850000,
+  "totalCharacters": 150000,
+  "plan": "growth"
+}</pre>
+      </div>
+
+      <h2 id="voice-ids">Voice IDs</h2>
+      <p>Use these voice IDs in your generate requests. All voices are available on all plans.</p>
+      <div class="voice-grid">
+        <div class="voice-card"><div class="voice-id">English_CaptivatingStoryteller</div><div class="voice-name">Captivating Storyteller</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_MaturePartner</div><div class="voice-name">Mature Partner</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_FriendlyPerson</div><div class="voice-name">Friendly Person</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_ReliableMentor</div><div class="voice-name">Reliable Mentor</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_PatiencePatient</div><div class="voice-name">Patience</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_PlayfulSangfroid</div><div class="voice-name">Playful</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_DecisiveMentor</div><div class="voice-name">Decisive Mentor</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_VoiceOfReason</div><div class="voice-name">Voice of Reason</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_WarmthAndCare</div><div class="voice-name">Warmth and Care</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_EasyGoing</div><div class="voice-name">Easy Going</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_SteadfastProtector</div><div class="voice-name">Steadfast Protector</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_Whisper</div><div class="voice-name">Whisper</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_RomanticAura</div><div class="voice-name">Romantic Aura</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_GentleExpression</div><div class="voice-name">Gentle Expression</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_TenderAndCaring</div><div class="voice-name">Tender and Caring</div><div class="voice-meta">English · Female</div></div>
+        <div class="voice-card"><div class="voice-id">English_LeadingMan</div><div class="voice-name">Leading Man</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_BrilliantCoach</div><div class="voice-name">Brilliant Coach</div><div class="voice-meta">English · Male</div></div>
+        <div class="voice-card"><div class="voice-id">English_SportsCommentator</div><div class="voice-name">Sports Commentator</div><div class="voice-meta">English · Male</div></div>
+      </div>
+
+      <h2 id="errors">Error Codes</h2>
+      <table class="param-table">
+        <tr><th>Status</th><th>Code</th><th>Description</th></tr>
+        <tr><td>401</td><td>Unauthorized</td><td>Missing or invalid API key. Check your x-api-key header.</td></tr>
+        <tr><td>402</td><td>Payment Required</td><td>No active subscription or monthly credits exhausted. Subscribe at platform.audlabs.io.</td></tr>
+        <tr><td>429</td><td>Rate Limited</td><td>Exceeded 5 requests per minute. Slow down your request rate.</td></tr>
+        <tr><td>400</td><td>Bad Request</td><td>Missing required parameters or invalid values in request body.</td></tr>
+        <tr><td>503</td><td>Service Unavailable</td><td>Voice generation temporarily at capacity. Retry after a few seconds.</td></tr>
+        <tr><td>500</td><td>Server Error</td><td>Internal error. Contact hello@audlabs.io if this persists.</td></tr>
+      </table>
+
+      <h2 id="pricing">Pricing</h2>
+      <p>Credits are purchased monthly at <a href="https://platform.audlabs.io" style="color:#c9a84c;">platform.audlabs.io</a>. 1 credit = 1 character. Credits expire at the end of each month.</p>
+      <table class="param-table">
+        <tr><th>Plan</th><th>Monthly Price</th><th>Characters/Month</th><th>Cost per 1M chars</th></tr>
+        <tr><td>Starter</td><td>$15/mo</td><td>3,000,000</td><td>$5.00</td></tr>
+        <tr><td>Growth</td><td>$40/mo</td><td>10,000,000</td><td>$4.00</td></tr>
+        <tr><td>Pro</td><td>$90/mo</td><td>20,000,000</td><td>$4.50</td></tr>
+      </table>
+      <p style="margin-top:14px;">Need a custom plan or have questions? Email <a href="mailto:hello@audlabs.io" style="color:#c9a84c;">hello@audlabs.io</a></p>
+    </div>
+  </main>
+</div>
+</div>
+
+<script>
+var isDark=false;
+
+function toggleSidebar(){
+  var sb=document.getElementById("vg-sidebar");
+  var ov=document.getElementById("vg-overlay");
+  sb.classList.toggle("open");
+  ov.classList.toggle("show");
+}
+
+function toggleTheme(){
+  isDark=!isDark;
+  document.getElementById("vg").classList.toggle("dark-mode",isDark);
+  document.getElementById("theme-icon").textContent=isDark?"☀️":"🌙";
+  document.getElementById("theme-label").textContent=isDark?"Light":"Dark";
+}
+
+function setActive(el){
+  document.querySelectorAll(".vg-sb-item").forEach(function(l){l.classList.remove("active");});
+  el.classList.add("active");
+  document.getElementById("vg-sidebar").classList.remove("open");
+  document.getElementById("vg-overlay").classList.remove("show");
+}
+
+function copyCode(btn){
+  var pre=btn.closest(".code-block").querySelector("pre");
+  navigator.clipboard.writeText(pre.textContent).then(function(){
+    btn.textContent="Copied!";
+    setTimeout(function(){btn.textContent="Copy";},2000);
+  });
+}
+</script>
+</body>
+</html>
+
+

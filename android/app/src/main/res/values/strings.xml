@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AudLabs</string>
+    <string name="title_activity_main">AudLabs</string>
+    <string name="package_name">io.audlabs.app</string>
+    <string name="custom_url_scheme">io.audlabs.app</string>
+</resources>

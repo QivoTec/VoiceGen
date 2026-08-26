@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AudLabs Platform — Developer Portal</title>
+<link rel="icon" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{margin:0;padding:0;background:#f7f7f7;font-family:'Inter',sans-serif;}
+
+/* ── AUTH LANDING ── */
+#vg-land{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:#f7f7f7;}
+.vgl-card{background:#fff;border:1px solid #ebebeb;border-radius:16px;padding:40px;max-width:420px;width:100%;box-shadow:0 4px 24px rgba(0,0,0,0.06);}
+.vgl-logo{text-align:center;margin-bottom:28px;}
+.vgl-logo img{width:44px;height:44px;object-fit:contain;margin-bottom:10px;}
+.vgl-logo h1{font-size:20px;font-weight:700;color:#1a1a1a;margin-bottom:2px;}
+.vgl-logo p{font-size:13px;color:#999;}
+.vgl-tabs{display:flex;background:#f7f7f7;border:1px solid #ebebeb;border-radius:10px;padding:4px;margin-bottom:20px;}
+.vgl-tab{flex:1;padding:9px;text-align:center;font-size:13px;font-weight:600;color:#999;cursor:pointer;border-radius:7px;transition:all 0.15s;}
+.vgl-tab.active{background:#fff;color:#1a1a1a;box-shadow:0 1px 4px rgba(0,0,0,0.08);}
+.vgl-lbl{font-size:12px;font-weight:600;color:#666;margin-bottom:6px;display:block;}
+.vgl-inp{width:100%;background:#fafafa;border:1.5px solid #ebebeb;border-radius:8px;padding:11px 14px;font-size:14px;color:#1a1a1a;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.15s;margin-bottom:12px;}
+.vgl-inp:focus{border-color:#c9a84c;}
+.vgl-inp::placeholder{color:#bbb;}
+.vgl-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8c97a);border:none;color:#111;padding:13px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.15s;}
+.vgl-btn:hover{opacity:0.9;}
+.vgl-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.vgl-forgot{width:100%;background:none;border:none;font-family:'Inter',sans-serif;font-size:12px;color:#bbb;cursor:pointer;padding:8px;margin-top:4px;}
+.vgl-forgot:hover{color:#c9a84c;}
+.vgl-err{font-size:12px;padding:10px 12px;border-radius:8px;margin-bottom:12px;display:none;}
+.vgl-err.error{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.2);}
+.vgl-err.success{background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.2);}
+.vgl-terms{font-size:12px;color:#bbb;line-height:1.5;text-align:center;margin-top:16px;}
+.vgl-terms a{color:#c9a84c;text-decoration:none;}
+
+/* ── APP ── */
+#vg-app{display:none;min-height:100vh;background:#f0f0f0;}
+#vg.dark-mode #vg-app{background:#141414;}
+.vg-sidebar{position:fixed;top:0;left:0;width:260px;height:100vh;background:#111;display:flex;flex-direction:column;z-index:200;transform:translateX(-100%);transition:transform 0.3s ease;}
+.vg-sidebar.open{transform:translateX(0);}
+@media(min-width:769px){.vg-sidebar{transform:translateX(0);}}
+.vg-sb-logo{padding:24px 20px 20px;border-bottom:1px solid #222;display:flex;align-items:center;gap:10px;}
+.vg-sb-logotext{font-family:'Space Mono',monospace;font-size:13px;letter-spacing:0.2em;color:#c9a84c;font-weight:700;}
+.vg-sb-sub{font-size:10px;color:#555;letter-spacing:0.1em;margin-top:2px;}
+.vg-sb-nav{flex:1;padding:16px 12px;overflow-y:auto;}
+.vg-sb-section{font-size:10px;letter-spacing:0.2em;color:#444;text-transform:uppercase;padding:12px 8px 6px;font-family:'Space Mono',monospace;}
+.vg-sb-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:all 0.15s;color:#888;font-size:13px;font-weight:500;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;text-decoration:none;}
+.vg-sb-item:hover{background:#1a1a1a;color:#ddd;}
+.vg-sb-item.active{background:#1e1a10;color:#c9a84c;}
+.vg-sb-item .icon{width:18px;height:18px;flex-shrink:0;opacity:0.7;}
+.vg-sb-item.active .icon{opacity:1;}
+.vg-sb-footer{padding:16px 12px;border-top:1px solid #1a1a1a;}
+.vg-sb-user{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;background:#1a1a1a;}
+.vg-sb-avatar{width:32px;height:32px;border-radius:50%;object-fit:cover;border:2px solid #333;flex-shrink:0;background:linear-gradient(135deg,#c9a84c,#e8c97a);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#111;}
+.vg-sb-uinfo{flex:1;overflow:hidden;}
+.vg-sb-uname{font-size:12px;font-weight:600;color:#ddd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vg-sb-uemail{font-size:10px;color:#555;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.vg-sb-signout{background:none;border:none;color:#444;cursor:pointer;padding:4px;border-radius:4px;transition:color 0.15s;flex-shrink:0;}
+.vg-sb-signout:hover{color:#c9a84c;}
+.vg-sb-close{display:none;background:none;border:none;color:#666;cursor:pointer;padding:4px;margin-left:auto;}
+@media(max-width:768px){.vg-sb-close{display:flex;}}
+
+.vg-main{margin-left:0;min-height:100vh;background:#f7f7f7;}
+#vg.dark-mode .vg-main{background:#141414;}
+@media(min-width:769px){.vg-main{margin-left:260px;}}
+.vg-topbar{background:#fff;border-bottom:1px solid #ebebeb;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+#vg.dark-mode .vg-topbar{background:#111;border-color:#222;}
+.vg-topbar-title{font-size:18px;font-weight:600;color:#1a1a1a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#vg.dark-mode .vg-topbar-title{color:#f0ece0;}
+@media(max-width:600px){.vg-topbar-title{font-size:14px;}.vg-topbar{padding:14px 16px;}}
+.vg-hamburger{display:flex;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;padding:4px;color:#555;}
+@media(min-width:769px){.vg-hamburger{display:none;}}
+.vg-theme-btn{display:flex;align-items:center;gap:6px;background:none;border:1.5px solid #ebebeb;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;color:#555;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s;}
+#vg.dark-mode .vg-theme-btn{border-color:#2a2a2a;color:#aaa;}
+.vg-theme-btn:hover{border-color:#c9a84c;color:#c9a84c;}
+.vg-content{padding:28px;}
+@media(max-width:600px){.vg-content{padding:16px;}}
+.vg-card{background:#fff;border-radius:12px;padding:24px;margin-bottom:20px;border:1px solid #ebebeb;}
+#vg.dark-mode .vg-card{background:#1e1e1e;border-color:#2a2a2a;}
+.vg-card-title{font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+#vg.dark-mode .vg-card-title{color:#f0ece0;}
+.vg-card-title .dot{width:8px;height:8px;background:#c9a84c;border-radius:50%;flex-shrink:0;}
+.vg-tc{display:none;}
+.vg-tc.active{display:block;}
+.vg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;}
+.vg-overlay.show{display:block;}
+
+/* ── STATS ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;margin-bottom:20px;}
+.stat{background:#fff;border:1px solid #ebebeb;border-radius:10px;padding:16px 20px;}
+#vg.dark-mode .stat{background:#1e1e1e;border-color:#2a2a2a;}
+.stat-lbl{font-size:11px;font-weight:600;color:#bbb;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;}
+.stat-val{font-size:22px;font-weight:700;color:#c9a84c;font-family:'Space Mono',monospace;line-height:1;}
+.stat-sub{font-size:11px;color:#bbb;margin-top:6px;}
+#vg.dark-mode .stat-sub{color:#555;}
+
+/* ── API KEY ── */
+.key-row{display:flex;align-items:center;gap:10px;}
+@media(max-width:600px){.key-row{flex-direction:column;align-items:stretch;}}
+.key-val{flex:1;background:#fafafa;border:1px solid #ebebeb;border-radius:8px;padding:11px 14px;font-size:12px;font-family:'Space Mono',monospace;color:#c9a84c;word-break:break-all;}
+#vg.dark-mode .key-val{background:#161616;border-color:#2a2a2a;}
+.copy-btn{background:#f7f7f7;border:1px solid #ebebeb;color:#555;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:'Inter',sans-serif;white-space:nowrap;transition:all 0.15s;flex-shrink:0;}
+#vg.dark-mode .copy-btn{background:#2a2a2a;border-color:#333;color:#aaa;}
+.copy-btn:hover{background:#c9a84c;color:#111;border-color:#c9a84c;}
+
+/* ── SUBSCRIPTION ── */
+.sub-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:100px;font-size:12px;font-weight:600;margin-bottom:14px;}
+.sub-active{background:rgba(39,174,96,0.1);color:#27ae60;border:1px solid rgba(39,174,96,0.3);}
+.sub-expired{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);}
+.sub-none{background:#f7f7f7;color:#999;border:1px solid #ebebeb;}
+#vg.dark-mode .sub-none{background:#1a1a1a;border-color:#2a2a2a;}
+.prog-wrap{margin-bottom:14px;}
+.prog-labels{display:flex;justify-content:space-between;font-size:11px;color:#bbb;margin-bottom:6px;font-family:'Space Mono',monospace;}
+.prog-bar{background:#f7f7f7;border-radius:100px;height:8px;overflow:hidden;border:1px solid #ebebeb;}
+#vg.dark-mode .prog-bar{background:#1a1a1a;border-color:#2a2a2a;}
+.prog-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,#c9a84c,#e8c97a);transition:width 0.4s;}
+
+/* ── PLANS ── */
+.plans-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:16px;}
+@media(max-width:600px){.plans-grid{grid-template-columns:1fr;}}
+.plan{background:#fafafa;border:1.5px solid #ebebeb;border-radius:10px;padding:16px;cursor:pointer;transition:all 0.15s;position:relative;}
+#vg.dark-mode .plan{background:#161616;border-color:#2a2a2a;}
+.plan:hover,.plan.sel{border-color:#c9a84c;background:#fffdf7;}
+#vg.dark-mode .plan:hover,#vg.dark-mode .plan.sel{background:#1a1500;}
+.plan-popular{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#111;font-size:9px;font-weight:700;padding:2px 10px;border-radius:100px;white-space:nowrap;}
+.plan-name{font-size:13px;font-weight:700;color:#1a1a1a;margin-bottom:6px;}
+#vg.dark-mode .plan-name{color:#f0ece0;}
+.plan-price{font-size:20px;font-weight:700;color:#c9a84c;}
+.plan-period{font-size:10px;color:#bbb;margin-bottom:6px;}
+.plan-credits{font-size:11px;color:#888;}
+
+/* ── PAYMENT ── */
+.pay-tabs{display:flex;gap:8px;margin-bottom:16px;}
+@media(max-width:600px){.pay-tabs{flex-direction:column;}}
+.pay-tab{flex:1;background:#fafafa;border:1.5px solid #ebebeb;border-radius:8px;padding:12px;text-align:center;cursor:pointer;transition:all 0.15s;}
+#vg.dark-mode .pay-tab{background:#161616;border-color:#2a2a2a;}
+.pay-tab:hover,.pay-tab.sel{border-color:#c9a84c;background:#fffdf7;}
+#vg.dark-mode .pay-tab:hover,#vg.dark-mode .pay-tab.sel{background:#1a1500;}
+.pay-tab-icon{font-size:20px;margin-bottom:4px;}
+.pay-tab-name{font-size:12px;font-weight:600;color:#666;}
+#vg.dark-mode .pay-tab-name{color:#aaa;}
+.pay-note{font-size:12px;color:#999;margin-bottom:16px;line-height:1.6;}
+.pay-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8c97a);border:none;color:#111;padding:13px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.15s;}
+.pay-btn:hover{opacity:0.9;}
+.pay-btn:disabled{opacity:0.5;cursor:not-allowed;}
+
+.va-box{background:#fafafa;border:1px solid #ebebeb;border-radius:10px;padding:20px;margin-top:16px;display:none;}
+#vg.dark-mode .va-box{background:#161616;border-color:#2a2a2a;}
+.va-title{font-size:13px;font-weight:700;color:#c9a84c;margin-bottom:16px;}
+.va-row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid #ebebeb;}
+@media(max-width:600px){.va-row{flex-direction:column;align-items:flex-start;gap:4px;}}
+#vg.dark-mode .va-row{border-color:#2a2a2a;}
+.va-row:last-of-type{border-bottom:none;}
+.va-key{font-size:12px;color:#999;}
+.va-val{font-size:13px;font-weight:600;color:#1a1a1a;font-family:'Space Mono',monospace;}
+#vg.dark-mode .va-val{color:#f0ece0;}
+.va-amount{font-size:20px;font-weight:700;color:#c9a84c;font-family:'Space Mono',monospace;}
+.va-note{font-size:12px;color:#888;margin-top:14px;line-height:1.7;background:#fffdf7;border:1px solid #f0e5c0;border-radius:8px;padding:12px;}
+#vg.dark-mode .va-note{background:#1a1500;border-color:#3a3000;}
+
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a1a;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;display:none;z-index:9999;max-width:300px;box-shadow:0 4px 16px rgba(0,0,0,0.2);}
+</style>
+</head>
+<body>
+<div id="vg">
+
+<!-- AUTH LANDING -->
+<div id="vg-land">
+  <div class="vgl-card">
+    <div class="vgl-logo">
+      <img src="/logo.png" alt="AudLabs">
+      <h1>AudLabs Platform</h1>
+      <p>Developer Portal — Build with AI Voices</p>
+    </div>
+    <div class="vgl-tabs">
+      <div class="vgl-tab active" id="tab-in" onclick="setTab('in')">Sign In</div>
+      <div class="vgl-tab" id="tab-up" onclick="setTab('up')">Sign Up</div>
+    </div>
+    <div class="vgl-err" id="auth-err"></div>
+    <div id="signup-extra" style="display:none;">
+      <label class="vgl-lbl">Full Name</label>
+      <input type="text" class="vgl-inp" id="inp-name" placeholder="Your full name">
+      <label class="vgl-lbl">Company (optional)</label>
+      <input type="text" class="vgl-inp" id="inp-company" placeholder="Company name">
+    </div>
+    <label class="vgl-lbl">Email Address</label>
+    <input type="email" class="vgl-inp" id="inp-email" placeholder="you@company.com">
+    <label class="vgl-lbl">Password</label>
+    <div style="position:relative;display:flex;align-items:center;">
+      <input type="password" class="vgl-inp" id="inp-password" placeholder="Min 6 characters" style="padding-right:44px;margin-bottom:12px;">
+      <button type="button" onclick="togglePwd()" style="position:absolute;right:10px;background:none;border:none;cursor:pointer;color:#999;padding:0;display:flex;align-items:center;justify-content:center;top:50%;transform:translateY(-50%);margin-top:-6px;" id="pwd-eye">
+
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 9s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="9" r="2.3" stroke="currentColor" stroke-width="1.3"/></svg>
+      </button>
+    </div>
+
+    <button class="vgl-btn" id="auth-btn" onclick="handleAuth()">Sign In</button>
+    <button class="vgl-forgot" id="forgot-btn" onclick="handleForgot()">Forgot password?</button>
+    <div class="vgl-terms">By continuing you agree to AudLabs <a href="https://audlabs.io/privacy-policy">Privacy Policy</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="vg-app">
+  <div class="vg-overlay" id="vg-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <aside class="vg-sidebar" id="vg-sidebar">
+    <div class="vg-sb-logo">
+      <img src="/logo.png" style="width:36px;height:36px;object-fit:contain;flex-shrink:0;">
+      <div style="flex:1;">
+        <div class="vg-sb-logotext">AudLabs</div>
+        <div class="vg-sb-sub">Platform</div>
+      </div>
+      <button class="vg-sb-close" onclick="toggleSidebar()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M15 5L5 15M5 5l10 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <nav class="vg-sb-nav">
+      <div class="vg-sb-section">Menu</div>
+      <button class="vg-sb-item active" id="sb-dashboard" onclick="showPanel('dashboard')">
+        <svg class="icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="2" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="10" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="10" y="10" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        Dashboard
+      </button>
+      <button class="vg-sb-item" id="sb-apikey" onclick="showPanel('apikey')">
+        <svg class="icon" viewBox="0 0 18 18" fill="none"><circle cx="7" cy="9" r="4" stroke="currentColor" stroke-width="1.5"/><path d="M11 9h5.5M14.5 7v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        API Key
+      </button>
+      <button class="vg-sb-item" id="sb-subscription" onclick="showPanel('subscription')">
+        <svg class="icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M2 8h14" stroke="currentColor" stroke-width="1.5"/></svg>
+        Subscription
+      </button>
+      <div class="vg-sb-section">Resources</div>
+      <a href="/docs" class="vg-sb-item">
+        <svg class="icon" viewBox="0 0 18 18" fill="none"><path d="M4 2h9a1 1 0 011 1v12a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/><path d="M6 6h6M6 9h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Documentation
+      </a>
+      <a href="https://audlabs.io" class="vg-sb-item">
+        <svg class="icon" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M9 2c0 0-3.5 2.5-3.5 7s3.5 7 3.5 7M9 2c0 0 3.5 2.5 3.5 7s-3.5 7-3.5 7M2 9h14" stroke="currentColor" stroke-width="1.5"/></svg>
+        Main Site
+      </a>
+    </nav>
+    <div class="vg-sb-footer">
+      <div class="vg-sb-user">
+        <div class="vg-sb-avatar" id="sb-avatar">A</div>
+        <div class="vg-sb-uinfo">
+          <div class="vg-sb-uname" id="sb-name">Loading...</div>
+          <div class="vg-sb-uemail" id="sb-email"></div>
+        </div>
+        <button class="vg-sb-signout" onclick="doSignOut()" title="Sign out">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 2H3a1 1 0 00-1 1v10a1 1 0 001 1h3M11 11l3-3-3-3M14 8H6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="vg-main">
+    <div class="vg-topbar">
+      <button class="vg-hamburger" onclick="toggleSidebar()">
+        <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><path d="M3 6h16M3 11h16M3 16h16" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+      </button>
+      <div style="flex:1;text-align:center;min-width:0;">
+        <div class="vg-topbar-title" id="topbar-page-title">Dashboard</div>
+      </div>
+      <button class="vg-theme-btn" onclick="toggleTheme()"><span id="theme-icon">🌙</span><span id="theme-label">Dark</span></button>
+    </div>
+
+    <div class="vg-content">
+
+      <!-- DASHBOARD -->
+      <div class="vg-tc active" id="panel-dashboard">
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="stat-lbl">Monthly Credits</div>
+            <div class="stat-val" id="s-credits">—</div>
+            <div class="stat-sub">remaining this month</div>
+          </div>
+          <div class="stat">
+            <div class="stat-lbl">Total Generated</div>
+            <div class="stat-val" id="s-total">—</div>
+            <div class="stat-sub">characters all time</div>
+          </div>
+          <div class="stat">
+            <div class="stat-lbl">Current Plan</div>
+            <div class="stat-val" id="s-plan" style="font-size:15px;padding-top:4px;">None</div>
+            <div class="stat-sub" id="s-expiry">No active plan</div>
+          </div>
+          <div class="stat">
+            <div class="stat-lbl">Rate Limit</div>
+            <div class="stat-val" style="font-size:15px;padding-top:4px;">5/min</div>
+            <div class="stat-sub">max requests/minute</div>
+          </div>
+        </div>
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Usage This Month</div>
+          <div class="prog-wrap">
+            <div class="prog-labels"><span id="used-lbl">0 used</span><span id="total-lbl">0 total</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+          </div>
+          <div style="font-size:12px;color:#bbb;">Credits reset on the 1st of each month. Unused credits do not carry over.</div>
+        </div>
+<div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Recent Usage</div>
+          <div id="usage-history-list" style="font-size:13px;color:#888;">Loading...</div>
+        </div>
+
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Quick Start</div>
+          <div style="font-size:13px;color:#888;line-height:1.9;">
+            1. Copy your API key from the <strong style="color:#c9a84c;cursor:pointer;" onclick="showPanel('apikey')">API Key</strong> tab<br>
+            2. Subscribe to a plan from the <strong style="color:#c9a84c;cursor:pointer;" onclick="showPanel('subscription')">Subscription</strong> tab<br>
+            3. Read the <a href="/docs" style="color:#c9a84c;font-weight:600;">Documentation</a> to start making API calls<br>
+            4. Send POST requests to <code style="background:#fafafa;padding:2px 6px;border-radius:4px;font-family:'Space Mono',monospace;font-size:11px;border:1px solid #ebebeb;">https://app.audlabs.io/api/v1/generate</code>
+          </div>
+        </div>
+      </div>
+
+      <!-- API KEY -->
+      <div class="vg-tc" id="panel-apikey">
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Your Secret API Key</div>
+          <div style="font-size:13px;color:#888;margin-bottom:14px;line-height:1.7;">Pass this key as the <code style="background:#fafafa;padding:2px 6px;border-radius:4px;font-family:'Space Mono',monospace;font-size:11px;color:#c9a84c;border:1px solid #ebebeb;">x-api-key</code> header in every request. Never expose it in public or client-side code.</div>
+          <div class="key-row">
+            <div class="key-val" id="api-key-val">Loading...</div>
+            <button class="copy-btn" onclick="copyKey()">📋 Copy Key</button>
+          </div>
+        </div>
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Example Request</div>
+          <div style="background:#fafafa;border:1px solid #ebebeb;border-radius:8px;padding:16px;overflow-x:auto;">
+<pre style="font-size:12px;font-family:'Space Mono',monospace;color:#555;line-height:1.8;">fetch('https://app.audlabs.io/api/v1/generate', {
+  method: 'POST',
+  headers: {
+    'x-api-key': 'YOUR_API_KEY',
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    text: 'Hello world',
+    voice_id: 'English_CaptivatingStoryteller',
+    speed: 1.0
+  })
+})</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- SUBSCRIPTION -->
+      <div class="vg-tc" id="panel-subscription">
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Current Status</div>
+          <div class="sub-badge sub-none" id="sub-badge">No Active Plan</div>
+          <div style="font-size:13px;color:#888;" id="sub-detail">Subscribe to a plan below to start using the API.</div>
+        </div>
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Choose a Plan</div>
+          <div class="plans-grid">
+            <div class="plan" data-plan="starter" data-price="15" data-credits="3000000" onclick="selectPlan(this)">
+              <div class="plan-name">Starter</div>
+              <div class="plan-price">$15</div>
+              <div class="plan-period">/month</div>
+              <div class="plan-credits">3,000,000 chars/mo</div>
+            </div>
+            <div class="plan sel" data-plan="growth" data-price="40" data-credits="10000000" onclick="selectPlan(this)">
+              <div class="plan-popular">POPULAR</div>
+              <div class="plan-name">Growth</div>
+              <div class="plan-price">$40</div>
+              <div class="plan-period">/month</div>
+              <div class="plan-credits">10,000,000 chars/mo</div>
+            </div>
+            <div class="plan" data-plan="pro" data-price="90" data-credits="20000000" onclick="selectPlan(this)">
+              <div class="plan-name">Pro</div>
+              <div class="plan-price">$90</div>
+              <div class="plan-period">/month</div>
+              <div class="plan-credits">20,000,000 chars/mo</div>
+            </div>
+          </div>
+          <div class="pay-note">Credits expire monthly regardless of usage. Plans do not auto-renew — pay each month to continue access.</div>
+          <div class="pay-tabs">
+            <div class="pay-tab sel" id="pt-transfer" onclick="selectPayTab('transfer')">
+              <div class="pay-tab-icon">🏦</div>
+              <div class="pay-tab-name">Bank Transfer</div>
+            </div>
+            <div class="pay-tab" id="pt-card" onclick="selectPayTab('card')">
+              <div class="pay-tab-icon">💳</div>
+              <div class="pay-tab-name">Card Payment</div>
+            </div>
+          </div>
+          <button class="pay-btn" id="pay-btn" onclick="handlePayment()">Get Virtual Account →</button>
+          <div class="va-box" id="va-box">
+            <div class="va-title">🏦 Transfer to activate your plan</div>
+            <div class="va-row"><span class="va-key">Amount</span><span class="va-amount" id="va-amount">—</span></div>
+            <div class="va-row"><span class="va-key">Bank</span><span class="va-val" id="va-bank">—</span></div>
+            <div class="va-row"><span class="va-key">Account Number</span><span class="va-val" id="va-acct">—</span></div>
+            <div class="va-row"><span class="va-key">Account Name</span><span class="va-val" id="va-name-val">—</span></div>
+            <div class="va-note">⚠️ Transfer the exact amount shown. Your plan activates automatically within 5 minutes. This is a one-time account.</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const BACKEND="https://app.audlabs.io";
+var currentUser=null,keyData=null,isSignup=false,isDark=false;
+var selectedPlan={plan:"growth",price:40,credits:10000000};
+var selectedPayTab="transfer";
+
+const FC={apiKey:"AIzaSyCJ12GtdhXTzfB0h0buHkjzsqZtRxzfxS8",authDomain:"voicegene.firebaseapp.com",projectId:"voicegene",storageBucket:"voicegene.firebasestorage.app",messagingSenderId:"1040481136250",appId:"1:1040481136250:web:7a47e5993510d3ac07d5c3"};
+try{firebase.initializeApp(FC);}catch(e){}
+var auth=firebase.auth();
+
+auth.onAuthStateChanged(async function(user){
+  if(user){currentUser=user;showApp();await loadData();}
+  else{showAuth();}
+});
+
+function showAuth(){
+  document.getElementById("vg-land").style.display="flex";
+  document.getElementById("vg-app").style.display="none";
+}
+function showApp(){
+  document.getElementById("vg-land").style.display="none";
+  document.getElementById("vg-app").style.display="block";
+  var name=currentUser.displayName||currentUser.email.split("@")[0];
+  document.getElementById("sb-name").textContent=name;
+  document.getElementById("sb-email").textContent=currentUser.email;
+  document.getElementById("sb-avatar").textContent=name.charAt(0).toUpperCase();
+  loadUsageHistory();
+}
+
+
+function togglePwd(){
+  var inp=document.getElementById("inp-password");
+  var isPwd=inp.type==="password";
+  inp.type=isPwd?"text":"password";
+  document.getElementById("pwd-eye").innerHTML=isPwd?
+    '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 2l14 14M7.5 7.7a2.3 2.3 0 003.1 3.1M5.3 5.3C3 6.7 1 9 1 9s3 6 8 6c1.5 0 2.8-.4 3.9-1M12.5 12.5C14.5 11 17 9 17 9s-1.2-2.4-3.3-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>':
+    '<svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M1 9s3-6 8-6 8 6 8 6-3 6-8 6-8-6-8-6z" stroke="currentColor" stroke-width="1.3"/><circle cx="9" cy="9" r="2.3" stroke="currentColor" stroke-width="1.3"/></svg>';
+}
+
+function setTab(tab){
+  isSignup=tab==="up";
+  document.getElementById("tab-in").className="vgl-tab"+(isSignup?"":" active");
+  document.getElementById("tab-up").className="vgl-tab"+(isSignup?" active":"");
+  document.getElementById("signup-extra").style.display=isSignup?"block":"none";
+  document.getElementById("auth-btn").textContent=isSignup?"Create Account":"Sign In";
+  document.getElementById("forgot-btn").style.display=isSignup?"none":"block";
+  document.getElementById("auth-err").style.display="none";
+}
+
+async function handleAuth(){
+  var email=document.getElementById("inp-email").value.trim();
+  var password=document.getElementById("inp-password").value.trim();
+  document.getElementById("auth-err").style.display="none";
+  if(!email||!password){showErr("Email and password required");return;}
+  if(password.length<6){showErr("Password must be at least 6 characters");return;}
+  var btn=document.getElementById("auth-btn");
+  btn.disabled=true;btn.textContent=isSignup?"Creating account...":"Signing in...";
+  try{
+    if(isSignup){
+      var name=document.getElementById("inp-name").value.trim();
+      var company=document.getElementById("inp-company").value.trim();
+      if(!name){showErr("Full name required");btn.disabled=false;btn.textContent="Create Account";return;}
+      var res=await fetch(BACKEND+"/api/developer/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password,name,company})});
+      var data=await res.json();
+      if(!data.success){showErr(data.error||"Signup failed");btn.disabled=false;btn.textContent="Create Account";return;}
+      var signUpResult=await auth.signInWithEmailAndPassword(email,password);
+      await signUpResult.user.sendEmailVerification();
+      await auth.signOut();
+      var msgEl=document.getElementById("auth-err");
+      msgEl.textContent="✅ Account created! Check your email inbox and spam folder for a verification link before signing in.";
+      msgEl.className="vgl-err success";msgEl.style.display="block";
+      btn.disabled=false;btn.textContent="Create Account";
+      setTab("in");
+      return;
+    }else{
+      var signInResult=await auth.signInWithEmailAndPassword(email,password);
+      if(!signInResult.user.emailVerified){
+        await auth.signOut();
+        showErr("Please verify your email first. Check your inbox for the verification link.");
+        btn.disabled=false;btn.textContent="Sign In";
+        return;
+      }
+    }
+  }catch(e){
+
+    showErr(e.message.replace("Firebase: ","").replace(/\(auth\/[^)]+\)/,"").trim());
+    btn.disabled=false;btn.textContent=isSignup?"Create Account":"Sign In";
+  }
+}
+
+async function handleForgot(){
+  var email=document.getElementById("inp-email").value.trim();
+  if(!email){showErr("Enter your email address first");return;}
+  try{
+    await auth.sendPasswordResetEmail(email);
+    var err=document.getElementById("auth-err");
+    err.textContent="Password reset email sent. Check your inbox.";
+    err.className="vgl-err success";err.style.display="block";
+  }catch(e){showErr(e.message);}
+}
+
+function showErr(msg){
+  var err=document.getElementById("auth-err");
+  err.textContent=msg;err.className="vgl-err error";err.style.display="block";
+}
+
+async function loadUsageHistory(){
+  try{
+    var token=await currentUser.getIdToken();
+    var res=await fetch(BACKEND+"/api/developer/usage-history",{headers:{"Authorization":"Bearer "+token}});
+    var data=await res.json();
+    var listEl=document.getElementById("usage-history-list");
+    if(!data.success||!data.usage||!data.usage.length){
+      listEl.innerHTML='<div style="text-align:center;padding:20px;color:#bbb;">No API requests yet. Once you start using the API your recent activity will show here.</div>';
+      return;
+    }
+    listEl.innerHTML='<table style="width:100%;border-collapse:collapse;"><tr style="border-bottom:1px solid #ebebeb;"><th style="text-align:left;padding:8px 6px;font-size:11px;color:#bbb;font-weight:600;">DATE</th><th style="text-align:left;padding:8px 6px;font-size:11px;color:#bbb;font-weight:600;">VOICE</th><th style="text-align:right;padding:8px 6px;font-size:11px;color:#bbb;font-weight:600;">CHARACTERS</th></tr>'+
+      data.usage.map(function(u){
+        var date=u.createdAt?new Date(u.createdAt).toLocaleDateString("en-US",{month:"short",day:"numeric",hour:"2-digit",minute:"2-digit"}):"—";
+        return '<tr style="border-bottom:1px solid #f7f7f7;"><td style="padding:8px 6px;font-size:12px;color:#666;font-family:Space Mono,monospace;">'+date+'</td><td style="padding:8px 6px;font-size:12px;color:#666;font-family:Space Mono,monospace;">'+(u.voice_id||"—")+'</td><td style="padding:8px 6px;font-size:12px;color:#c9a84c;font-family:Space Mono,monospace;text-align:right;">'+u.characters.toLocaleString()+'</td></tr>';
+      }).join("")+'</table>';
+  }catch(e){console.warn("Usage history error:",e);}
+}
+
+async function loadData(){
+  try{
+    var token=await currentUser.getIdToken();
+    var res=await fetch(BACKEND+"/api/developer/key",{headers:{"Authorization":"Bearer "+token}});
+    var data=await res.json();
+    if(!data.success)return;
+    keyData=data;
+    document.getElementById("api-key-val").textContent=data.key;
+    var credits=data.monthlyCredits||0,total=data.totalMonthlyCredits||0,used=Math.max(0,total-credits);
+    document.getElementById("s-credits").textContent=credits.toLocaleString();
+    document.getElementById("s-total").textContent=(data.totalCharacters||0).toLocaleString();
+    var plan=data.plan||"none";
+    document.getElementById("s-plan").textContent=plan.charAt(0).toUpperCase()+plan.slice(1);
+    if(data.subscriptionExpiry){
+      var exp=new Date(data.subscriptionExpiry._seconds?data.subscriptionExpiry._seconds*1000:data.subscriptionExpiry);
+      var days=Math.ceil((exp-new Date())/(1000*60*60*24));
+      document.getElementById("s-expiry").textContent=days>0?days+" days left":"Expired";
+      document.getElementById("sub-detail").textContent="Expires "+exp.toLocaleDateString("en-US",{month:"long",day:"numeric",year:"numeric"});
+      var badge=document.getElementById("sub-badge");
+      if(days>0){badge.className="sub-badge sub-active";badge.textContent="● Active";}
+      else{badge.className="sub-badge sub-expired";badge.textContent="● Expired";}
+    }
+    if(total>0){
+      var pct=Math.min(100,Math.round((used/total)*100));
+      document.getElementById("prog-fill").style.width=pct+"%";
+      document.getElementById("used-lbl").textContent=used.toLocaleString()+" used";
+      document.getElementById("total-lbl").textContent=total.toLocaleString()+" total";
+    }
+  }catch(e){console.warn("Load error:",e);}
+}
+
+function copyKey(){
+  var key=document.getElementById("api-key-val").textContent;
+  navigator.clipboard.writeText(key).then(function(){showToast("API key copied!");});
+}
+
+var panelTitles={dashboard:"Dashboard",apikey:"API Key",subscription:"Subscription"};
+function showPanel(name){
+  document.querySelectorAll(".vg-tc").forEach(function(p){p.classList.remove("active");});
+  document.querySelectorAll(".vg-sb-item").forEach(function(i){i.classList.remove("active");});
+  document.getElementById("panel-"+name).classList.add("active");
+  var sb=document.getElementById("sb-"+name);
+  if(sb)sb.classList.add("active");
+  document.getElementById("topbar-page-title").textContent=panelTitles[name]||"Dashboard";
+  document.getElementById("vg-sidebar").classList.remove("open");
+  document.getElementById("vg-overlay").classList.remove("show");
+}
+
+function selectPlan(el){
+  document.querySelectorAll(".plan").forEach(function(p){p.classList.remove("sel");});
+  el.classList.add("sel");
+  selectedPlan={plan:el.dataset.plan,price:parseInt(el.dataset.price),credits:parseInt(el.dataset.credits)};
+  document.getElementById("va-box").style.display="none";
+  document.getElementById("pay-btn").textContent=selectedPayTab==="transfer"?"Get Virtual Account →":"Pay with Card →";
+}
+
+function selectPayTab(tab){
+  selectedPayTab=tab;
+  document.getElementById("pt-transfer").className="pay-tab"+(tab==="transfer"?" sel":"");
+  document.getElementById("pt-card").className="pay-tab"+(tab==="card"?" sel":"");
+  document.getElementById("pay-btn").textContent=tab==="transfer"?"Get Virtual Account →":"Pay with Card →";
+  document.getElementById("va-box").style.display="none";
+}
+
+async function handlePayment(){
+  if(!currentUser){showToast("Please sign in first");return;}
+  var btn=document.getElementById("pay-btn");
+  btn.disabled=true;btn.textContent="Processing...";
+  try{
+    var token=await currentUser.getIdToken();
+    if(selectedPayTab==="transfer"){
+      var res=await fetch(BACKEND+"/api/developer/create-virtual-account",{method:"POST",headers:{"Authorization":"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({plan:selectedPlan.plan})});
+      var data=await res.json();
+      if(!data.success){showToast(data.error||"Failed");btn.disabled=false;btn.textContent="Get Virtual Account →";return;}
+      document.getElementById("va-amount").textContent="₦"+data.amountNGN.toLocaleString();
+      document.getElementById("va-bank").textContent=data.bankName;
+      document.getElementById("va-acct").textContent=data.accountNumber;
+      document.getElementById("va-name-val").textContent=data.accountName;
+      document.getElementById("va-box").style.display="block";
+      btn.disabled=false;btn.textContent="Get New Account →";
+    }else{
+      var res2=await fetch(BACKEND+"/api/developer/create-card-payment",{method:"POST",headers:{"Authorization":"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({plan:selectedPlan.plan})});
+      var data2=await res2.json();
+      if(!data2.success){showToast(data2.error||"Failed");btn.disabled=false;btn.textContent="Pay with Card →";return;}
+      FlutterwaveCheckout({
+        public_key:"FLWPUBK-your-key-here",
+        tx_ref:data2.txRef,amount:data2.amount,currency:"NGN",
+        customer:{email:data2.customerEmail,name:data2.customerName},
+        customizations:{title:"AudLabs Platform",description:"Developer API — "+selectedPlan.plan,logo:"https://audlabs.io/logo.png"},
+        callback:function(r){if(r.status==="successful"){showToast("Payment successful! Plan activating...");setTimeout(loadData,3000);}},
+        onclose:function(){btn.disabled=false;btn.textContent="Pay with Card →";}
+      });
+    }
+  }catch(e){showToast("Error: "+e.message);btn.disabled=false;btn.textContent=selectedPayTab==="transfer"?"Get Virtual Account →":"Pay with Card →";}
+}
+
+function toggleSidebar(){
+  var sb=document.getElementById("vg-sidebar");
+  var ov=document.getElementById("vg-overlay");
+  sb.classList.toggle("open");
+  ov.classList.toggle("show");
+}
+
+function toggleTheme(){
+  isDark=!isDark;
+  document.getElementById("vg").classList.toggle("dark-mode",isDark);
+  document.getElementById("theme-icon").textContent=isDark?"☀️":"🌙";
+  document.getElementById("theme-label").textContent=isDark?"Light":"Dark";
+}
+
+function doSignOut(){auth.signOut();}
+
+function showToast(msg){
+  var t=document.getElementById("toast");
+  t.textContent=msg;t.style.display="block";
+  setTimeout(function(){t.style.display="none";},3000);
+}
+</script>
+</body>
+</html>
+
+
+
+
