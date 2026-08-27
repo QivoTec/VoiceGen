@@ -193,7 +193,14 @@ th:nth-child(11),td:nth-child(11){display:none;}
 <div style="color:#555;font-size:13px;">Loading...</div>
 </div>
 </div>
-
+<div class="section">
+<h2>🔔 Send Push Notification</h2>
+<div style="color:#888;font-size:12px;margin-bottom:12px;">Sends to every user who has the Android app installed and has opened it at least once.</div>
+<input type="text" id="push-title" placeholder="Notification title (e.g. New Update Available!)" style="width:100%;padding:10px 12px;background:#111;border:1px solid #333;border-radius:8px;color:#fff;font-size:13px;margin-bottom:8px;">
+<textarea id="push-body" placeholder="Notification message (e.g. Update AudLabs now for the latest features and fixes.)" rows="3" style="width:100%;padding:10px 12px;background:#111;border:1px solid #333;border-radius:8px;color:#fff;font-size:13px;margin-bottom:10px;resize:vertical;"></textarea>
+<button onclick="sendPushNotification()" id="push-send-btn" class="action-btn btn-add" style="padding:10px 20px;font-size:13px;">🔔 Send to All Users</button>
+<div id="push-result" style="margin-top:10px;font-size:12px;color:#888;"></div>
+</div>
 <div class="section">
 <h2>👥 All Users — <span id="users-count">0</span> total</h2>
 <input type="text" class="search-input" id="user-search" placeholder="🔍 Search by email, name or UID..." oninput="filterUsers(this.value)">
@@ -273,6 +280,43 @@ document.getElementById("dashboard").style.display = "none";
 document.getElementById("login-screen").style.display = "flex";
 document.getElementById("admin-pass").value = "";
 document.getElementById("login-err").textContent = "";
+}
+async function sendPushNotification(){
+  var title = document.getElementById("push-title").value.trim();
+  var body = document.getElementById("push-body").value.trim();
+  var resultDiv = document.getElementById("push-result");
+  var btn = document.getElementById("push-send-btn");
+  if(!title || !body){
+    resultDiv.textContent = "Please fill in both title and message.";
+    resultDiv.style.color = "#e74c3c";
+    return;
+  }
+  if(!confirm("Send this notification to ALL users with the app installed?")) return;
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  resultDiv.textContent = "";
+  try {
+    var res = await fetch("/api/admin-send-push", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","x-admin-secret":"audlabs-admin-2026"},
+      body: JSON.stringify({ title: title, body: body })
+    });
+    var data = await res.json();
+    if(data.success){
+      resultDiv.textContent = "✅ Sent to " + data.sent + " of " + data.totalDevices + " devices" + (data.failed ? " (" + data.failed + " failed)" : "") + ".";
+      resultDiv.style.color = "#27ae60";
+      document.getElementById("push-title").value = "";
+      document.getElementById("push-body").value = "";
+    } else {
+      resultDiv.textContent = "Failed: " + (data.error || "Unknown error");
+      resultDiv.style.color = "#e74c3c";
+    }
+  } catch(e){
+    resultDiv.textContent = "Error: " + e.message;
+    resultDiv.style.color = "#e74c3c";
+  }
+  btn.disabled = false;
+  btn.textContent = "🔔 Send to All Users";
 }
 
 var campaignBatchStart = 0;
