@@ -906,13 +906,13 @@ app.post("/api/flutterwave-webhook", express.raw({ type:"*/*" }), async (req,res
         const diff = Math.abs(usdAmount - pkg.usd);
         if(diff < minDiff){ minDiff = diff; matched = pkg; }
       });
-      if(minDiff / matched.usd <= 0.10){
+            if(minDiff / matched.usd <= 0.10){
         creditsToAdd = matched.credits;
       } else {
-        creditsToAdd = Math.floor(usdAmount * 166666);
+        creditsToAdd = Math.floor(usdAmount * 100000);
       }
     } catch(rateErr){
-      creditsToAdd = Math.floor(amountPaid / 1600 * 166666);
+      creditsToAdd = Math.floor(amountPaid / 1600 * 100000);
     }
     await db.collection("users").doc(user.uid).update({
         credits: admin.firestore.FieldValue.increment(creditsToAdd),
@@ -1132,17 +1132,17 @@ app.post("/api/paystack-webhook", express.raw({ type:"*/*" }), async (req,res) =
         if(diff < minDiff){ minDiff = diff; matched = pkg; }
       });
       // Only match if within 10% of package price
-      if(minDiff / matched.usd <= 0.10){
+            if(minDiff / matched.usd <= 0.10){
         creditsToAdd = matched.credits;
         console.log("Matched package:", matched.usd, "USD =", matched.credits, "credits, paid:", usdAmount.toFixed(2), "USD");
       } else {
         // Fallback: calculate proportionally
-        creditsToAdd = Math.floor(usdAmount * 166666);
+        creditsToAdd = Math.floor(usdAmount * 100000);
         console.log("No exact package match, proportional credits:", creditsToAdd, "for", usdAmount.toFixed(2), "USD");
       }
     } catch(rateErr) {
       // Fallback if rate fetch fails
-      creditsToAdd = Math.floor(amountPaid / 1600 * 166666);
+      creditsToAdd = Math.floor(amountPaid / 1600 * 100000);
       console.log("Rate fetch failed, fallback credits:", creditsToAdd);
     }
     await db.collection("users").doc(uid).update({
