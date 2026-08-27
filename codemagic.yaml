@@ -17,10 +17,10 @@ workflows:
       - name: Copy web assets and sync Capacitor
         script: |
           npx cap sync ios
-            - name: Build unsigned iOS app (for testing purposes)
+                  - name: Build unsigned iOS app (for testing purposes)
         script: |
           cd ios/App
-          xcodebuild -workspace $XCODE_WORKSPACE \
+          xcodebuild -project App.xcodeproj \
             -scheme $XCODE_SCHEME \
             -configuration Debug \
             -sdk iphonesimulator \
