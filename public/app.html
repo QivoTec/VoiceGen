@@ -999,9 +999,15 @@ if(!signInResult.user.emailVerified){
 statusEl.textContent = "";
 
 } catch(signInErr){
-if(signInErr.code === "auth/user-not-found" || signInErr.code === "auth/invalid-credential" || signInErr.code === "auth/invalid-login-credentials"){
+if(signInErr.code === "auth/user-not-found"){
 statusEl.style.color = "#e74c3c";
 statusEl.textContent = "No account found with this email. Please use the Sign Up tab to create an account.";
+btn.disabled = false;
+btn.textContent = "Sign In";
+return;
+} else if(signInErr.code === "auth/invalid-credential" || signInErr.code === "auth/invalid-login-credentials" || signInErr.code === "auth/wrong-password"){
+statusEl.style.color = "#e74c3c";
+statusEl.textContent = "Incorrect password. Please try again or click 'Forgot password?' below.";
 btn.disabled = false;
 btn.textContent = "Sign In";
 return;
