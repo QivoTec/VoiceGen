@@ -2696,7 +2696,7 @@ app.get("/robots.txt", (req,res) => {
 
 app.get("/ads.txt", (req,res) => {
   res.set("Content-Type","text/plain");
-  res.send("google.com, pub-2851644269126796, DIRECT, f08c47fec0942fa0");
+  res.send("google.com, pub-6338752366923352, DIRECT, f08c47fec0942fa0");
 });
 
 
