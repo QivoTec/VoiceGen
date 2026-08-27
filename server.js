@@ -893,12 +893,12 @@ app.post("/api/flutterwave-webhook", express.raw({ type:"*/*" }), async (req,res
     try {
       const rateRes = await axios.get("https://open.er-api.com/v6/latest/USD");
       const ngnRate = rateRes.data?.rates?.NGN || 1600;
-      const usdAmount = amountPaid / ngnRate;
+            const usdAmount = amountPaid / ngnRate;
       const packages = [
-        {usd:6, credits:700000},
-        {usd:12, credits:1600000},
-        {usd:18, credits:2700000},
-        {usd:24, credits:4000000}
+        {usd:8, credits:700000},
+        {usd:16, credits:1600000},
+        {usd:24, credits:2700000},
+        {usd:30, credits:4000000}
       ];
       let matched = packages[0];
       let minDiff = Math.abs(usdAmount - packages[0].usd);
@@ -1116,13 +1116,13 @@ app.post("/api/paystack-webhook", express.raw({ type:"*/*" }), async (req,res) =
     try {
       const rateRes = await axios.get("https://open.er-api.com/v6/latest/USD");
       const ngnRate = rateRes.data?.rates?.NGN || 1600;
-      const usdAmount = amountPaid / ngnRate;
+            const usdAmount = amountPaid / ngnRate;
       // Match to nearest package
       const packages = [
-        {usd:6, credits:700000},
-        {usd:12, credits:1600000},
-        {usd:18, credits:2700000},
-        {usd:24, credits:4000000}
+        {usd:8, credits:700000},
+        {usd:16, credits:1600000},
+        {usd:24, credits:2700000},
+        {usd:30, credits:4000000}
       ];
       // Find closest package
       let matched = packages[0];
