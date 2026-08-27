@@ -281,6 +281,43 @@ document.getElementById("login-screen").style.display = "flex";
 document.getElementById("admin-pass").value = "";
 document.getElementById("login-err").textContent = "";
 }
+async function sendPushNotification(){
+  var title = document.getElementById("push-title").value.trim();
+  var body = document.getElementById("push-body").value.trim();
+  var resultDiv = document.getElementById("push-result");
+  var btn = document.getElementById("push-send-btn");
+  if(!title || !body){
+    resultDiv.textContent = "Please fill in both title and message.";
+    resultDiv.style.color = "#e74c3c";
+    return;
+  }
+  if(!confirm("Send this notification to ALL users with the app installed?")) return;
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  resultDiv.textContent = "";
+  try {
+    var res = await fetch("/api/admin-send-push", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","x-admin-secret":"audlabs-admin-2026"},
+      body: JSON.stringify({ title: title, body: body })
+    });
+    var data = await res.json();
+    if(data.success){
+      resultDiv.textContent = "✅ Sent to " + data.sent + " of " + data.totalDevices + " devices" + (data.failed ? " (" + data.failed + " failed)" : "") + ".";
+      resultDiv.style.color = "#27ae60";
+      document.getElementById("push-title").value = "";
+      document.getElementById("push-body").value = "";
+    } else {
+      resultDiv.textContent = "Failed: " + (data.error || "Unknown error");
+      resultDiv.style.color = "#e74c3c";
+    }
+  } catch(e){
+    resultDiv.textContent = "Error: " + e.message;
+    resultDiv.style.color = "#e74c3c";
+  }
+  btn.disabled = false;
+  btn.textContent = "🔔 Send to All Users";
+}
 
 var campaignBatchStart = 0;
 var campaignRunning = false;
