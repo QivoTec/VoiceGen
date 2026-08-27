@@ -14,10 +14,11 @@ workflows:
       - name: Install npm dependencies
         script: |
           npm install
-      - name: Copy web assets and sync Capacitor
+            - name: Copy web assets and sync Capacitor
         script: |
           npx cap sync ios
-                  - name: Build unsigned iOS app (for testing purposes)
+          ls -la ios/App/App/
+      - name: Build unsigned iOS app (for testing purposes)
         script: |
           cd ios/App
           xcodebuild -project App.xcodeproj \
