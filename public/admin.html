@@ -437,7 +437,7 @@ async function generateBlogPost(){
   var tagsStr = prompt("Tags (comma separated, e.g: YouTube,AI,Voice):");
   var tags = tagsStr ? tagsStr.split(",").map(function(t){ return t.trim(); }) : [];
   var imageFile = prompt("Banner image filename (e.g: top-10-youtube-niches-2026.jpg) — leave blank for none:");
-  var image = imageFile ? "/blog-images/" + imageFile.trim() : "";
+  var image = imageFile ? "/" + imageFile.trim().replace(/^\/+/, "") : "";
   try {
     var res = await fetch("/api/save-blog-post", {
       method: "POST",
