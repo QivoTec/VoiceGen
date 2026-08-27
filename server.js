@@ -2752,6 +2752,60 @@ app.get("/sitemap.xml", async (req,res) => {
   }
 });
 
+// ── SAVE PUSH TOKEN ──
+app.post("/api/save-push-token", async (req,res) => {
+  const user = await verifyUser(req,res);
+  if(!user) return;
+  try {
+    const { pushToken } = req.body;
+    if(!pushToken) return res.status(400).json({ error:"pushToken required" });
+    await db.collection("users").doc(user.uid).set({
+      pushToken: pushToken
+    }, { merge: true });
+    return res.json({ success:true });
+  } catch(e){
+    return res.status(500).json({ error:e.message });
+  }
+});
+// ── SEND PUSH NOTIFICATION (ADMIN) ──
+app.post("/api/admin-send-push", async (req,res) => {
+  const adminPassword = req.headers["x-admin-password"] || req.headers["x-admin-secret"];
+  if(adminPassword !== "(Oluwaseyi23)" && adminPassword !== "audlabs-admin-2026") return res.status(401).json({ error:"Unauthorized" });
+  try {
+    const { title, body } = req.body;
+    if(!title || !body) return res.status(400).json({ error:"title and body required" });
+    const usersSnap = await db.collection("users").where("pushToken","!=",null).get();
+    const tokens = [];
+    usersSnap.docs.forEach(function(doc){
+      const t = doc.data().pushToken;
+      if(t) tokens.push(t);
+    });
+    if(!tokens.length) return res.json({ success:true, sent:0, message:"No devices registered for push yet." });
+    let sentCount = 0;
+    let failedCount = 0;
+    const messaging = admin.messaging();
+    const batchSize = 500;
+    for(let i = 0; i < tokens.length; i += batchSize){
+      const batch = tokens.slice(i, i + batchSize);
+      try {
+        const response = await messaging.sendEachForMulticast({
+          tokens: batch,
+          notification: { title: title, body: body }
+        });
+        sentCount += response.successCount;
+        failedCount += response.failureCount;
+      } catch(batchErr){
+        console.error("Push batch error:", batchErr.message);
+        failedCount += batch.length;
+      }
+    }
+    return res.json({ success:true, sent:sentCount, failed:failedCount, totalDevices:tokens.length });
+  } catch(e){
+    console.error("Admin push error:", e.message);
+    return res.status(500).json({ error:e.message });
+  }
+});
+app.get("/delete-account", (req,res) => {
 app.get("/delete-account", (req,res) => {
   var host = req.headers.host || "";
   if(host.startsWith("app.")) return res.redirect("https://audlabs.io/delete-account");
