@@ -17,10 +17,7 @@ workflows:
       - name: Copy web assets and sync Capacitor
         script: |
           npx cap sync ios
-      - name: Install CocoaPods dependencies
-        script: |
-          cd ios/App && pod install
-      - name: Build unsigned iOS app (for testing purposes)
+            - name: Build unsigned iOS app (for testing purposes)
         script: |
           cd ios/App
           xcodebuild -workspace $XCODE_WORKSPACE \
