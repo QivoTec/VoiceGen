@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+<script src="capacitor.js"></script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <!-- Google tag (gtag.js) -->
@@ -84,7 +86,6 @@ Continue with Google
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 </button>
 </div>
-
 <button id="auth-submit-btn" onclick="handleEmailAuth()" style="width:100%;padding:13px 20px;background:#1a1a1a;border:none;border-radius:10px;font-family:Inter,sans-serif;font-size:14px;font-weight:600;color:#fff;cursor:pointer;margin-bottom:8px;">Sign In</button>
 <button onclick="handleForgotPassword()" id="auth-forgot-btn" style="width:100%;padding:8px;background:transparent;border:none;font-family:Inter,sans-serif;font-size:12px;color:#bbb;cursor:pointer;">Forgot password?</button>
 <div id="auth-status" style="font-size:12px;color:#e74c3c;margin-top:6px;text-align:center;"></div>
@@ -248,12 +249,12 @@ Share on X
 <span style="font-size:11px;color:#bbb;flex-basis:100%;">Removes background noise from your audio sample</span>
 </div>
 <div style="display:inline-flex;align-items:center;gap:8px;margin-top:8px;"><button class="vg-actionbtn" id="vg-clonebtn">Clone Voice — 15,000 credits</button><a href="https://youtube.com/@AudLabs" target="_blank" title="Watch how to clone a voice" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#1a1a1a;border:2px solid #c9a84c;color:#c9a84c;font-size:13px;font-weight:700;text-decoration:none;flex-shrink:0;">?</a></div></div><div class="vg-card">
-<div class="vg-card-title"><span class="dot"></span>Your Cloned Voices</div><div id="vg-clonedlist"><div class="vg-empty"><div class="big">🎙</div><p>No cloned voices yet.</p></div></div></div></div><!-- TOPUP --><div id="vg-tc-topup" class="vg-tc"><div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Your Credit Balance</div><div style="text-align:center;padding:20px 0;"><div style="font-size:48px;font-weight:700;color:#1a1a1a;" id="vg-big-credits">—</div><div style="font-size:13px;color:#999;margin-top:4px;">credits remaining</div><div style="font-size:12px;color:#bbb;margin-top:8px;">1 credit = 1 character</div></div></div><div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Credit Packages — Bank Transfer (NGN)</div><div style="background:#fffdf7;border:1.5px solid #f0e5c0;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#7a6230;">💡 Select a package, copy the exact Naira amount and transfer to your virtual account. Credits are added automatically.</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;" id="topup-packages"><div class="topup-pkg" data-usd="30" data-credits="4000000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Studio</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">4,000,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="30" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div><div class="topup-pkg" data-usd="24" data-credits="2700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Pro</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">2,700,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="24" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div><div class="topup-pkg sel-topup-pkg" data-usd="16" data-credits="1600000" style="border:2px solid #c9a84c;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#fffdf7;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;">MOST POPULAR</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Standard</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">1,600,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="16" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div><div class="topup-pkg" data-usd="8" data-credits="700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Starter</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">700,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="8" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div></div><div id="topup-selected-box" style="background:#fff8e6;border:1.5px solid #f0d080;border-radius:10px;padding:16px;margin-bottom:16px;display:none;"><div style="font-size:12px;color:#888;margin-bottom:6px;">Transfer exactly this amount:</div><div style="display:flex;align-items:center;gap:10px;"><div id="topup-exact-amount" style="font-size:28px;font-weight:700;color:#c9a84c;flex:1;">—</div><button onclick="copyTopupAmount()" style="background:#1a1a1a;border:none;color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📋 Copy</button></div><div style="font-size:12px;color:#bbb;margin-top:4px;" id="topup-credits-label">— credits</div></div><div class="vg-card-title" style="margin-top:4px;"><span class="dot"></span>Your Virtual Account</div><div id="vg-va-list"><div style="text-align:center;color:#bbb;font-size:13px;padding:20px;">Loading your virtual account...</div></div><button onclick="refreshBalance()" style="background:#f5f5f5;border:1.5px solid #ebebeb;color:#555;padding:10px 20px;font-size:13px;font-weight:500;cursor:pointer;border-radius:8px;font-family:Inter,sans-serif;margin-top:12px;">↻ Refresh Balance</button></div></div>
+<div class="vg-card-title"><span class="dot"></span>Your Cloned Voices</div><div id="vg-clonedlist"><div class="vg-empty"><div class="big">🎙</div><p>No cloned voices yet.</p></div></div></div></div><!-- TOPUP --><div id="vg-tc-topup" class="vg-tc"><div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Your Credit Balance</div><div style="text-align:center;padding:20px 0;"><div style="font-size:48px;font-weight:700;color:#1a1a1a;" id="vg-big-credits">—</div><div style="font-size:13px;color:#999;margin-top:4px;">credits remaining</div><div style="font-size:12px;color:#bbb;margin-top:8px;">1 credit = 1 character</div></div></div><div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Credit Packages — Bank Transfer (NGN)</div><div style="background:#fffdf7;border:1.5px solid #f0e5c0;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#7a6230;">💡 Select a package, copy the exact Naira amount and transfer to your virtual account. Credits are added automatically.</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:16px;" id="topup-packages"><div class="topup-pkg" data-usd="24" data-credits="4000000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Studio</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">4,000,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="24" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div><div class="topup-pkg" data-usd="18" data-credits="2700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Pro</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">2,700,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="18" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div><div class="topup-pkg sel-topup-pkg" data-usd="12" data-credits="1600000" style="border:2px solid #c9a84c;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#fffdf7;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;">MOST POPULAR</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Standard</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">1,600,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="12" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div><div class="topup-pkg" data-usd="6" data-credits="700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Starter</div><div style="font-size:22px;font-weight:700;color:#c9a84c;">700,000</div><div style="font-size:11px;color:#999;margin-bottom:6px;">Lifetime Credits</div><div class="topup-ngn-price" data-usd="6" style="font-size:14px;font-weight:700;color:#1a1a1a;">Loading...</div></div></div><div id="topup-selected-box" style="background:#fff8e6;border:1.5px solid #f0d080;border-radius:10px;padding:16px;margin-bottom:16px;display:none;"><div style="font-size:12px;color:#888;margin-bottom:6px;">Transfer exactly this amount:</div><div style="display:flex;align-items:center;gap:10px;"><div id="topup-exact-amount" style="font-size:28px;font-weight:700;color:#c9a84c;flex:1;">—</div><button onclick="copyTopupAmount()" style="background:#1a1a1a;border:none;color:#fff;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;">📋 Copy</button></div><div style="font-size:12px;color:#bbb;margin-top:4px;" id="topup-credits-label">— credits</div></div><div class="vg-card-title" style="margin-top:4px;"><span class="dot"></span>Your Virtual Account</div><div id="vg-va-list"><div style="text-align:center;color:#bbb;font-size:13px;padding:20px;">Loading your virtual account...</div></div><button onclick="refreshBalance()" style="background:#f5f5f5;border:1.5px solid #ebebeb;color:#555;padding:10px 20px;font-size:13px;font-weight:500;cursor:pointer;border-radius:8px;font-family:Inter,sans-serif;margin-top:12px;">↻ Refresh Balance</button></div></div>
 <div id="vg-tc-crypto" class="vg-tc">
 <div class="vg-card">
 <div class="vg-card-title"><span class="dot"></span>Buy Credits with Crypto.</div>
-<div style="background:#f0f7ff;border:1.5px solid #cce0ff;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#2c5aa0;">💡 Pay with USDT (TRC20) from anywhere. Min: $24 USDT</div>
-<div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Credit Packages</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px;" id="crypto-packages"><div class="crypto-pkg sel-pkg" data-usd="24" data-credits="2700000" style="border:2px solid #c9a84c;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#fffdf7;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;">POPULAR</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Pro</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">2,700,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;">$24 USDT</div></div><div class="crypto-pkg" data-usd="30" data-credits="4000000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Studio</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">4,000,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;">$30 USDT</div></div></div></div><button class="vg-genbtn" id="crypto-pay-btn" onclick="initCryptoPayment()" style="margin-bottom:0;">
+<div style="background:#f0f7ff;border:1.5px solid #cce0ff;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#2c5aa0;">💡 Pay with USDT (TRC20) from anywhere. Min: $18 USDT</div>
+<div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Credit Packages</div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px;" id="crypto-packages"><div class="crypto-pkg sel-pkg" data-usd="18" data-credits="2700000" style="border:2px solid #c9a84c;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#fffdf7;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;">POPULAR</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Pro</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">2,700,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;">$18 USDT</div></div><div class="crypto-pkg" data-usd="24" data-credits="4000000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Studio</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">4,000,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;">$24 USDT</div></div></div></div><button class="vg-genbtn" id="crypto-pay-btn" onclick="initCryptoPayment()" style="margin-bottom:0;">
  Pay with USDT
  </button></div><!-- Payment Instructions (shown after clicking pay) --><div class="vg-card" id="crypto-payment-box" style="display:none;"><div class="vg-card-title"><span class="dot"></span>Send Payment</div><div style="text-align:center;padding:10px 0 20px;"><div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Send exactly</div><div style="font-size:36px;font-weight:700;color:#c9a84c;" id="crypto-amount-display">—</div><div style="font-size:13px;color:#999;margin-bottom:20px;">TRC20</div><div style="background:#f5f5f5;border-radius:8px;padding:14px;word-break:break-all;font-family:Space Mono,monospace;font-size:12px;color:#1a1a1a;margin-bottom:10px;" id="crypto-address-display">Loading address...</div><div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;"> <button onclick="copyCryptoAddress()" style="background:#1a1a1a;border:none;color:#fff;padding:8px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">📋 Copy Address</button> <button onclick="copyCryptoAmount()" style="background:#c9a84c;border:none;color:#111;padding:8px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">📋 Copy Amount</button> </div><div style="background:#fff8e6;border:1px solid #f0d080;border-radius:8px;padding:12px;font-size:12px;color:#7a6230;line-height:1.6;text-align:left;">
  ⚠️ <strong>Important:</strong> Send ONLY USDT on the <strong>TRC20 network</strong>. Sending other coins or using wrong network will result in permanent loss. Credits are added automatically within 1-30 minutes after network confirmation.
@@ -262,7 +263,7 @@ Share on X
 <div id="vg-tc-card" class="vg-tc">
 <div class="vg-card">
 <div class="vg-card-title"><span class="dot"></span>Buy Credits with Card or Mobile Money.</div>
-<div style="background:#f0fff4;border:1.5px solid #b2f5c8;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#276749;">💳 Pay with Visa, Mastercard or any debit/credit card. Min: $8</div>
+<div style="background:#f0fff4;border:1.5px solid #b2f5c8;border-radius:8px;padding:10px;margin-bottom:16px;font-size:12px;color:#276749;">💳 Pay with Visa, Mastercard or any debit/credit card. Min: $6</div>
 <div class="vg-card">
 <div class="vg-card-title"><span class="dot"></span>Select Your Country</div>
 <div style="position:relative;" id="card-country-wrap">
@@ -275,10 +276,10 @@ Share on X
 </div>
 <div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Credit Packages</div>
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px;" id="card-packages">
-<div class="card-pkg" data-usd="30" data-credits="4000000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Studio</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">4,000,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="24" style="font-size:15px;font-weight:700;color:#1a1a1a;">$30</div></div>
-<div class="card-pkg" data-usd="24" data-credits="2700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Pro</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">2,700,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="18" style="font-size:15px;font-weight:700;color:#1a1a1a;">$24</div></div>
-<div class="card-pkg sel-card-pkg" data-usd="16" data-credits="1600000" style="border:2px solid #c9a84c;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#fffdf7;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;">MOST POPULAR</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Standard</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">1,600,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="12" style="font-size:15px;font-weight:700;color:#1a1a1a;">$16</div></div>
-<div class="card-pkg" data-usd="8" data-credits="700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Starter</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">700,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="6" style="font-size:15px;font-weight:700;color:#1a1a1a;">$8</div></div>
+<div class="card-pkg" data-usd="24" data-credits="4000000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Studio</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">4,000,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="24" style="font-size:15px;font-weight:700;color:#1a1a1a;">$24</div></div>
+<div class="card-pkg" data-usd="18" data-credits="2700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Pro</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">2,700,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="18" style="font-size:15px;font-weight:700;color:#1a1a1a;">$18</div></div>
+<div class="card-pkg sel-card-pkg" data-usd="12" data-credits="1600000" style="border:2px solid #c9a84c;border-radius:10px;padding:16px;text-align:center;cursor:pointer;background:#fffdf7;position:relative;"><div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:#c9a84c;color:#111;font-size:10px;font-weight:700;padding:2px 10px;border-radius:10px;white-space:nowrap;">MOST POPULAR</div><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Standard</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">1,600,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="12" style="font-size:15px;font-weight:700;color:#1a1a1a;">$12</div></div>
+<div class="card-pkg" data-usd="6" data-credits="700000" style="border:1.5px solid #ebebeb;border-radius:10px;padding:16px;text-align:center;cursor:pointer;transition:all 0.15s;"><div style="font-size:13px;font-weight:600;color:#1a1a1a;margin-bottom:4px;">Starter</div><div style="font-size:26px;font-weight:700;color:#c9a84c;">700,000</div><div style="font-size:12px;color:#999;margin-bottom:10px;">Lifetime Credits</div><div class="card-local-price" data-usd="6" style="font-size:15px;font-weight:700;color:#1a1a1a;">$6</div></div>
 </div></div>
 <button class="vg-genbtn" id="card-pay-btn" onclick="initCardPayment()">
 💳 Pay with Card or Mobile Money
@@ -999,15 +1000,9 @@ if(!signInResult.user.emailVerified){
 statusEl.textContent = "";
 
 } catch(signInErr){
-if(signInErr.code === "auth/user-not-found"){
+if(signInErr.code === "auth/user-not-found" || signInErr.code === "auth/invalid-credential" || signInErr.code === "auth/invalid-login-credentials"){
 statusEl.style.color = "#e74c3c";
 statusEl.textContent = "No account found with this email. Please use the Sign Up tab to create an account.";
-btn.disabled = false;
-btn.textContent = "Sign In";
-return;
-} else if(signInErr.code === "auth/invalid-credential" || signInErr.code === "auth/invalid-login-credentials" || signInErr.code === "auth/wrong-password"){
-statusEl.style.color = "#e74c3c";
-statusEl.textContent = "Incorrect password. Please try again or click 'Forgot password?' below.";
 btn.disabled = false;
 btn.textContent = "Sign In";
 return;
@@ -1685,19 +1680,12 @@ if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isN
     var fileName = "audlabs_"+Date.now()+".mp3";
     var Filesystem = window.Capacitor.Plugins.Filesystem;
     var Share = window.Capacitor.Plugins.Share;
-    var savedFile = await Filesystem.writeFile({
+        var savedFile = await Filesystem.writeFile({
       path: fileName,
       data: base64data,
       directory: "DOCUMENTS"
     });
-    showStatus("Voiceover saved to your device!", "ok");
-    try {
-      await Share.share({
-        title: "Share your AudLabs voiceover",
-        url: savedFile.uri,
-        dialogTitle: "Share your voiceover"
-      });
-    } catch(shareErr){}
+    showStatus("Saved to your device! Check your Files app.", "ok");
   };
   reader.readAsDataURL(blob);
 } else {
@@ -1715,36 +1703,10 @@ if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isN
 showStatus("Download failed. Please try again.", "err");
 }
 } else if(lastBlob){
-  if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
-    try {
-      var reader = new FileReader();
-      reader.onloadend = async function(){
-        var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".mp3";
-        var Filesystem = window.Capacitor.Plugins.Filesystem;
-        var Share = window.Capacitor.Plugins.Share;
-        var savedFile = await Filesystem.writeFile({
-          path: fileName,
-          data: base64data,
-          directory: "CACHE"
-        });
-        await Share.share({
-          title: "Save your AudLabs voiceover",
-          url: savedFile.uri,
-          dialogTitle: "Save or share your voiceover"
-        });
-        showStatus("Voiceover ready to save!", "ok");
-      };
-      reader.readAsDataURL(lastBlob);
-    } catch(nativeErr){
-      showStatus("Download failed: "+nativeErr.message, "err");
-    }
-  } else {
-    var a=document.createElement("a");
-    a.href=URL.createObjectURL(lastBlob);
-    a.download="audlabs_"+Date.now()+".mp3";
-    a.click();
-  }
+  var a=document.createElement("a");
+  a.href=URL.createObjectURL(lastBlob);
+  a.download="audlabs_"+Date.now()+".mp3";
+  a.click();
 }
 };
 async function saveHistory(text, vname, url, filename){
@@ -3324,18 +3286,6 @@ window.translateScript = async function(){
   btn.disabled = false;
 };
 
-window.goToAffiliateTab = function(){
-  document.querySelectorAll(".vg-sb-item").forEach(function(b){b.classList.remove("active");});
-  document.querySelectorAll(".vg-tc").forEach(function(c){c.classList.remove("active");});
-  var refBtn = document.querySelector('[data-tab="referral"]');
-  if(refBtn) refBtn.classList.add("active");
-  var refTab = document.getElementById("vg-tc-referral");
-  if(refTab) refTab.classList.add("active");
-  var earnGroup = document.getElementById("sb-group-earn");
-  var earnArrow = document.getElementById("sb-arrow-earn");
-  if(earnGroup) earnGroup.style.display = "block";
-  if(earnArrow) earnArrow.style.transform = "rotate(90deg)";
-};
 window.toggleAuthPasswordVisibility = function(){
   var pwInput = document.getElementById("auth-password");
   var eyeBtn = document.getElementById("auth-pw-eye");
@@ -3348,101 +3298,24 @@ window.toggleAuthPasswordVisibility = function(){
     eyeBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
   }
 };
+window.goToAffiliateTab = function(){
+  document.querySelectorAll(".vg-sb-item").forEach(function(b){b.classList.remove("active");});
+  document.querySelectorAll(".vg-tc").forEach(function(c){c.classList.remove("active");});
+  var refBtn = document.querySelector('[data-tab="referral"]');
+  if(refBtn) refBtn.classList.add("active");
+  var refTab = document.getElementById("vg-tc-referral");
+  if(refTab) refTab.classList.add("active");
+  var earnGroup = document.getElementById("sb-group-earn");
+  var earnArrow = document.getElementById("sb-arrow-earn");
+  if(earnGroup) earnGroup.style.display = "block";
+  if(earnArrow) earnArrow.style.transform = "rotate(90deg)";
+};
 window.copyTranslation = function(){
   var text = document.getElementById("translator-output").value;
   navigator.clipboard.writeText(text).then(function(){
     showStatus("Copied to clipboard!", "ok");
   });
 };
-
-// Pull-to-refresh (native app only)
-if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
-  (function(){
-    var startY = 0;
-    var pulling = false;
-    var refreshing = false;
-    var threshold = 70;
-    var indicator = document.createElement("div");
-    indicator.id = "ptr-indicator";
-    indicator.style.cssText = "position:fixed;top:-60px;left:50%;transform:translate(-50%,0);width:40px;height:40px;background:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;z-index:99999;transition:top 0.25s ease,opacity 0.25s ease;box-shadow:0 2px 12px rgba(0,0,0,0.15);opacity:0;";
-    indicator.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#c9a84c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 11-3-6.7"/><polyline points="21 3 21 9 15 9"/></svg>';
-    document.body.appendChild(indicator);
-    var iconEl = indicator.querySelector("svg");
-
-    document.addEventListener("touchstart", function(e){
-      if(window.scrollY === 0 && !refreshing){
-        startY = e.touches[0].clientY;
-        pulling = true;
-      }
-    }, {passive:true});
-
-    document.addEventListener("touchmove", function(e){
-      if(!pulling || refreshing) return;
-      var currentY = e.touches[0].clientY;
-      var diff = currentY - startY;
-      if(diff > 0 && window.scrollY === 0){
-        var pullDist = Math.min(diff * 0.45, threshold + 30);
-        var topPos = pullDist - 60;
-        indicator.style.top = topPos + "px";
-        indicator.style.opacity = Math.min(pullDist / threshold, 1);
-        iconEl.style.transform = "rotate(" + (pullDist * 2.5) + "deg)";
-      }
-    }, {passive:true});
-
-    document.addEventListener("touchend", function(){
-      if(!pulling || refreshing) return;
-      pulling = false;
-      var currentTop = parseInt(indicator.style.top) || -60;
-      if(currentTop >= threshold - 60){
-        refreshing = true;
-        indicator.style.top = "20px";
-        indicator.style.opacity = "1";
-        iconEl.style.animation = "ptr-spin 0.7s linear infinite";
-        setTimeout(function(){
-          location.reload();
-        }, 500);
-      } else {
-        indicator.style.top = "-60px";
-        indicator.style.opacity = "0";
-      }
-    }, {passive:true});
-  })();
-  var ptrStyle = document.createElement("style");
-  ptrStyle.textContent = "@keyframes ptr-spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}";
-  document.head.appendChild(ptrStyle);
-}
-// Push Notifications setup (native app only)
-if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
-  (function(){
-    var PushNotifications = window.Capacitor.Plugins.PushNotifications;
-    if(!PushNotifications) return;
-    PushNotifications.requestPermissions().then(function(result){
-      if(result.receive === "granted"){
-        PushNotifications.register();
-      }
-    });
-    PushNotifications.addListener("registration", function(tokenData){
-      var pushToken = tokenData.value;
-      auth.onAuthStateChanged(function(u){
-        if(u && pushToken){
-          u.getIdToken().then(function(idToken){
-            fetch(BACKEND+"/api/save-push-token", {
-              method: "POST",
-              headers: {"Content-Type":"application/json","Authorization":"Bearer "+idToken},
-              body: JSON.stringify({ pushToken: pushToken })
-            }).catch(function(){});
-          });
-        }
-      });
-    });
-    PushNotifications.addListener("registrationError", function(err){
-      console.warn("Push registration error:", err);
-    });
-    PushNotifications.addListener("pushNotificationReceived", function(notification){
-      console.log("Push received:", notification);
-    });
-  })();
-}
 window.useTranslation = function(){
   var text = document.getElementById("translator-output").value;
   document.getElementById("vg-script").value = text;
@@ -3463,25 +3336,18 @@ window.downloadTranslationPDF = async function(){
       headers: {"Content-Type":"application/json","Authorization":"Bearer "+token},
       body: JSON.stringify({ text: text, title: title })
     });
-        var blob = await res.blob();
-        if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
+    var blob = await res.blob();
+    if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
       var reader = new FileReader();
       reader.onloadend = async function(){
         var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".pdf";
         var Filesystem = window.Capacitor.Plugins.Filesystem;
-        var Share = window.Capacitor.Plugins.Share;
-        var savedFile = await Filesystem.writeFile({
-          path: fileName,
+        await Filesystem.writeFile({
+          path: "audlabs.pdf",
           data: base64data,
-          directory: "CACHE"
+          directory: "DOCUMENTS"
         });
-        await Share.share({
-          title: "Share your AudLabs PDF",
-          url: savedFile.uri,
-          dialogTitle: "Share your PDF"
-        });
-        showStatus("PDF ready to share!", "ok");
+        showStatus("PDF saved to your device! Check your Files app.", "ok");
       };
       reader.readAsDataURL(blob);
     } else {
@@ -3566,24 +3432,17 @@ window.downloadTranscriptPDF = async function(){
       showStatus("PDF generation failed — file too small. Please try again.", "err");
       return;
     }
-                if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
+        if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
       var reader = new FileReader();
       reader.onloadend = async function(){
         var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".pdf";
         var Filesystem = window.Capacitor.Plugins.Filesystem;
-        var Share = window.Capacitor.Plugins.Share;
-        var savedFile = await Filesystem.writeFile({
-          path: fileName,
+        await Filesystem.writeFile({
+          path: "audlabs.pdf",
           data: base64data,
-          directory: "CACHE"
+          directory: "DOCUMENTS"
         });
-        await Share.share({
-          title: "Share your AudLabs PDF",
-          url: savedFile.uri,
-          dialogTitle: "Share your PDF"
-        });
-        showStatus("PDF ready to share!", "ok");
+        showStatus("PDF saved to your device! Check your Files app.", "ok");
       };
       reader.readAsDataURL(blob);
     } else {
@@ -3600,6 +3459,8 @@ window.downloadTranscriptPDF = async function(){
     showStatus("PDF download failed. Please try again.", "err");
   }
 };
+
+
 var noiseReductionEnabled = false;
 window.toggleNoiseReduction = function(){
   noiseReductionEnabled = !noiseReductionEnabled;

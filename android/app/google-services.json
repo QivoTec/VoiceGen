@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "1040481136250",
+    "project_id": "voicegene",
+    "storage_bucket": "voicegene.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1040481136250:android:13a8efb381ab826907d5c3",
+        "android_client_info": {
+          "package_name": "io.audlabs.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1040481136250-3lq1u6d33ah4ij1jml4m5n74kus0skar.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.audlabs.app",
+            "certificate_hash": "b18bd53a7d7fb2edcb4f408603bf598bf5d7d0e5"
+          }
+        },
+        {
+          "client_id": "1040481136250-e9mc8tf3lbrv4ibmctv5pailhprh0do0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBuLI5YNVxNa0SG5rwfKwtEmXIS12PcQi4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1040481136250-e9mc8tf3lbrv4ibmctv5pailhprh0do0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

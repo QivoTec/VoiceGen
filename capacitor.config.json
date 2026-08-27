@@ -1,5 +1,13 @@
 {
   "appId": "io.audlabs.app",
   "appName": "AudLabs",
-  "webDir": "www"
+  "webDir": "www",
+  "plugins": {
+    "SplashScreen": {
+      "launchAutoHide": true,
+      "launchShowDuration": 0,
+      "androidSplashResourceName": "splash",
+      "showSpinner": false
+    }
+  }
 }
