@@ -864,6 +864,8 @@ document.getElementById("vg-land").style.display="none";
 document.getElementById("vg-app").style.display="none";
 auth.onAuthStateChanged(function(u){
 if(u && !u.emailVerified){
+  var otpScreenVisible = document.getElementById("vg-otp-screen") && document.getElementById("vg-otp-screen").style.display === "flex";
+  if(otpScreenVisible) return;
   auth.signOut();
   return;
 }
