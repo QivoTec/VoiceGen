@@ -3358,6 +3358,8 @@ window.handleVerifyOtp = async function(){
       btn.textContent = "Verify Account";
     }
   } catch(e){
+    console.error("OTP verify error:", e);
+    alert("OTP verify error: " + e.message);
     statusEl.style.color = "#e74c3c";
     statusEl.textContent = "Something went wrong. Please try again.";
     btn.disabled = false;
@@ -3378,6 +3380,8 @@ window.handleResendOtp = async function(){
     statusEl.style.color = "#27ae60";
     statusEl.textContent = "✅ New code sent! Check your email.";
   } catch(e){
+    console.error("OTP resend error:", e);
+    alert("OTP resend error: " + e.message);
     statusEl.style.color = "#e74c3c";
     statusEl.textContent = "Failed to resend. Please try again.";
   }
