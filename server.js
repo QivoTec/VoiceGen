@@ -2814,7 +2814,8 @@ app.post("/api/send-verification-code", async (req,res) => {
           <div style="background:#f5f5f5;border-radius:10px;padding:20px;text-align:center;margin:20px 0;">
             <span style="font-size:32px;font-weight:700;letter-spacing:8px;color:#c9a84c;">${code}</span>
           </div>
-          <p style="color:#999;font-size:12px;">This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
+                    <p style="color:#999;font-size:12px;">This code expires in 10 minutes.</p>
+          <p style="color:#999;font-size:12px;margin-top:16px;">If you didn't request to verify this email address, kindly ignore this email.<br><br>Best regards,<br>The AudLabs Team</p>
         </div>
       `
     });
