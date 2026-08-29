@@ -937,10 +937,9 @@ if(currentAuthTab === "signup"){
       var emailName = email.split("@")[0].replace(/[0-9]/g,"").replace(/[._-]/g," ").trim();
       displayName = emailName.charAt(0).toUpperCase()+emailName.slice(1);
     }
-                awaitingOtpVerification = true;
+                                awaitingOtpVerification = true;
         var newUser = await auth.createUserWithEmailAndPassword(email, password);
     await newUser.user.updateProfile({ displayName: displayName });
-    await newUser.user.sendEmailVerification();
     (function(){
       try {
         var referrer = document.referrer || "";
