@@ -3337,7 +3337,8 @@ window.handleVerifyOtp = async function(){
   btn.textContent = "Verifying...";
   statusEl.textContent = "";
   try {
-    var token = await getToken();
+    var token = auth.currentUser ? await auth.currentUser.getIdToken(true) : null;
+    if(!token) throw new Error("Not signed in. Please try signing up again.");
     var res = await fetch(BACKEND+"/api/verify-code", {
       method: "POST",
       headers: {"Content-Type":"application/json","Authorization":"Bearer "+token},
