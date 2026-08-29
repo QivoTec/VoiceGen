@@ -942,7 +942,7 @@ if(currentAuthTab === "signup"){
             trafficSource = hostMatch ? ("Other: " + hostMatch[1]) : "Other";
           }
         }
-        newUser.user.getIdToken().then(function(idToken){
+                newUser.user.getIdToken().then(function(idToken){
           fetch(BACKEND+"/api/track-signup-source", {
             method: "POST",
             headers: {"Content-Type":"application/json","Authorization":"Bearer "+idToken},
@@ -951,9 +951,12 @@ if(currentAuthTab === "signup"){
         }).catch(function(){});
       } catch(trackErr){}
     })();
-    statusEl.style.color = "#27ae60";
-    statusEl.textContent = "✅ Account created! Please check your email inbox AND spam/junk folder for a verification link. Click it to activate your account.";
-    await auth.signOut();
+    var otpToken = await newUser.user.getIdToken();
+    await fetch(BACKEND+"/api/send-verification-code", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","Authorization":"Bearer "+otpToken}
+    });
+    showOtpScreen(email);
     btn.disabled = false;
     btn.textContent = "Create Account";
     return;
