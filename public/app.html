@@ -1028,12 +1028,12 @@ emailName = emailName.replace(/[0-9]/g, "").replace(/[._-]/g, " ").replace(/([a-
 emailName = emailName.split(" ").filter(function(w){ return w.length > 0; }).map(function(w){ return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }).join(" ");
 if(!emailName) emailName = email.split("@")[0];
 await newUserCredential.user.updateProfile({ displayName: emailName });
-// Send verification email
-await newUserCredential.user.sendEmailVerification();
-statusEl.style.color = "#27ae60";
-statusEl.textContent = "✅ Account created! Please check your email inbox AND spam/junk folder for a verification link from AudLabs. Click it to activate your account.";
-// Sign out until they verify
-await auth.signOut();
+var otpTokenAuto = await newUserCredential.user.getIdToken();
+await fetch(BACKEND+"/api/send-verification-code", {
+  method: "POST",
+  headers: {"Content-Type":"application/json","Authorization":"Bearer "+otpTokenAuto}
+});
+showOtpScreen(email);
 return;
 } catch(createErr){
 if(createErr.code === "auth/email-already-in-use"){
