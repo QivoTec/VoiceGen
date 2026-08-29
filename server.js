@@ -2792,6 +2792,62 @@ app.post("/api/admin-send-push", async (req,res) => {
     return res.status(500).json({ error:e.message });
   }
 });
+// ── SEND VERIFICATION CODE ──
+app.post("/api/send-verification-code", async (req,res) => {
+  const user = await verifyUser(req,res);
+  if(!user) return;
+  try {
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = Date.now() + (10 * 60 * 1000);
+    await db.collection("users").doc(user.uid).set({
+      verificationCode: code,
+      verificationCodeExpiresAt: expiresAt
+    }, { merge: true });
+    await audlabsTransporter.sendMail({
+      from: '"AudLabs" <hello@audlabs.io>',
+      to: user.email,
+      subject: `Your AudLabs verification code: ${code}`,
+      html: `
+        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
+          <h2 style="color:#1a1a1a;">Verify your email</h2>
+          <p style="color:#555;font-size:14px;line-height:1.6;">Enter this code to verify your AudLabs account:</p>
+          <div style="background:#f5f5f5;border-radius:10px;padding:20px;text-align:center;margin:20px 0;">
+            <span style="font-size:32px;font-weight:700;letter-spacing:8px;color:#c9a84c;">${code}</span>
+          </div>
+          <p style="color:#999;font-size:12px;">This code expires in 10 minutes. If you didn't request this, you can ignore this email.</p>
+        </div>
+      `
+    });
+    return res.json({ success:true });
+  } catch(e){
+    console.error("Send verification code error:", e.message);
+    return res.status(500).json({ error:"Failed to send verification code. Please try again." });
+  }
+});
+// ── VERIFY CODE ──
+app.post("/api/verify-code", async (req,res) => {
+  const user = await verifyUser(req,res);
+  if(!user) return;
+  try {
+    const code = req.body.code;
+    if(!code) return res.status(400).json({ error:"Code required" });
+    const userDoc = await db.collection("users").doc(user.uid).get();
+    const data = userDoc.data();
+    if(!data.verificationCode) return res.status(400).json({ error:"No verification code found. Please request a new one." });
+    if(Date.now() > data.verificationCodeExpiresAt) return res.status(400).json({ error:"Code expired. Please request a new one." });
+    if(data.verificationCode !== code) return res.status(400).json({ error:"Incorrect code. Please try again." });
+    await admin.auth().updateUser(user.uid, { emailVerified: true });
+    await db.collection("users").doc(user.uid).update({
+      verificationCode: admin.firestore.FieldValue.delete(),
+      verificationCodeExpiresAt: admin.firestore.FieldValue.delete()
+    });
+    return res.json({ success:true });
+  } catch(e){
+    console.error("Verify code error:", e.message);
+    return res.status(500).json({ error:e.message });
+  }
+});
+app.get("/delete-account", (req,res) => {
 app.get("/delete-account", (req,res) => {
   var host = req.headers.host || "";
   if(host.startsWith("app.")) return res.redirect("https://audlabs.io/delete-account");
