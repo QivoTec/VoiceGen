@@ -994,21 +994,12 @@ var signInResult = await auth.signInWithEmailAndPassword(email, password);
 
 // Check if email is verified
 if(!signInResult.user.emailVerified){
-  await auth.signOut();
-  statusEl.style.color = "#e74c3c";
-  statusEl.textContent = "⚠️ Please verify your email first. Check your inbox for a verification link. Click here to resend it.";
-  // Add resend link
-  var resendBtn = document.createElement("span");
-  resendBtn.style.cssText = "color:#c9a84c;cursor:pointer;text-decoration:underline;margin-left:4px;font-size:12px;";
-  resendBtn.textContent = "Resend verification email";
-  resendBtn.onclick = async function(){
-    try {
-      await signInResult.user.sendEmailVerification();
-      await auth.signOut();
-      statusEl.textContent = "✅ Verification email sent! Check your inbox.";
-    } catch(e){ statusEl.textContent = "Failed to resend: "+e.message; }
-  };
-  statusEl.appendChild(resendBtn);
+  var otpTokenSignin = await signInResult.user.getIdToken();
+  await fetch(BACKEND+"/api/send-verification-code", {
+    method: "POST",
+    headers: {"Content-Type":"application/json","Authorization":"Bearer "+otpTokenSignin}
+  });
+  showOtpScreen(email);
   btn.disabled = false;
   btn.textContent = "Continue";
   return;
@@ -3318,6 +3309,75 @@ window.toggleAuthPasswordVisibility = function(){
   } else {
     pwInput.type = "password";
     eyeBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  }
+};
+window.showOtpScreen = function(email){
+  document.getElementById("vg-land").style.display = "none";
+  document.getElementById("vg-otp-screen").style.display = "flex";
+  document.getElementById("otp-email-display").textContent = email;
+  document.getElementById("otp-code-input").value = "";
+  document.getElementById("otp-status").textContent = "";
+  document.getElementById("otp-code-input").focus();
+};
+window.cancelOtpScreen = function(){
+  auth.signOut();
+  document.getElementById("vg-otp-screen").style.display = "none";
+  document.getElementById("vg-land").style.display = "flex";
+};
+window.handleVerifyOtp = async function(){
+  var code = document.getElementById("otp-code-input").value.trim();
+  var statusEl = document.getElementById("otp-status");
+  var btn = document.getElementById("otp-verify-btn");
+  if(!code || code.length !== 6){
+    statusEl.style.color = "#e74c3c";
+    statusEl.textContent = "Please enter the 6-digit code.";
+    return;
+  }
+  btn.disabled = true;
+  btn.textContent = "Verifying...";
+  statusEl.textContent = "";
+  try {
+    var token = await getToken();
+    var res = await fetch(BACKEND+"/api/verify-code", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","Authorization":"Bearer "+token},
+      body: JSON.stringify({ code: code })
+    });
+    var data = await res.json();
+    if(data.success){
+      statusEl.style.color = "#27ae60";
+      statusEl.textContent = "✅ Verified! Redirecting...";
+      setTimeout(function(){
+        window.location.reload();
+      }, 1200);
+    } else {
+      statusEl.style.color = "#e74c3c";
+      statusEl.textContent = data.error || "Verification failed.";
+      btn.disabled = false;
+      btn.textContent = "Verify Account";
+    }
+  } catch(e){
+    statusEl.style.color = "#e74c3c";
+    statusEl.textContent = "Something went wrong. Please try again.";
+    btn.disabled = false;
+    btn.textContent = "Verify Account";
+  }
+};
+window.handleResendOtp = async function(){
+  var statusEl = document.getElementById("otp-status");
+  statusEl.style.color = "#888";
+  statusEl.textContent = "Sending new code...";
+  try {
+    var token = await getToken();
+    await fetch(BACKEND+"/api/send-verification-code", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","Authorization":"Bearer "+token}
+    });
+    statusEl.style.color = "#27ae60";
+    statusEl.textContent = "✅ New code sent! Check your email.";
+  } catch(e){
+    statusEl.style.color = "#e74c3c";
+    statusEl.textContent = "Failed to resend. Please try again.";
   }
 };
 window.copyTranslation = function(){
