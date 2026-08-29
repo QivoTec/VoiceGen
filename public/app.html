@@ -3369,7 +3369,8 @@ window.handleResendOtp = async function(){
   statusEl.style.color = "#888";
   statusEl.textContent = "Sending new code...";
   try {
-    var token = await getToken();
+    var token = auth.currentUser ? await auth.currentUser.getIdToken(true) : null;
+    if(!token) throw new Error("Not signed in.");
     await fetch(BACKEND+"/api/send-verification-code", {
       method: "POST",
       headers: {"Content-Type":"application/json","Authorization":"Bearer "+token}
