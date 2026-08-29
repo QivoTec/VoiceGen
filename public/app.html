@@ -993,6 +993,7 @@ if(currentAuthTab === "signup"){
 }
 // Sign in flow
 try {
+awaitingOtpVerification = true;
 var signInResult = await auth.signInWithEmailAndPassword(email, password);
 
 // Check if email is verified
@@ -1031,6 +1032,7 @@ emailName = emailName.replace(/[0-9]/g, "").replace(/[._-]/g, " ").replace(/([a-
 emailName = emailName.split(" ").filter(function(w){ return w.length > 0; }).map(function(w){ return w.charAt(0).toUpperCase()+w.slice(1).toLowerCase(); }).join(" ");
 if(!emailName) emailName = email.split("@")[0];
 await newUserCredential.user.updateProfile({ displayName: emailName });
+awaitingOtpVerification = true;
 var otpTokenAuto = await newUserCredential.user.getIdToken();
 await fetch(BACKEND+"/api/send-verification-code", {
   method: "POST",
