@@ -651,6 +651,7 @@ Share on X
 var FC={apiKey:"AIzaSyCJ12GtdhXTzfB0h0buHkjzsqZtRxzfxS8",authDomain:"voicegene.firebaseapp.com",projectId:"voicegene",storageBucket:"voicegene.firebasestorage.app",messagingSenderId:"1040481136250",appId:"1:1040481136250:web:7a47e5993510d3ac07d5c3"};
 var BACKEND = ""; 
 var userCredits = 0;var userTeamId = "";
+var awaitingOtpVerification = false;
 var userVirtualAccounts = [];
 firebase.initializeApp(FC);
 var auth=firebase.auth(),db=firebase.firestore(),prov=new firebase.auth.GoogleAuthProvider(),userVirtualAccounts=[];
@@ -864,8 +865,7 @@ document.getElementById("vg-land").style.display="none";
 document.getElementById("vg-app").style.display="none";
 auth.onAuthStateChanged(function(u){
 if(u && !u.emailVerified){
-  var otpScreenVisible = document.getElementById("vg-otp-screen") && document.getElementById("vg-otp-screen").style.display === "flex";
-  if(otpScreenVisible) return;
+  if(awaitingOtpVerification) return;
   auth.signOut();
   return;
 }
@@ -937,6 +937,7 @@ if(currentAuthTab === "signup"){
       var emailName = email.split("@")[0].replace(/[0-9]/g,"").replace(/[._-]/g," ").trim();
       displayName = emailName.charAt(0).toUpperCase()+emailName.slice(1);
     }
+                awaitingOtpVerification = true;
         var newUser = await auth.createUserWithEmailAndPassword(email, password);
     await newUser.user.updateProfile({ displayName: displayName });
     await newUser.user.sendEmailVerification();
@@ -3322,6 +3323,7 @@ window.showOtpScreen = function(email){
   document.getElementById("otp-code-input").focus();
 };
 window.cancelOtpScreen = function(){
+  awaitingOtpVerification = false;
   auth.signOut();
   document.getElementById("vg-otp-screen").style.display = "none";
   document.getElementById("vg-land").style.display = "flex";
