@@ -109,63 +109,6 @@ async function sendWithdrawalAlert(data) {
         <p style="margin-top:16px;color:#888;">Please send the USDT to the wallet address above as soon as possible.</p>
       `
     });
-
-        console.log("✅ Withdrawal alert email sent");
-  } catch(e) {
-    console.error("Email send failed:", e.message);
-  }
-}
-async function sendPurchaseReceipt(data) {
-  try {
-    await audlabsTransporter.sendMail({
-      from: '"AudLabs" <hello@audlabs.io>',
-      to: data.email,
-      subject: `Your AudLabs Receipt — ${data.creditsAdded.toLocaleString()} Credits`,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
-          <h2 style="color:#1a1a1a;">Payment Receipt</h2>
-          <p style="color:#555;font-size:14px;">Thank you for your purchase! Here are your transaction details:</p>
-          <table style="width:100%;border-collapse:collapse;margin:20px 0;">
-            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#888;font-size:13px;">Credits Purchased</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-weight:700;color:#c9a84c;">${data.creditsAdded.toLocaleString()}</td></tr>
-            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#888;font-size:13px;">Amount Paid</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-weight:600;">${data.amountDisplay}</td></tr>
-            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#888;font-size:13px;">Payment Method</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;">${data.method}</td></tr>
-            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#888;font-size:13px;">Reference</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-family:monospace;font-size:12px;">${data.reference}</td></tr>
-            <tr><td style="padding:10px 0;color:#888;font-size:13px;">Date</td><td style="padding:10px 0;text-align:right;">${new Date().toLocaleString()}</td></tr>
-          </table>
-          <p style="color:#999;font-size:12px;">Thank you for choosing AudLabs. If you have any questions about this transaction, contact us at hello@audlabs.io.</p>
-        </div>
-      `
-    });
-    console.log("✅ Purchase receipt email sent to", data.email);
-  } catch(e) {
-    console.error("Purchase receipt email failed:", e.message);
-  }
-}
-async function sendWithdrawalReceipt(data) {
-  try {
-    await audlabsTransporter.sendMail({
-      from: '"AudLabs" <hello@audlabs.io>',
-      to: data.email,
-      subject: `Your AudLabs Withdrawal Receipt — ₦${data.amountNGN.toLocaleString()}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:480px;margin:0 auto;padding:32px 24px;">
-          <h2 style="color:#1a1a1a;">Withdrawal Receipt</h2>
-          <p style="color:#555;font-size:14px;">Your affiliate earnings withdrawal has been successfully processed. Here are the details:</p>
-          <table style="width:100%;border-collapse:collapse;margin:20px 0;">
-            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#888;font-size:13px;">Amount Withdrawn</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;font-weight:700;color:#27ae60;">₦${data.amountNGN.toLocaleString()}</td></tr>
-            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#888;font-size:13px;">Payment Method</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;">${data.method}</td></tr>
-            <tr><td style="padding:10px 0;border-bottom:1px solid #eee;color:#888;font-size:13px;">Date</td><td style="padding:10px 0;border-bottom:1px solid #eee;text-align:right;">${new Date().toLocaleString()}</td></tr>
-          </table>
-          <p style="color:#999;font-size:12px;">Thank you for being part of the AudLabs Affiliate Program. If you have any questions about this withdrawal, contact us at hello@audlabs.io.</p>
-        </div>
-      `
-    });
-    console.log("✅ Withdrawal receipt email sent to", data.email);
-  } catch(e) {
-    console.error("Withdrawal receipt email failed:", e.message);
-  }
-}
-// ── FIREBASE ──
     console.log("✅ Withdrawal alert email sent");
   } catch(e) {
     console.error("Email send failed:", e.message);
@@ -983,22 +926,13 @@ app.post("/api/flutterwave-webhook", express.raw({ type:"*/*" }), async (req,res
       lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
       [`daily.${today}`]: admin.firestore.FieldValue.increment(amountUSD)
     }, {merge:true});
-        await db.collection("users").doc(uid).collection("transactions").add({
+    await db.collection("users").doc(uid).collection("transactions").add({
       type:"credit", amount:creditsToAdd, amountNGN:amountPaid, paymentRef:reference,
       note:`Top-up — ₦${amountPaid.toLocaleString()} — ${creditsToAdd.toLocaleString()} credits`,
       createdAt: admin.firestore.FieldValue.serverTimestamp()
     });
     // Referral commission
     const userDoc = await db.collection("users").doc(uid).get();
-    if(userDoc.data()?.email){
-      sendPurchaseReceipt({
-        email: userDoc.data().email,
-        creditsAdded: creditsToAdd,
-        amountDisplay: `₦${amountPaid.toLocaleString()}`,
-        method: "Bank Transfer",
-        reference: reference
-      }).catch(function(){});
-    }
     const referredBy = userDoc.data()?.referredBy;
     if(referredBy){
       const referredUserDoc2 = await db.collection("users").doc(uid).get();
@@ -1224,22 +1158,14 @@ const today = new Date().toISOString().split("T")[0];
       [`daily.${today}`]: admin.firestore.FieldValue.increment(amountUSD)
     }, {merge: true});
 
-        await db.collection("users").doc(uid).collection("transactions").add({
+    await db.collection("users").doc(uid).collection("transactions").add({
       type:"credit", amount:creditsToAdd, amountNGN:amountPaid, paymentRef:reference,
       note:`Top-up — ₦${amountPaid.toLocaleString()} — ${creditsToAdd.toLocaleString()} credits`,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+
     // Referral commission
     const userDoc = await db.collection("users").doc(uid).get();
-    if(userDoc.data()?.email){
-      sendPurchaseReceipt({
-        email: userDoc.data().email,
-        creditsAdded: creditsToAdd,
-        amountDisplay: `₦${amountPaid.toLocaleString()}`,
-        method: "Card Payment",
-        reference: reference
-      }).catch(function(){});
-    }
     const referredBy = userDoc.data()?.referredBy;
     console.log("Checking referral for uid:", uid, "referredBy:", referredBy);
     if (referredBy) {
@@ -1302,22 +1228,13 @@ const today = new Date().toISOString().split("T")[0];
       lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
       [`daily.${today}`]: admin.firestore.FieldValue.increment(payData.amountUSD || 0)
     }, {merge: true});
-        await db.collection("users").doc(payData.uid).collection("transactions").add({
+    await db.collection("users").doc(payData.uid).collection("transactions").add({
       type:"credit", amount:creditsToAdd,
       note:`Crypto top-up — $${payData.amountUSD} USDT — ${creditsToAdd.toLocaleString()} credits`,
       createdAt: admin.firestore.FieldValue.serverTimestamp(),
     });
     await db.collection("cryptoPayments").doc(order_id).update({ status:"completed" });
-    const cryptoUserDoc = await db.collection("users").doc(payData.uid).get();
-    if(cryptoUserDoc.data()?.email){
-      sendPurchaseReceipt({
-        email: cryptoUserDoc.data().email,
-        creditsAdded: creditsToAdd,
-        amountDisplay: `$${payData.amountUSD} USDT`,
-        method: "Crypto (USDT)",
-        reference: order_id
-      }).catch(function(){});
-    }
+
     console.log(`✅ Crypto credited ${creditsToAdd} to ${payData.uid}`);
     return res.json({ success:true });
   } catch(e) { return res.status(500).json({ error:e.message }); }
@@ -1375,11 +1292,10 @@ app.post("/api/request-withdrawal", async (req,res) => {
       withdrawalData.usdAmount = usdAmount;
       withdrawalData.rateUsed = rateUsed;
       note = `Withdrawal ₦${amount.toLocaleString()} → $${usdAmount} USDT`;
-            await db.collection("withdrawalRequests").add(withdrawalData);
+      await db.collection("withdrawalRequests").add(withdrawalData);
       await ref.collection("transactions").add({ type:"withdrawal", amount:-amount, note, createdAt:admin.firestore.FieldValue.serverTimestamp() });
       // Send email alert
       await sendWithdrawalAlert({ email:user.email, amountNGN:amount, usdAmount, walletAddress, rateUsed });
-      sendWithdrawalReceipt({ email:user.email, amountNGN:amount, method:"USDT (Crypto)" }).catch(function(){});
       return res.json({ success:true, message:"USDT withdrawal submitted. You will receive your USDT within 20 hours." });
     }
 
@@ -1423,10 +1339,10 @@ app.post("/api/request-withdrawal", async (req,res) => {
       withdrawalData.recipientCode = recipientCode;
       withdrawalData.status = transferStatus;
 
-            await db.collection("withdrawalRequests").add(withdrawalData);
+      await db.collection("withdrawalRequests").add(withdrawalData);
       await ref.collection("transactions").add({ type:"withdrawal", amount:-amount, note, createdAt:admin.firestore.FieldValue.serverTimestamp() });
+
       console.log("✅ Transfer initiated:", transferRef, "status:", transferStatus);
-      sendWithdrawalReceipt({ email:user.email, amountNGN:amount, method:`Bank Transfer — ${bankName}` }).catch(function(){});
       return res.json({ success:true, message:`Transfer of ₦${amount.toLocaleString()} initiated successfully! You will receive it shortly.`, status: transferStatus });
 
     } catch(transferErr) {
@@ -1479,15 +1395,8 @@ app.get("/api/check-crypto-payment", async (req,res) => {
             note:`Crypto top-up — $${payData.amountUSD} USDT — ${creditsToAdd.toLocaleString()} credits`,
             createdAt: admin.firestore.FieldValue.serverTimestamp()
           });
-                    await db.collection("cryptoPayments").doc(orderId).update({ status:"completed" });
+          await db.collection("cryptoPayments").doc(orderId).update({ status:"completed" });
           console.log("✅ Manual check credited:", creditsToAdd, "to", user.uid);
-          sendPurchaseReceipt({
-            email: user.email,
-            creditsAdded: creditsToAdd,
-            amountDisplay: `$${payData.amountUSD} USDT`,
-            method: "Crypto (USDT)",
-            reference: orderId
-          }).catch(function(){});
         }
       }
     }
