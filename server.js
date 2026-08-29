@@ -2847,7 +2847,7 @@ app.post("/api/verify-code", async (req,res) => {
     return res.status(500).json({ error:e.message });
   }
 });
-app.get("/delete-account", (req,res) => {
+
 app.get("/delete-account", (req,res) => {
   var host = req.headers.host || "";
   if(host.startsWith("app.")) return res.redirect("https://audlabs.io/delete-account");
