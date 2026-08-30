@@ -165,12 +165,6 @@ async function sendWithdrawalReceipt(data) {
     console.error("Withdrawal receipt email failed:", e.message);
   }
 }
-// ── FIREBASE ──
-    console.log("✅ Withdrawal alert email sent");
-  } catch(e) {
-    console.error("Email send failed:", e.message);
-  }
-}
 
 // ── FIREBASE ──
 const admin = require("firebase-admin");
