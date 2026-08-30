@@ -204,7 +204,17 @@ body{margin:0;padding:0;background:#f7f7f7;font-family:'Inter',sans-serif;}
     <div class="vgl-terms">By continuing you agree to AudLabs <a href="https://audlabs.io/privacy-policy">Privacy Policy</a></div>
   </div>
 </div>
-
+<div id="vg-otp-screen" style="display:none;align-items:center;justify-content:center;min-height:100vh;padding:20px;background:#f7f7f7;">
+<div class="vgl-card">
+<div class="vgl-logo"><img src="https://app.audlabs.io/logo.png" alt="AudLabs"><h1>Verify Your Email</h1><p>Enter the 6-digit code sent to your inbox.</p></div>
+<p style="font-size:13px;color:#888;margin-bottom:16px;text-align:center;">Code sent to <strong id="otp-email-display" style="color:#1a1a1a;"></strong></p>
+<input type="text" id="otp-code-input" maxlength="6" inputmode="numeric" placeholder="000000" style="width:100%;padding:16px;border:1.5px solid #ebebeb;border-radius:10px;font-family:'Space Mono',monospace;font-size:28px;letter-spacing:12px;text-align:center;color:#1a1a1a;background:#fafafa;outline:none;margin-bottom:16px;box-sizing:border-box;">
+<button class="vgl-btn" id="otp-verify-btn" onclick="handleVerifyOtp()">Verify Account</button>
+<div id="otp-status" style="font-size:12px;color:#e74c3c;margin:10px 0;text-align:center;"></div>
+<div style="font-size:13px;color:#888;text-align:center;">Didn't get the code? <span onclick="handleResendOtp()" style="color:#c9a84c;cursor:pointer;text-decoration:underline;">Resend code</span></div>
+<a href="#" onclick="cancelOtpScreen();return false;" style="display:block;font-size:13px;color:#bbb;text-decoration:none;margin-top:16px;text-align:center;">← Back to Sign In</a>
+</div>
+</div>
 <!-- APP -->
 <div id="vg-app">
   <div class="vg-overlay" id="vg-overlay" onclick="toggleSidebar()"></div>
@@ -529,6 +539,55 @@ async function handleForgot(){
     err.textContent="Password reset email sent. Check your inbox.";
     err.className="vgl-err success";err.style.display="block";
   }catch(e){showErr(e.message);}
+}
+function showOtpScreen(email){
+  document.getElementById("vg-land").style.display="none";
+  document.getElementById("vg-otp-screen").style.display="flex";
+  document.getElementById("otp-email-display").textContent=email;
+  document.getElementById("otp-code-input").value="";
+  document.getElementById("otp-status").textContent="";
+  document.getElementById("otp-code-input").focus();
+}
+function cancelOtpScreen(){
+  awaitingOtpVerification=false;
+  auth.signOut();
+  document.getElementById("vg-otp-screen").style.display="none";
+  document.getElementById("vg-land").style.display="flex";
+}
+async function handleVerifyOtp(){
+  var code=document.getElementById("otp-code-input").value.trim();
+  var statusEl=document.getElementById("otp-status");
+  var btn=document.getElementById("otp-verify-btn");
+  if(!code||code.length!==6){statusEl.style.color="#e74c3c";statusEl.textContent="Please enter the 6-digit code.";return;}
+  btn.disabled=true;btn.textContent="Verifying...";statusEl.textContent="";
+  try{
+    var token=auth.currentUser?await auth.currentUser.getIdToken(true):null;
+    if(!token) throw new Error("Not signed in. Please try signing up again.");
+    var res=await fetch(BACKEND+"/api/verify-code",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token},body:JSON.stringify({code:code})});
+    var data=await res.json();
+    if(data.success){
+      statusEl.style.color="#27ae60";statusEl.textContent="✅ Verified! Redirecting...";
+      setTimeout(function(){window.location.reload();},1200);
+    }else{
+      statusEl.style.color="#e74c3c";statusEl.textContent=data.error||"Verification failed.";
+      btn.disabled=false;btn.textContent="Verify Account";
+    }
+  }catch(e){
+    statusEl.style.color="#e74c3c";statusEl.textContent="Something went wrong. Please try again.";
+    btn.disabled=false;btn.textContent="Verify Account";
+  }
+}
+async function handleResendOtp(){
+  var statusEl=document.getElementById("otp-status");
+  statusEl.style.color="#888";statusEl.textContent="Sending new code...";
+  try{
+    var token=auth.currentUser?await auth.currentUser.getIdToken(true):null;
+    if(!token) throw new Error("Not signed in.");
+    await fetch(BACKEND+"/api/send-verification-code",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+token}});
+    statusEl.style.color="#27ae60";statusEl.textContent="✅ New code sent! Check your email.";
+  }catch(e){
+    statusEl.style.color="#e74c3c";statusEl.textContent="Failed to resend. Please try again.";
+  }
 }
 
 function showErr(msg){
