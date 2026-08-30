@@ -1496,7 +1496,7 @@ app.post("/api/create-crypto-payment", async (req,res) => {
   if (!user) return;
   const { amountUSD, creditsAmount } = req.body;
   try {
-    const orderId = `VG-CRYPTO-user.uid.slice(0,8)-{Date.now()}`;
+        const orderId = `VG-CRYPTO-${user.uid.slice(0,8)}-${Date.now()}`;
     const response = await axios.post("https://api.nowpayments.io/v1/payment", {
       price_amount: amountUSD, price_currency:"usd", pay_currency:"usdttrc20",
       order_id: orderId, order_description:`VoiceGen ${creditsAmount} credits`,
