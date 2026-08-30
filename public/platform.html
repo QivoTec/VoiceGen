@@ -305,6 +305,22 @@ body{margin:0;padding:0;background:#f7f7f7;font-family:'Inter',sans-serif;}
           </div>
           <div style="font-size:12px;color:#bbb;">Credits reset on the 1st of each month. Unused credits do not carry over.</div>
         </div>
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>Weekly Usage Limit</div>
+          <div class="prog-wrap">
+            <div class="prog-labels"><span id="weekly-used-lbl">0 used</span><span id="weekly-total-lbl">0 total</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="weekly-prog-fill" style="width:0%"></div></div>
+          </div>
+          <div style="font-size:12px;color:#bbb;" id="weekly-reset-lbl">Resets every Monday at 1:00 AM WAT.</div>
+        </div>
+        <div class="vg-card">
+          <div class="vg-card-title"><span class="dot"></span>5-Hour Usage Limit</div>
+          <div class="prog-wrap">
+            <div class="prog-labels"><span id="fivehour-used-lbl">0 used</span><span id="fivehour-total-lbl">0 total</span></div>
+            <div class="prog-bar"><div class="prog-fill" id="fivehour-prog-fill" style="width:0%"></div></div>
+          </div>
+          <div style="font-size:12px;color:#bbb;" id="fivehour-reset-lbl">Resets 5 hours after limit is reached.</div>
+        </div>
 <div class="vg-card">
           <div class="vg-card-title"><span class="dot"></span>Recent Usage</div>
           <div id="usage-history-list" style="font-size:13px;color:#888;">Loading...</div>
@@ -556,13 +572,46 @@ async function loadData(){
       if(days>0){badge.className="sub-badge sub-active";badge.textContent="● Active";}
       else{badge.className="sub-badge sub-expired";badge.textContent="● Expired";}
     }
-    if(total>0){
+        if(total>0){
       var pct=Math.min(100,Math.round((used/total)*100));
       document.getElementById("prog-fill").style.width=pct+"%";
       document.getElementById("used-lbl").textContent=used.toLocaleString()+" used";
       document.getElementById("total-lbl").textContent=total.toLocaleString()+" total";
     }
+    if(data.weeklyLimit){
+      var wPct=Math.min(100,Math.round((data.weeklyUsed/data.weeklyLimit)*100));
+      document.getElementById("weekly-prog-fill").style.width=wPct+"%";
+      document.getElementById("weekly-used-lbl").textContent=(data.weeklyUsed||0).toLocaleString()+" used";
+      document.getElementById("weekly-total-lbl").textContent=data.weeklyLimit.toLocaleString()+" total";
+      startCountdown("weekly-reset-lbl", data.weeklyResetAt, "Resets in");
+    }
+    if(data.fiveHourLimit){
+      var fPct=Math.min(100,Math.round((data.fiveHourUsed/data.fiveHourLimit)*100));
+      document.getElementById("fivehour-prog-fill").style.width=fPct+"%";
+      document.getElementById("fivehour-used-lbl").textContent=(data.fiveHourUsed||0).toLocaleString()+" used";
+      document.getElementById("fivehour-total-lbl").textContent=data.fiveHourLimit.toLocaleString()+" total";
+      startCountdown("fivehour-reset-lbl", data.fiveHourResetAt, "Resets in");
+    }
   }catch(e){console.warn("Load error:",e);}
+}
+var countdownIntervals={};
+function startCountdown(elId, resetAtIso, prefix){
+  if(countdownIntervals[elId]) clearInterval(countdownIntervals[elId]);
+  var resetTime=new Date(resetAtIso).getTime();
+  function update(){
+    var diff=resetTime-Date.now();
+    if(diff<=0){
+      document.getElementById(elId).textContent=prefix+" now...";
+      clearInterval(countdownIntervals[elId]);
+      return;
+    }
+    var h=Math.floor(diff/3600000);
+    var m=Math.floor((diff%3600000)/60000);
+    var s=Math.floor((diff%60000)/1000);
+    document.getElementById(elId).textContent=prefix+" "+h+"h "+m+"m "+s+"s";
+  }
+  update();
+  countdownIntervals[elId]=setInterval(update,1000);
 }
 
 function copyKey(){
