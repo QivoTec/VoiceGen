@@ -4390,6 +4390,22 @@ async function verifyApiKey(req, res){
 
 
 // ── DEVELOPER API — GENERATE VOICE ──
+const DEV_PLAN_LIMITS = {
+  starter: { weekly: 750000, fiveHour: 150000 },
+  growth: { weekly: 2500000, fiveHour: 500000 },
+  pro: { weekly: 5000000, fiveHour: 1000000 }
+};
+function getNextMondayReset(){
+  const now = new Date();
+  const nowWAT = new Date(now.getTime() + (60*60*1000)); // shift to WAT (UTC+1)
+  const day = nowWAT.getUTCDay(); // 0=Sun,1=Mon...
+  let daysUntilMonday = (1 - day + 7) % 7;
+  if(daysUntilMonday === 0 && nowWAT.getUTCHours() >= 1) daysUntilMonday = 7;
+  const nextMondayWAT = new Date(nowWAT);
+  nextMondayWAT.setUTCDate(nowWAT.getUTCDate() + daysUntilMonday);
+  nextMondayWAT.setUTCHours(1,0,0,0);
+  return new Date(nextMondayWAT.getTime() - (60*60*1000)); // shift back to UTC
+}
 app.post("/api/v1/generate", async (req,res) => {
   const keyData = await verifyApiKey(req,res);
   if(!keyData) return;
@@ -4402,6 +4418,29 @@ app.post("/api/v1/generate", async (req,res) => {
     // Check if enough monthly credits
     if(keyData.monthlyCredits < characters){
       return res.status(402).json({ error:"Insufficient monthly credits. You have "+keyData.monthlyCredits+" credits remaining. Upgrade at platform.audlabs.io" });
+    }
+    // Weekly & 5-hour limit checks
+    const planLimits = DEV_PLAN_LIMITS[keyData.plan] || DEV_PLAN_LIMITS.starter;
+    const nowTs = Date.now();
+    let weeklyUsed = keyData.weeklyUsed || 0;
+    let weeklyResetAt = keyData.weeklyResetAt ? (keyData.weeklyResetAt.toDate ? keyData.weeklyResetAt.toDate().getTime() : new Date(keyData.weeklyResetAt).getTime()) : 0;
+    if(!weeklyResetAt || nowTs > weeklyResetAt){
+      weeklyUsed = 0;
+      weeklyResetAt = getNextMondayReset().getTime();
+    }
+    if(weeklyUsed + characters > planLimits.weekly){
+      return res.status(429).json({ error:"Weekly usage limit reached. Resets "+new Date(weeklyResetAt).toISOString(), resetAt: new Date(weeklyResetAt).toISOString() });
+    }
+    let fiveHourUsed = keyData.fiveHourUsed || 0;
+    let fiveHourWindowStart = keyData.fiveHourWindowStart ? (keyData.fiveHourWindowStart.toDate ? keyData.fiveHourWindowStart.toDate().getTime() : new Date(keyData.fiveHourWindowStart).getTime()) : 0;
+    const FIVE_HOURS_MS = 5*60*60*1000;
+    if(!fiveHourWindowStart || nowTs - fiveHourWindowStart > FIVE_HOURS_MS){
+      fiveHourUsed = 0;
+      fiveHourWindowStart = nowTs;
+    }
+    if(fiveHourUsed + characters > planLimits.fiveHour){
+      const resetAt = new Date(fiveHourWindowStart + FIVE_HOURS_MS);
+      return res.status(429).json({ error:"5-hour usage limit reached. Resets at "+resetAt.toISOString(), resetAt: resetAt.toISOString() });
     }
 
     // Generate with MiniMax
@@ -4472,11 +4511,15 @@ app.post("/api/v1/generate", async (req,res) => {
       return res.status(503).json({ error:"Voice generation temporarily unavailable. Please try again." });
     }
 
-    // Deduct monthly credits
+        // Deduct monthly credits + update weekly/5-hour tracking
     await db.collection("apiKeys").doc(keyData.keyId).update({
       monthlyCredits: admin.firestore.FieldValue.increment(-characters),
       totalCharacters: admin.firestore.FieldValue.increment(characters),
-      lastUsed: admin.firestore.FieldValue.serverTimestamp()
+      lastUsed: admin.firestore.FieldValue.serverTimestamp(),
+      weeklyUsed: weeklyUsed + characters,
+      weeklyResetAt: admin.firestore.Timestamp.fromDate(new Date(weeklyResetAt)),
+      fiveHourUsed: fiveHourUsed + characters,
+      fiveHourWindowStart: admin.firestore.Timestamp.fromDate(new Date(fiveHourWindowStart))
     });
 
     // Log usage
@@ -5048,7 +5091,22 @@ app.get("/api/developer/key", async (req,res) => {
     console.log("API key docs found:", snap.size);
     if(snap.empty) return res.status(404).json({ error:"No API key found. Please sign up at platform.audlabs.io" });
 
-    const keyData = snap.docs[0].data();
+        const keyData = snap.docs[0].data();
+    const planLimitsForKey = DEV_PLAN_LIMITS[keyData.plan] || DEV_PLAN_LIMITS.starter;
+    const nowTsForKey = Date.now();
+    let weeklyUsedForKey = keyData.weeklyUsed || 0;
+    let weeklyResetAtForKey = keyData.weeklyResetAt ? (keyData.weeklyResetAt.toDate ? keyData.weeklyResetAt.toDate().getTime() : new Date(keyData.weeklyResetAt).getTime()) : 0;
+    if(!weeklyResetAtForKey || nowTsForKey > weeklyResetAtForKey){
+      weeklyUsedForKey = 0;
+      weeklyResetAtForKey = getNextMondayReset().getTime();
+    }
+    let fiveHourUsedForKey = keyData.fiveHourUsed || 0;
+    let fiveHourWindowStartForKey = keyData.fiveHourWindowStart ? (keyData.fiveHourWindowStart.toDate ? keyData.fiveHourWindowStart.toDate().getTime() : new Date(keyData.fiveHourWindowStart).getTime()) : 0;
+    const FIVE_HOURS_MS_KEY = 5*60*60*1000;
+    if(!fiveHourWindowStartForKey || nowTsForKey - fiveHourWindowStartForKey > FIVE_HOURS_MS_KEY){
+      fiveHourUsedForKey = 0;
+      fiveHourWindowStartForKey = nowTsForKey;
+    }
     return res.json({
       success: true,
       key: keyData.key,
@@ -5058,7 +5116,13 @@ app.get("/api/developer/key", async (req,res) => {
       plan: keyData.plan || "none",
       totalCharacters: keyData.totalCharacters || 0,
       subscriptionExpiry: keyData.subscriptionExpiry || null,
-      active: keyData.active || false
+      active: keyData.active || false,
+      weeklyUsed: weeklyUsedForKey,
+      weeklyLimit: planLimitsForKey.weekly,
+      weeklyResetAt: new Date(weeklyResetAtForKey).toISOString(),
+      fiveHourUsed: fiveHourUsedForKey,
+      fiveHourLimit: planLimitsForKey.fiveHour,
+      fiveHourResetAt: new Date(fiveHourWindowStartForKey + FIVE_HOURS_MS_KEY).toISOString()
     });
   } catch(e){
     return res.status(500).json({ error:e.message });
