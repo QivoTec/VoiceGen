@@ -145,9 +145,9 @@ body{margin:0;padding:0;background:#f7f7f7;font-family:'Inter',sans-serif;}
 .pay-tab-name{font-size:12px;font-weight:600;color:#666;}
 #vg.dark-mode .pay-tab-name{color:#aaa;}
 .pay-note{font-size:12px;color:#999;margin-bottom:16px;line-height:1.6;}
-.pay-btn{width:100%;background:linear-gradient(135deg,#c9a84c,#e8c97a);border:none;color:#111;padding:13px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.15s;}
-.pay-btn:hover{opacity:0.9;}
-.pay-btn:disabled{opacity:0.5;cursor:not-allowed;}
+.pay-btn{width:100%;background:linear-gradient(180deg,#e8c97a 0%,#c9a84c 45%,#b8934a 100%);border:1px solid rgba(184,147,74,0.5);color:#111;padding:13px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;position:relative;overflow:hidden;transition:all 0.2s;box-shadow:0 4px 14px rgba(201,168,76,0.35),inset 0 1px 0 rgba(255,255,255,0.5);}
+.pay-btn:hover{filter:brightness(1.06);transform:translateY(-1px);box-shadow:0 6px 18px rgba(201,168,76,0.45),inset 0 1px 0 rgba(255,255,255,0.5);}
+.pay-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
 
 .va-box{background:#fafafa;border:1px solid #ebebeb;border-radius:10px;padding:20px;margin-top:16px;display:none;}
 #vg.dark-mode .va-box{background:#161616;border-color:#2a2a2a;}
