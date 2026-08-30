@@ -619,7 +619,7 @@ async function handlePayment(){
       var data2=await res2.json();
       if(!data2.success){showToast(data2.error||"Failed");btn.disabled=false;btn.textContent="Pay with Card →";return;}
       FlutterwaveCheckout({
-        public_key:"FLWPUBK-your-key-here",
+        public_key:"FLWPUBK-92d4bad9c43ab52a4cc2d2ec318195f4-X",
         tx_ref:data2.txRef,amount:data2.amount,currency:"NGN",
         customer:{email:data2.customerEmail,name:data2.customerName},
         customizations:{title:"AudLabs Platform",description:"Developer API — "+selectedPlan.plan,logo:"https://audlabs.io/logo.png"},
