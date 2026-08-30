@@ -4761,7 +4761,7 @@ app.post("/api/developer/signup", async (req,res) => {
 
 // ── DEVELOPER PLANS ──
 const DEV_PLANS = {
-  starter: { name:"Starter", price_usd:25, credits:3000000, label:"3M characters/month" },
+  starter: { name:"Starter", price_usd:30, credits:3000000, label:"3M characters/month" },
   growth: { name:"Growth", price_usd:70, credits:10000000, label:"10M characters/month" },
   pro: { name:"Pro", price_usd:150, credits:20000000, label:"20M characters/month" }
 };
