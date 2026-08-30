@@ -429,14 +429,18 @@ body{margin:0;padding:0;background:#f7f7f7;font-family:'Inter',sans-serif;}
 <script>
 const BACKEND="https://app.audlabs.io";
 var currentUser=null,keyData=null,isSignup=false,isDark=false;
+var awaitingOtpVerification=false;
 var selectedPlan={plan:"growth",price:40,credits:10000000};
 var selectedPayTab="transfer";
-
 const FC={apiKey:"AIzaSyCJ12GtdhXTzfB0h0buHkjzsqZtRxzfxS8",authDomain:"voicegene.firebaseapp.com",projectId:"voicegene",storageBucket:"voicegene.firebasestorage.app",messagingSenderId:"1040481136250",appId:"1:1040481136250:web:7a47e5993510d3ac07d5c3"};
 try{firebase.initializeApp(FC);}catch(e){}
 var auth=firebase.auth();
-
 auth.onAuthStateChanged(async function(user){
+  if(user && !user.emailVerified){
+    if(awaitingOtpVerification) return;
+    auth.signOut();
+    return;
+  }
   if(user){currentUser=user;showApp();await loadData();}
   else{showAuth();}
 });
@@ -491,20 +495,20 @@ async function handleAuth(){
       var res=await fetch(BACKEND+"/api/developer/signup",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({email,password,name,company})});
       var data=await res.json();
       if(!data.success){showErr(data.error||"Signup failed");btn.disabled=false;btn.textContent="Create Account";return;}
-      var signUpResult=await auth.signInWithEmailAndPassword(email,password);
-      await signUpResult.user.sendEmailVerification();
-      await auth.signOut();
-      var msgEl=document.getElementById("auth-err");
-      msgEl.textContent="✅ Account created! Check your email inbox and spam folder for a verification link before signing in.";
-      msgEl.className="vgl-err success";msgEl.style.display="block";
+            var signUpResult=await auth.signInWithEmailAndPassword(email,password);
+      awaitingOtpVerification=true;
+      var otpTokenDev=await signUpResult.user.getIdToken();
+      await fetch(BACKEND+"/api/send-verification-code",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+otpTokenDev}});
+      showOtpScreen(email);
       btn.disabled=false;btn.textContent="Create Account";
-      setTab("in");
       return;
-    }else{
+        }else{
       var signInResult=await auth.signInWithEmailAndPassword(email,password);
       if(!signInResult.user.emailVerified){
-        await auth.signOut();
-        showErr("Please verify your email first. Check your inbox for the verification link.");
+        awaitingOtpVerification=true;
+        var otpTokenDevSignin=await signInResult.user.getIdToken();
+        await fetch(BACKEND+"/api/send-verification-code",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+otpTokenDevSignin}});
+        showOtpScreen(email);
         btn.disabled=false;btn.textContent="Sign In";
         return;
       }
