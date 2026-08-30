@@ -1394,7 +1394,7 @@ app.post("/api/request-withdrawal", async (req,res) => {
       console.log("Recipient code:", recipientCode);
 
       // Step 2: Initiate transfer
-      const transferRef = `VG-WD-user.uid.slice(0,8)-{Date.now()}`;
+            const transferRef = `VG-WD-${user.uid.slice(0,8)}-${Date.now()}`;
       const transferRes = await axios.post(`${PAYSTACK_BASE}/transfer`, {
         source: "balance",
         amount: amount * 100, // Paystack uses kobo
