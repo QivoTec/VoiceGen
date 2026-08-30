@@ -591,7 +591,9 @@ async function handleVerifyOtp(){
       statusEl.style.color="#e74c3c";statusEl.textContent=data.error||"Verification failed.";
       btn.disabled=false;btn.textContent="Verify Account";
     }
-  }catch(e){
+    }catch(e){
+    console.error("OTP verify error:", e);
+    alert("OTP verify error: " + e.message);
     statusEl.style.color="#e74c3c";statusEl.textContent="Something went wrong. Please try again.";
     btn.disabled=false;btn.textContent="Verify Account";
   }
