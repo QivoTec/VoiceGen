@@ -2915,6 +2915,8 @@ app.get("/", (req,res) => {
     res.redirect("https://app.audlabs.io/login");
   } else if(host.startsWith("platform.")){
     res.sendFile(path.join(__dirname, "public", "platform.html"));
+  } else if(host.startsWith("mail.")){
+    res.sendFile(path.join(__dirname, "public", "mail.html"));
   } else {
     res.sendFile(path.join(__dirname, "landing.html"));
   }
@@ -3089,13 +3091,7 @@ app.get("/platform", (req,res) => {
     res.sendFile(path.join(__dirname, "public", "platform.html"));
   }
 });
-app.get("/", (req,res,next) => {
-  var host = req.headers.host || "";
-  if(host.startsWith("mail.")){
-    return res.sendFile(path.join(__dirname, "public", "mail.html"));
-  }
-  next();
-});
+
 app.get("/blog", (req,res) => {
   res.sendFile(path.join(__dirname, "public", "blog.html"));
 });
