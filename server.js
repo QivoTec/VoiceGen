@@ -639,7 +639,131 @@ console.error("Campaign error:", e.message);
 return res.status(500).json({ error:e.message });
 }
 });
-
+// ── SAVE CAMPAIGN (DYNAMIC) ──
+app.post("/api/admin/save-campaign", async (req,res) => {
+  const isAdmin = req.headers["x-admin-secret"] === "audlabs-admin-2026";
+  if(!isAdmin) return res.status(401).json({ error:"Unauthorized" });
+  try {
+    const { name, subject, htmlBody } = req.body;
+    if(!name || !subject || !htmlBody) return res.status(400).json({ error:"name, subject, and htmlBody are required" });
+    const slug = name.toLowerCase().trim().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");
+    if(!slug) return res.status(400).json({ error:"Invalid campaign name" });
+    const existing = await db.collection("emailCampaigns").doc(slug).get();
+    if(existing.exists && existing.data().sentAt) return res.status(400).json({ error:"A campaign with this name has already been sent. Please choose a different name." });
+    await db.collection("emailCampaigns").doc(slug).set({
+      name: name.trim(),
+      slug: slug,
+      subject: subject,
+      htmlBody: htmlBody,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      sentAt: existing.exists ? (existing.data().sentAt || null) : null
+    }, { merge: true });
+    return res.json({ success:true, slug: slug });
+  } catch(e){
+    return res.status(500).json({ error:e.message });
+  }
+});
+// ── LIST CAMPAIGNS (DYNAMIC) ──
+app.get("/api/admin/campaigns-list", async (req,res) => {
+  const isAdmin = req.headers["x-admin-secret"] === "audlabs-admin-2026";
+  if(!isAdmin) return res.status(401).json({ error:"Unauthorized" });
+  try {
+    const snap = await db.collection("emailCampaigns").orderBy("createdAt","desc").limit(50).get();
+    const campaigns = snap.docs.map(function(d){
+      const data = d.data();
+      return {
+        slug: d.id,
+        name: data.name,
+        subject: data.subject,
+        htmlBody: data.htmlBody,
+        createdAt: data.createdAt ? new Date(data.createdAt._seconds*1000).toISOString() : null,
+        sentAt: data.sentAt ? new Date(data.sentAt._seconds*1000).toISOString() : null,
+        sentCount: data.sentCount || 0,
+        failedCount: data.failedCount || 0
+      };
+    });
+    return res.json({ success:true, campaigns: campaigns });
+  } catch(e){
+    return res.status(500).json({ error:e.message });
+  }
+});
+// ── SEND CAMPAIGN (DYNAMIC) ──
+app.post("/api/admin/send-campaign-v2", async (req,res) => {
+  const isAdmin = req.headers["x-admin-secret"] === "audlabs-admin-2026";
+  if(!isAdmin) return res.status(401).json({ error:"Unauthorized" });
+  const testMode = req.headers["x-test-mode"] === "true";
+  try {
+    const { slug } = req.body;
+    if(!slug) return res.status(400).json({ error:"slug is required" });
+    const campaignDoc = await db.collection("emailCampaigns").doc(slug).get();
+    if(!campaignDoc.exists) return res.status(404).json({ error:"Campaign not found" });
+    const campaign = campaignDoc.data();
+    let users = [];
+    if(testMode){
+      users = [{email:"demolaadeyemo0@gmail.com", displayName:"Adeyemo"}];
+    } else {
+      const snap = await db.collection("users").select("email","displayName").get();
+      users = snap.docs.map(function(d){ return d.data(); }).filter(function(u){
+        if(!u.email) return false;
+        var email = u.email.toLowerCase();
+        var fakeDomains = ["tongtode.com","sudaley.com","llllan","lagagh","lastgg","lastt","laga.com"];
+        for(var fd of fakeDomains){ if(email.includes(fd)) return false; }
+        var localPart = email.split("@")[0];
+        if(/^[a-z0-9]{15,}$/.test(localPart)) return false;
+        return true;
+      });
+      const sentSnap = await db.collection("campaignSent").doc(slug).get();
+      const alreadySent = sentSnap.exists ? (sentSnap.data().emails || []) : [];
+      users = users.filter(function(u){ return u.email && !alreadySent.includes(u.email); });
+    }
+    const batchSize = 100;
+    users = users.slice(0, batchSize);
+    let sent = 0, failed = 0;
+    for(const userData of users){
+      if(!userData.email) continue;
+      try {
+        var firstName = "";
+        if(userData.displayName && userData.displayName.trim()){
+          firstName = userData.displayName.trim().split(" ")[0];
+        } else if(userData.email){
+          firstName = userData.email.split("@")[0].replace(/[0-9._]/g,"").trim();
+        }
+        if(!firstName) firstName = "Creator";
+        firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+        var personalizedHtml = campaign.htmlBody.split("${firstName}").join(firstName).split("{{firstName}}").join(firstName);
+        var personalizedSubject = campaign.subject.split("${firstName}").join(firstName).split("{{firstName}}").join(firstName);
+        await sesTransporter.sendMail({
+          from: 'Adeyemo from AudLabs <hello@audlabs.io>',
+          to: userData.email,
+          subject: personalizedSubject,
+          html: personalizedHtml
+        });
+        sent++;
+        if(!testMode){
+          await db.collection("campaignSent").doc(slug).set({
+            emails: admin.firestore.FieldValue.arrayUnion(userData.email),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          }, {merge:true});
+        }
+        await new Promise(function(resolve){ setTimeout(resolve, 100); });
+      } catch(emailErr){
+        console.error("Failed to send to:", userData.email, emailErr.message);
+        failed++;
+      }
+    }
+    if(!testMode){
+      await db.collection("emailCampaigns").doc(slug).set({
+        sentAt: admin.firestore.FieldValue.serverTimestamp(),
+        sentCount: admin.firestore.FieldValue.increment(sent),
+        failedCount: admin.firestore.FieldValue.increment(failed)
+      }, {merge:true});
+    }
+    return res.json({ success:true, sent, failed });
+  } catch(e){
+    console.error("Dynamic campaign error:", e.message);
+    return res.status(500).json({ error:e.message });
+  }
+});
 // ── REBUILD LEADERBOARD (CRON) ──
 app.post("/api/rebuild-leaderboard", async (req,res) => {
 const cronSecret = req.headers["x-cron-secret"];
