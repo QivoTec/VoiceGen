@@ -59,7 +59,12 @@ textarea.field-inp{min-height:260px;font-family:'Space Mono',monospace;font-size
   <div class="login-card">
     <h1>AudLabs Mail</h1>
     <p>Admin access required to send email campaigns.</p>
-    <input type="password" class="login-inp" id="admin-pass" placeholder="Admin password" onkeydown="if(event.key==='Enter')adminLogin()">
+    <div style="position:relative;">
+<input type="password" class="login-inp" id="admin-pass" placeholder="Admin password" style="padding-right:44px;" onkeydown="if(event.key==='Enter')adminLogin()">
+<button type="button" onclick="toggleAdminPwd()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#999;padding:4px;display:flex;align-items:center;" id="admin-pwd-eye">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+</button>
+</div>
     <button class="login-btn" onclick="adminLogin()">Sign In</button>
     <div class="login-err" id="login-err"></div>
   </div>
@@ -104,10 +109,26 @@ const BACKEND = "https://app.audlabs.io";
 let adminPassword = "";
 let currentSlug = null;
 
+  function toggleAdminPwd(){
+  var pwInput = document.getElementById("admin-pass");
+  var eyeBtn = document.getElementById("admin-pwd-eye");
+  if(pwInput.type === "password"){
+    pwInput.type = "text";
+    eyeBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19m-6.72-1.07a3 3 0 11-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+  } else {
+    pwInput.type = "password";
+    eyeBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+  }
+}
+function adminLogin(){
 function adminLogin(){
   const pass = document.getElementById("admin-pass").value;
   if(!pass){ document.getElementById("login-err").textContent = "Please enter password"; return; }
-  adminPassword = pass;
+  if(pass !== "(Oluwaseyi23)"){
+    document.getElementById("login-err").textContent = "Incorrect password";
+    return;
+  }
+  adminPassword = "audlabs-admin-2026";
   document.getElementById("login-screen").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
   loadCampaigns();
