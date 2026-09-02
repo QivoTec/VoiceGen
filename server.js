@@ -3089,8 +3089,13 @@ app.get("/platform", (req,res) => {
     res.sendFile(path.join(__dirname, "public", "platform.html"));
   }
 });
-
-
+app.get("/", (req,res,next) => {
+  var host = req.headers.host || "";
+  if(host.startsWith("mail.")){
+    return res.sendFile(path.join(__dirname, "public", "mail.html"));
+  }
+  next();
+});
 app.get("/blog", (req,res) => {
   res.sendFile(path.join(__dirname, "public", "blog.html"));
 });
