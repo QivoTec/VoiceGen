@@ -260,6 +260,20 @@ async function loadOpenCount(slug, sentCount){
     }
   }catch(e){}
 }
+  async function deleteDraft(slug){
+  if(!confirm("Delete this draft campaign? This cannot be undone.")) return;
+  try{
+    const res = await fetch(BACKEND + "/api/admin/delete-campaign", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","x-admin-secret":adminPassword},
+      body: JSON.stringify({ slug })
+    });
+    const data = await res.json();
+    if(data.success){ loadCampaigns(); }
+    else { alert(data.error || "Failed to delete"); }
+  }catch(e){ alert("Error: " + e.message); }
+}
+function loadIntoEditor(c){
 function loadIntoEditor(c){
   document.getElementById("camp-name").value = c.name;
   document.getElementById("camp-subject").value = c.subject;
