@@ -730,8 +730,11 @@ app.post("/api/admin/send-campaign-v2", async (req,res) => {
         }
         if(!firstName) firstName = "Creator";
         firstName = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
-        var personalizedHtml = campaign.htmlBody.split("${firstName}").join(firstName).split("{{firstName}}").join(firstName);
+                var personalizedHtml = campaign.htmlBody.split("${firstName}").join(firstName).split("{{firstName}}").join(firstName);
         var personalizedSubject = campaign.subject.split("${firstName}").join(firstName).split("{{firstName}}").join(firstName);
+        var trackingId = slug + "_" + Buffer.from(userData.email).toString("base64").replace(/[^a-zA-Z0-9]/g,"");
+        var trackingPixel = '<img src="https://app.audlabs.io/api/track-email-open?id=' + trackingId + '" width="1" height="1" style="display:none;" alt="">';
+        personalizedHtml = personalizedHtml.replace("</body>", trackingPixel + "</body>");
         await sesTransporter.sendMail({
           from: 'Adeyemo from AudLabs <hello@audlabs.io>',
           to: userData.email,
@@ -758,9 +761,42 @@ app.post("/api/admin/send-campaign-v2", async (req,res) => {
         failedCount: admin.firestore.FieldValue.increment(failed)
       }, {merge:true});
     }
-    return res.json({ success:true, sent, failed });
+        return res.json({ success:true, sent, failed });
   } catch(e){
     console.error("Dynamic campaign error:", e.message);
+    return res.status(500).json({ error:e.message });
+  }
+});
+// ── TRACK EMAIL OPEN ──
+const TRANSPARENT_PIXEL = Buffer.from("R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBTAA7", "base64");
+app.get("/api/track-email-open", async (req,res) => {
+  try {
+    const id = req.query.id;
+    if(id){
+      const underscoreIndex = id.indexOf("_");
+      const slug = underscoreIndex > -1 ? id.substring(0, underscoreIndex) : id;
+      await db.collection("emailCampaigns").doc(slug).collection("opens").doc(id).set({
+        openedAt: admin.firestore.FieldValue.serverTimestamp(),
+        count: admin.firestore.FieldValue.increment(1)
+      }, { merge: true });
+    }
+  } catch(e){
+    console.error("Track open error:", e.message);
+  }
+  res.set("Content-Type", "image/gif");
+  res.set("Cache-Control", "no-store, no-cache, must-revalidate, private");
+  res.send(TRANSPARENT_PIXEL);
+});
+// ── GET CAMPAIGN OPEN STATS ──
+app.get("/api/admin/campaign-opens", async (req,res) => {
+  const isAdmin = req.headers["x-admin-secret"] === "audlabs-admin-2026";
+  if(!isAdmin) return res.status(401).json({ error:"Unauthorized" });
+  try {
+    const slug = req.query.slug;
+    if(!slug) return res.status(400).json({ error:"slug is required" });
+    const opensSnap = await db.collection("emailCampaigns").doc(slug).collection("opens").get();
+    return res.json({ success:true, uniqueOpens: opensSnap.size });
+  } catch(e){
     return res.status(500).json({ error:e.message });
   }
 });
