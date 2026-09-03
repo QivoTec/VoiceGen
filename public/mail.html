@@ -59,9 +59,9 @@ textarea.field-inp{min-height:260px;font-family:'Space Mono',monospace;font-size
   <div class="login-card">
     <h1>AudLabs Mail</h1>
     <p>Admin access required to send email campaigns.</p>
-    <div style="position:relative;">
-<input type="password" class="login-inp" id="admin-pass" placeholder="Admin password" style="padding-right:44px;" onkeydown="if(event.key==='Enter')adminLogin()">
-<button type="button" onclick="toggleAdminPwd()" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:#999;padding:0;margin:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;" id="admin-pwd-eye">
+    <div style="position:relative;display:flex;align-items:center;">
+<input type="password" class="login-inp" id="admin-pass" placeholder="Admin password" style="padding-right:44px;margin-bottom:0;" onkeydown="if(event.key==='Enter')adminLogin()">
+<button type="button" onclick="toggleAdminPwd()" style="position:absolute;right:10px;background:none;border:none;cursor:pointer;color:#999;padding:0;margin:0;width:24px;height:24px;display:flex;align-items:center;justify-content:center;" id="admin-pwd-eye">
 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
 </button>
 </div>
