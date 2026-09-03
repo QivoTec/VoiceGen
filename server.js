@@ -794,8 +794,24 @@ app.get("/api/admin/campaign-opens", async (req,res) => {
   try {
     const slug = req.query.slug;
     if(!slug) return res.status(400).json({ error:"slug is required" });
-    const opensSnap = await db.collection("emailCampaigns").doc(slug).collection("opens").get();
+        const opensSnap = await db.collection("emailCampaigns").doc(slug).collection("opens").get();
     return res.json({ success:true, uniqueOpens: opensSnap.size });
+  } catch(e){
+    return res.status(500).json({ error:e.message });
+  }
+});
+// ── DELETE DRAFT CAMPAIGN ──
+app.post("/api/admin/delete-campaign", async (req,res) => {
+  const isAdmin = req.headers["x-admin-secret"] === "audlabs-admin-2026";
+  if(!isAdmin) return res.status(401).json({ error:"Unauthorized" });
+  try {
+    const { slug } = req.body;
+    if(!slug) return res.status(400).json({ error:"slug is required" });
+    const campaignDoc = await db.collection("emailCampaigns").doc(slug).get();
+    if(!campaignDoc.exists) return res.status(404).json({ error:"Campaign not found" });
+    if(campaignDoc.data().sentAt) return res.status(400).json({ error:"Cannot delete a campaign that has already been sent." });
+    await db.collection("emailCampaigns").doc(slug).delete();
+    return res.json({ success:true });
   } catch(e){
     return res.status(500).json({ error:e.message });
   }
