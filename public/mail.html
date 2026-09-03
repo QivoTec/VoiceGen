@@ -195,8 +195,11 @@ async function sendTest(){
 async function confirmSend(){
   if(!confirm("Send this campaign to ALL users now? This cannot be undone.")) return;
   const btn = document.getElementById("send-btn");
-  const slug = await saveCampaign(true);
-  if(!slug) return;
+  let slug = currentSlug;
+  if(!slug){
+    slug = await saveCampaign(true);
+    if(!slug) return;
+  }
   btn.disabled = true; btn.textContent = "Sending...";
   try{
     const res = await fetch(BACKEND + "/api/admin/send-campaign-v2", {
