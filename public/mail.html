@@ -233,9 +233,10 @@ async function loadCampaigns(){
           <div class="campaign-sub">${c.subject} · ${dateStr}${isSent ? ` · ${c.sentCount} sent, ${c.failedCount} failed` : ""}</div>
           ${isSent ? `<div class="campaign-sub" id="opens-${c.slug}" style="color:#c9a84c;">Loading opens...</div>` : ""}
         </div>
-        <div style="display:flex;align-items:center;gap:10px;">
+                <div style="display:flex;align-items:center;gap:10px;">
           <span class="campaign-badge ${isSent ? "badge-sent" : "badge-draft"}">${isSent ? "Sent" : "Draft"}</span>
           <button class="btn btn-outline" style="padding:6px 12px;font-size:12px;" onclick='loadIntoEditor(${JSON.stringify(c).replace(/'/g,"&apos;")})'>Load</button>
+          ${!isSent ? `<button class="btn btn-red" style="padding:6px 12px;font-size:12px;" onclick="deleteDraft('${c.slug}')">Delete</button>` : ""}
         </div>
       </div>`;
     }).join("");
