@@ -228,6 +228,7 @@ async function loadCampaigns(){
         <div>
           <div class="campaign-name">${c.name}</div>
           <div class="campaign-sub">${c.subject} · ${dateStr}${isSent ? ` · ${c.sentCount} sent, ${c.failedCount} failed` : ""}</div>
+          ${isSent ? `<div class="campaign-sub" id="opens-${c.slug}" style="color:#c9a84c;">Loading opens...</div>` : ""}
         </div>
         <div style="display:flex;align-items:center;gap:10px;">
           <span class="campaign-badge ${isSent ? "badge-sent" : "badge-draft"}">${isSent ? "Sent" : "Draft"}</span>
@@ -235,9 +236,25 @@ async function loadCampaigns(){
         </div>
       </div>`;
     }).join("");
+    data.campaigns.forEach(function(c){
+      if(c.sentAt) loadOpenCount(c.slug, c.sentCount);
+    });
   }catch(e){
     document.getElementById("campaigns-list").innerHTML = '<div class="empty-state">Failed to load campaigns.</div>';
   }
+}
+async function loadOpenCount(slug, sentCount){
+  try{
+    const res = await fetch(BACKEND + "/api/admin/campaign-opens?slug=" + slug, {
+      headers: {"x-admin-secret":adminPassword}
+    });
+    const data = await res.json();
+    const el = document.getElementById("opens-" + slug);
+    if(el && data.success){
+      const pct = sentCount > 0 ? Math.round((data.uniqueOpens / sentCount) * 100) : 0;
+      el.textContent = `👁 ${data.uniqueOpens} opened (${pct}% open rate)`;
+    }
+  }catch(e){}
 }
 function loadIntoEditor(c){
   document.getElementById("camp-name").value = c.name;
