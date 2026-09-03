@@ -3020,12 +3020,13 @@ app.post("/api/admin-send-push", async (req,res) => {
     const title = req.body.title;
     const body = req.body.body;
     if(!title || !body) return res.status(400).json({ error:"title and body required" });
-    const usersSnap = await db.collection("users").where("pushToken","!=",null).get();
-    const tokens = [];
+        const usersSnap = await db.collection("users").where("pushToken","!=",null).get();
+    const tokenSet = new Set();
     usersSnap.docs.forEach(function(doc){
       const t = doc.data().pushToken;
-      if(t) tokens.push(t);
+      if(t) tokenSet.add(t);
     });
+    const tokens = Array.from(tokenSet);
     if(!tokens.length){
       return res.json({ success:true, sent:0, message:"No devices registered yet." });
     }
