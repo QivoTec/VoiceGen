@@ -41,7 +41,7 @@ const PAYSTACK_SECRET = process.env.PAYSTACK_SECRET;
 const PAYSTACK_BASE = "https://api.paystack.co";
 const NOW_API_KEY = process.env.NOW_API_KEY;
 const NOW_IPN_SECRET = process.env.NOW_IPN_SECRET;
-const FREE_CREDITS = 5000;
+const FREE_CREDITS = 2000;
 const REFERRAL_PCT = 0.10;
 const MIN_WITHDRAWAL = 10000;
 const FLW_SECRET_KEY = process.env.FLW_SECRET_KEY;
@@ -335,7 +335,7 @@ app.post("/api/setup-account", async (req,res) => {
         });
         await db.collection("users").doc(uid).collection("transactions").add({
           type:"credit", amount:FREE_CREDITS,
-          note:"Welcome Bonus — 5,000 free credits to get you started! 🎙",
+          note:"Welcome Bonus — 2,000 free credits to get you started! 🎙",
           createdAt: admin.firestore.FieldValue.serverTimestamp(),
         });
         existingData.credits = FREE_CREDITS;
@@ -430,7 +430,7 @@ try {
   await audlabsTransporter.sendMail({
     from: `"AudLabs" <${process.env.AUDLABS_SMTP_USER}>`,
     to: email,
-    subject: "Welcome to AudLabs — Your 5000 Free Credits Are Ready! 🎙",
+    subject: "Welcome to AudLabs — Your 2000 Free Credits Are Ready! 🎙",
     html: `
       <div style="font-family:Inter,sans-serif;max-width:600px;margin:0 auto;background:#080c14;color:#fff;padding:40px;border-radius:16px;">
         <div style="text-align:center;margin-bottom:32px;">
@@ -438,9 +438,9 @@ try {
           <p style="color:rgba(255,255,255,0.6);font-size:15px;">AI-Powered Voice Generation Platform.</p>
         </div>
         <p style="font-size:15px;color:rgba(255,255,255,0.8);line-height:1.7;">Hi ${name},</p>
-        <p style="font-size:15px;color:rgba(255,255,255,0.8);line-height:1.7;">Welcome to AudLabs! We are excited to have you on board. Your account has been created successfully and we have added <strong style="color:#c9a84c;">5000 free credits</strong> to get you started.</p>
+        <p style="font-size:15px;color:rgba(255,255,255,0.8);line-height:1.7;">Welcome to AudLabs! We are excited to have you on board. Your account has been created successfully and we have added <strong style="color:#c9a84c;">2000 free credits</strong> to get you started.</p>
         <div style="background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.3);border-radius:12px;padding:24px;margin:24px 0;text-align:center;">
-          <div style="font-size:36px;font-weight:700;color:#c9a84c;">5,000</div>
+          <div style="font-size:36px;font-weight:700;color:#c9a84c;">2,000</div>
 <div style="font-size:14px;color:rgba(255,255,255,0.6);margin-top:4px;">Free Credits Added to Your Account.</div>
         </div>
         <p style="font-size:15px;color:rgba(255,255,255,0.8);line-height:1.7;">With AudLabs you can:</p>
@@ -5820,17 +5820,17 @@ app.all("/api/monthly-credits", async (req,res) => {
       for(const doc of chunk){
         const userRef = db.collection("users").doc(doc.id);
         batch.update(userRef, {
-          credits: admin.firestore.FieldValue.increment(5000)
+          credits: admin.firestore.FieldValue.increment(2000)
         });
         count++;
       }
       await batch.commit();
 
-      // Add transactions
+            // Add transactions
       for(const doc of chunk){
         await db.collection("users").doc(doc.id).collection("transactions").add({
-          type:"credit", amount:5000,
-          note:"🎁 Monthly Credits — 5,000 free credits for being an AudLabs User.",
+          type:"credit", amount:2000,
+          note:"🎁 Monthly Credits — 2,000 free credits for being an AudLabs User.",
           createdAt: admin.firestore.FieldValue.serverTimestamp()
         });
       }
