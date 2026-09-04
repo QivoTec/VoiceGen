@@ -421,7 +421,7 @@ const userData = {
     if(emailVerified){
 await db.collection("users").doc(uid).collection("transactions").add({
   type:"credit", amount:FREE_CREDITS, 
-  note:"Welcome Bonus — 5,000 free credits to get you started! 🎙",
+  note:"Welcome Bonus — 2,000 free credits to get you started! 🎙",
   createdAt: admin.firestore.FieldValue.serverTimestamp(),
 });
 }
