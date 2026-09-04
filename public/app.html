@@ -1538,6 +1538,7 @@ if(failedChunks.length > 0){
     throw new Error("Generation failed completely. Please try again.");
   }
   audioArrays = successfulArrays;
+  showStatus("⚠️ Your voiceover is incomplete — "+failedChunks.length+" of "+chunks.length+" part(s) failed to generate (likely due to poor network) and were skipped. Please try generating again to get the full script.", "err");
 }
 
 
