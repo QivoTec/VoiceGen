@@ -2611,7 +2611,7 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
         } catch(tertiaryErr){
           console.warn("Tertiary API key failed, switching to quaternary:", tertiaryErr.message);
           try {
-          response = await axios.post(
+                    response = await axios.post(
             "https://api.minimax.io/v1/t2a_v2",
             {
               model: "speech-2.8-hd",
@@ -2621,7 +2621,7 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
               audio_setting: { sample_rate: 32000, bitrate: 128000, format: "mp3", channel: 1 },
               output_format: "hex"
             },
-            { headers: { Authorization:`Bearer ${MK4}`, "Content-Type":"application/json" }}
+            { headers: { Authorization:`Bearer ${MK4}`, "Content-Type":"application/json" }, timeout: 20000 }
           );
           if(response.data && response.data.base_resp && (response.data.base_resp.status_code === 1002 || response.data.base_resp.status_code === 2056 || response.data.base_resp.status_msg?.includes("limit") || response.data.base_resp.status_msg?.includes("access") || response.data.base_resp.status_msg?.includes("voice_id"))){
             throw new Error("Rate limit hit on quaternary key");
