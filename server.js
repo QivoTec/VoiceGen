@@ -2629,7 +2629,7 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
           } catch(quaternaryErr){
             console.warn("Quaternary API key failed, switching to quinary:", quaternaryErr.message);
             try {
-              response = await axios.post(
+                            response = await axios.post(
                 "https://api.minimax.io/v1/t2a_v2",
                 {
                   model: "speech-2.8-hd",
@@ -2639,13 +2639,13 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
                   audio_setting: { sample_rate: 32000, bitrate: 128000, format: "mp3", channel: 1 },
                   output_format: "hex"
                 },
-                { headers: { Authorization:`Bearer ${MK5}`, "Content-Type":"application/json" }}
+                { headers: { Authorization:`Bearer ${MK5}`, "Content-Type":"application/json" }, timeout: 20000 }
               );
               if(response.data && response.data.base_resp && (response.data.base_resp.status_code === 1002 || response.data.base_resp.status_code === 2056 || response.data.base_resp.status_msg?.includes("limit") || response.data.base_resp.status_msg?.includes("access"))){
                 throw new Error("Rate limit hit on quinary key");
               }
             } catch(quinaryErr){
-              console.warn("Quinary key failed, switching to senary:", quinaryErr.message);
+                            console.warn("Quinary key failed, switching to senary:", quinaryErr.message);
               try {
                 response = await axios.post(
                   "https://api.minimax.io/v1/t2a_v2",
@@ -2657,13 +2657,13 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
                     audio_setting: { sample_rate: 32000, bitrate: 128000, format: "mp3", channel: 1 },
                     output_format: "hex"
                   },
-                  { headers: { Authorization:`Bearer ${MK6}`, "Content-Type":"application/json" }}
+                  { headers: { Authorization:`Bearer ${MK6}`, "Content-Type":"application/json" }, timeout: 20000 }
                 );
                 if(response.data && response.data.base_resp && (response.data.base_resp.status_code === 1002 || response.data.base_resp.status_code === 2056 || response.data.base_resp.status_msg?.includes("limit") || response.data.base_resp.status_msg?.includes("access"))){
                   throw new Error("Rate limit hit on senary key");
                 }
               } catch(senaryErr){
-                console.warn("Senary key failed, switching to septenary:", senaryErr.message);
+                                console.warn("Senary key failed, switching to septenary:", senaryErr.message);
                 try {
                   response = await axios.post(
                     "https://api.minimax.io/v1/t2a_v2",
@@ -2675,7 +2675,7 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
                       audio_setting: { sample_rate: 32000, bitrate: 128000, format: "mp3", channel: 1 },
                       output_format: "hex"
                     },
-                    { headers: { Authorization:`Bearer ${MK7}`, "Content-Type":"application/json" }}
+                    { headers: { Authorization:`Bearer ${MK7}`, "Content-Type":"application/json" }, timeout: 20000 }
                   );
                   if(response.data && response.data.base_resp && (response.data.base_resp.status_code === 1002 || response.data.base_resp.status_code === 2056 || response.data.base_resp.status_msg?.includes("limit") || response.data.base_resp.status_msg?.includes("access"))){
                     throw new Error("Rate limit hit on septenary key");
@@ -2693,7 +2693,7 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
                         audio_setting: { sample_rate: 32000, bitrate: 128000, format: "mp3", channel: 1 },
                         output_format: "hex"
                       },
-                      { headers: { Authorization:`Bearer ${MK8}`, "Content-Type":"application/json" }}
+                      { headers: { Authorization:`Bearer ${MK8}`, "Content-Type":"application/json" }, timeout: 20000 }
                     );
                     if(response.data && response.data.base_resp && (response.data.base_resp.status_code === 1002 || response.data.base_resp.status_code === 2056 || response.data.base_resp.status_msg?.includes("limit") || response.data.base_resp.status_msg?.includes("access"))){
                       throw new Error("Rate limit hit on octonary key");
@@ -2711,7 +2711,7 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
                           audio_setting: { sample_rate: 32000, bitrate: 128000, format: "mp3", channel: 1 },
                           output_format: "hex"
                         },
-                        { headers: { Authorization:`Bearer ${MK9}`, "Content-Type":"application/json" }}
+                        { headers: { Authorization:`Bearer ${MK9}`, "Content-Type":"application/json" }, timeout: 20000 }
                       );
                       if(response.data && response.data.base_resp && (response.data.base_resp.status_code === 1002 || response.data.base_resp.status_code === 2056 || response.data.base_resp.status_msg?.includes("limit") || response.data.base_resp.status_msg?.includes("access"))){
                         throw new Error("Rate limit hit on nonary key");
@@ -2728,7 +2728,7 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
                           audio_setting: { sample_rate: 32000, bitrate: 128000, format: "mp3", channel: 1 },
                           output_format: "hex"
                         },
-                        { headers: { Authorization:`Bearer ${MK10}`, "Content-Type":"application/json" }}
+                        { headers: { Authorization:`Bearer ${MK10}`, "Content-Type":"application/json" }, timeout: 20000 }
                       );
                     }
                   }
@@ -2740,7 +2740,6 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
       }
       }
     }
-
     // ── KOKORO FALLBACK REMOVED ──
 
 
