@@ -1649,6 +1649,8 @@ try {
 var genMsg = e.message || "Generation failed. Please try again.";
 if(genMsg.includes("high traffic") || genMsg.includes("High Traffic") || genMsg.includes("traffic") || genMsg.includes("alert")){
 showStatus("⚠️ High traffic alert! Too many creators are generating at the same time. You have not been charged for this. Please wait 2-3 hours and try again — we appreciate your patience.", "err");
+} else if(genMsg.includes("not been charged")){
+showStatus(genMsg, "err");
 } else {
 showStatus(genMsg + " You have not been charged for this attempt.", "err");
 }
