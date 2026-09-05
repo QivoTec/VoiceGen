@@ -1531,14 +1531,9 @@ for(var w = 0; w < Math.min(CONCURRENCY, chunks.length); w++){
 }
 await Promise.all(workers);
 
-// Remove null entries (failed chunks) from the final audio, keep only successful ones
-var successfulArrays = audioArrays.filter(function(a){ return a !== null; });
+// Any failed chunk means the whole generation fails - never deliver incomplete audio silently
 if(failedChunks.length > 0){
-  if(successfulArrays.length === 0){
-    throw new Error("Generation failed completely. Please try again.");
-  }
-  audioArrays = successfulArrays;
-  showStatus("⚠️ Your voiceover is incomplete — "+failedChunks.length+" of "+chunks.length+" part(s) failed to generate (likely due to poor network) and were skipped. Please try generating again to get the full script.", "err");
+  throw new Error("Generation incomplete — "+failedChunks.length+" of "+chunks.length+" part(s) failed. You have not been charged for this. Please try again.");
 }
 
 
