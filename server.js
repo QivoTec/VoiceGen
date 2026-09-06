@@ -236,11 +236,14 @@ function genRefCode(uid, email, displayName) {
     if (first.length >= 2) base = first;
   }
   if(!base){
-    base = (email||"").split("@")[0].replace(/[^a-z]/gi,"").toLowerCase().slice(0,8);
+    base = (email||"").split("@")[0].replace(/[^a-z]/gi,"").toLowerCase();
   }
-  if(!base) base = uid.slice(0,6).toLowerCase();
+  if(!base) base = uid.slice(0,4).toLowerCase();
   // Add unique suffix from UID to prevent duplicates
-  var suffix = uid.slice(-4).toLowerCase().replace(/[^a-z0-9]/g,"");
+  var suffix = uid.slice(-3).toLowerCase().replace(/[^a-z0-9]/g,"");
+  // Cap total length at 7 characters, reserving space for the suffix
+  var maxBaseLength = 7 - suffix.length;
+  base = base.slice(0, maxBaseLength);
   return base + suffix;
 }
 
