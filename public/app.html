@@ -410,7 +410,7 @@ Share on X
 <div id="thumbnail-result" style="display:none;text-align:center;">
 <img id="thumbnail-preview" src="" alt="Video Thumbnail" style="max-width:100%;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.1);margin-bottom:16px;">
 <div>
-<a id="thumbnail-download-link" href="" download="thumbnail.jpg" style="display:inline-block;background:linear-gradient(180deg,#2a2a2a,#1a1a1a);border:1px solid rgba(0,0,0,0.4);color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.1);">⬇️ Download Thumbnail</a>
+<button id="thumbnail-download-link" onclick="downloadThumbnail()" style="display:inline-block;background:linear-gradient(180deg,#2a2a2a,#1a1a1a);border:1px solid rgba(0,0,0,0.4);color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;box-shadow:0 2px 8px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.1);">⬇️ Download Thumbnail</button>
 </div>
 </div>
 <div id="thumbnail-error" style="display:none;background:#fff3f3;border:1.5px solid #fcc;border-radius:8px;padding:16px;font-size:13px;color:#e74c3c;"></div>
@@ -3284,18 +3284,62 @@ if(translatorInputEl){
     errorDiv.style.display = "block";
     return;
   }
-  var thumbUrl = "https://img.youtube.com/vi/"+videoId+"/maxresdefault.jpg";
+    var thumbUrl = "https://img.youtube.com/vi/"+videoId+"/maxresdefault.jpg";
   var img = document.getElementById("thumbnail-preview");
   img.onerror = function(){
     thumbUrl = "https://img.youtube.com/vi/"+videoId+"/hqdefault.jpg";
     img.src = thumbUrl;
-    document.getElementById("thumbnail-download-link").href = thumbUrl;
     img.onerror = null;
   };
   img.src = thumbUrl;
-  document.getElementById("thumbnail-download-link").href = thumbUrl;
-  document.getElementById("thumbnail-download-link").download = "audlabs_thumbnail_"+videoId+".jpg";
+  window.currentThumbnailUrl = thumbUrl;
+  window.currentThumbnailVideoId = videoId;
   resultDiv.style.display = "block";
+};
+window.downloadThumbnail = async function(){
+  var btn = document.getElementById("thumbnail-download-link");
+  var originalText = btn.textContent;
+  btn.textContent = "Downloading...";
+  try {
+    var actualUrl = document.getElementById("thumbnail-preview").src;
+    var response = await fetch(actualUrl);
+    var blob = await response.blob();
+    if(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()){
+      var reader = new FileReader();
+      reader.onloadend = async function(){
+        var base64data = reader.result.split(",")[1];
+        var Filesystem = window.Capacitor.Plugins.Filesystem;
+        var Share = window.Capacitor.Plugins.Share;
+        var fileName = "audlabs_thumbnail_"+window.currentThumbnailVideoId+".jpg";
+        var savedFile = await Filesystem.writeFile({
+          path: fileName,
+          data: base64data,
+          directory: "DOCUMENTS"
+        });
+        showStatus("Thumbnail saved to your device!", "ok");
+        try {
+          await Share.share({
+            title: "Share Thumbnail",
+            url: savedFile.uri,
+            dialogTitle: "Share your thumbnail"
+          });
+        } catch(shareErr){}
+      };
+      reader.readAsDataURL(blob);
+    } else {
+      var a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "audlabs_thumbnail_"+window.currentThumbnailVideoId+".jpg";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(a.href);
+      showStatus("Thumbnail downloaded!", "ok");
+    }
+  } catch(e){
+    showStatus("Download failed. Please try again.", "err");
+  }
+  btn.textContent = originalText;
 };
 window.translateScript = async function(){
   var text = document.getElementById("translator-input").value.trim();;
