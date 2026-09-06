@@ -3298,8 +3298,7 @@ if(translatorInputEl){
   resultDiv.style.display = "block";
 };
 window.translateScript = async function(){
-window.translateScript = async function(){
-  var text = document.getElementById("translator-input").value.trim();
+  var text = document.getElementById("translator-input").value.trim();;
   var targetLang = document.getElementById("translator-lang").value;
   if(!text){ showStatus("Please paste a script to translate first.", "err"); return; }
   var cost = text.length;
