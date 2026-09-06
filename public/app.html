@@ -110,6 +110,7 @@ Continue with Google
 <button class="vg-sb-item" data-tab="scriptvideos"><svg class="icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="3" width="14" height="12" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 7l4 2-4 2V7z" fill="currentColor"/></svg>Script To Videos.</button>
 <button class="vg-sb-item" data-tab="transcript"><svg class="icon" viewBox="0 0 18 18" fill="none"><path d="M3 4h12M3 7h12M3 10h8M3 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Transcript Extractor. <span style="background:#c9a84c;color:#111;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;">NEW</span></button>
 <button class="vg-sb-item" data-tab="translator"><svg class="icon" viewBox="0 0 18 18" fill="none"><path d="M3 5h6M6 3v2M6 5c0 3-2 5-4 6M4 8c1 1 2.5 1.5 4 1.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 15l3-8 3 8M11 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Language Translator. <span style="background:#c9a84c;color:#111;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;">NEW</span></button>
+<button class="vg-sb-item" data-tab="thumbnail"><svg class="icon" viewBox="0 0 18 18" fill="none"><rect x="2" y="4" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="8" r="1.3" fill="currentColor"/><path d="M2 12l4-3 3 2 5-4v6H2z" fill="currentColor"/></svg>Thumbnail Grabber. <span style="background:#c9a84c;color:#111;font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;margin-left:4px;">NEW</span></button>
 </div>
 <div class="vg-sb-section" onclick="toggleSbSection('earn')" style="cursor:pointer;font-size:12px;font-weight:700;color:#c9a84c;background:rgba(201,168,76,0.08);padding:8px 10px;border-radius:6px;letter-spacing:0.03em;margin-top:12px;margin-bottom:6px;height:36px;box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;"><span style="display:flex;align-items:center;gap:8px;"><svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M3 13l4-4 3 3 5-6M12 6h3v3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>Earn Money</span><span id="sb-arrow-earn" style="transition:transform 0.2s;display:inline-flex;align-items:center;justify-content:center;width:16px;height:16px;font-size:16px;line-height:1;">▾</span></div>
 <div id="sb-group-earn" style="display:none;">
@@ -395,6 +396,24 @@ Share on X
 <textarea id="translator-output" readonly style="width:100%;height:300px;padding:16px;background:#f9f9f9;border:1.5px solid #ebebeb;border-radius:8px;font-size:13px;font-family:Inter,sans-serif;color:#333;line-height:1.8;resize:none;outline:none;"></textarea>
 </div>
 <div id="translator-error" style="display:none;background:#fff3f3;border:1.5px solid #fcc;border-radius:8px;padding:16px;font-size:13px;color:#e74c3c;"></div>
+</div>
+</div>
+<div id="vg-tc-thumbnail" class="vg-tc">
+<div class="vg-card">
+<div class="vg-card-title"><span class="dot"></span>Thumbnail Grabber</div>
+<p style="font-size:13px;color:#888;margin-bottom:16px;line-height:1.6;">Paste any YouTube video link to instantly grab and download its thumbnail in the highest quality available. Completely free — no credits used.</p>
+<div style="margin-bottom:14px;">
+<label style="font-size:12px;font-weight:600;color:#888;margin-bottom:6px;display:block;">YouTube Video URL</label>
+<input type="text" id="thumbnail-url" placeholder="https://www.youtube.com/watch?v=..." style="width:100%;padding:12px 14px;background:#f9f9f9;border:1.5px solid #ebebeb;border-radius:8px;font-size:14px;font-family:Inter,sans-serif;color:#333;outline:none;box-sizing:border-box;">
+</div>
+<button onclick="getThumbnail()" id="thumbnail-btn" style="background:linear-gradient(180deg,#e8c97a 0%,#c9a84c 45%,#b8934a 100%);border:1px solid rgba(184,147,74,0.5);color:#111;padding:12px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;margin-bottom:16px;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(201,168,76,0.35),inset 0 1px 0 rgba(255,255,255,0.5);">🖼️ Get Video Thumbnail</button>
+<div id="thumbnail-result" style="display:none;text-align:center;">
+<img id="thumbnail-preview" src="" alt="Video Thumbnail" style="max-width:100%;border-radius:10px;box-shadow:0 4px 16px rgba(0,0,0,0.1);margin-bottom:16px;">
+<div>
+<a id="thumbnail-download-link" href="" download="thumbnail.jpg" style="display:inline-block;background:linear-gradient(180deg,#2a2a2a,#1a1a1a);border:1px solid rgba(0,0,0,0.4);color:#fff;padding:10px 24px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;text-decoration:none;box-shadow:0 2px 8px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.1);">⬇️ Download Thumbnail</a>
+</div>
+</div>
+<div id="thumbnail-error" style="display:none;background:#fff3f3;border:1.5px solid #fcc;border-radius:8px;padding:16px;font-size:13px;color:#e74c3c;"></div>
 </div>
 </div>
 
@@ -3238,6 +3257,47 @@ if(translatorInputEl){
   });
 }
 
+  window.getThumbnail = function(){
+  var url = document.getElementById("thumbnail-url").value.trim();
+  var resultDiv = document.getElementById("thumbnail-result");
+  var errorDiv = document.getElementById("thumbnail-error");
+  resultDiv.style.display = "none";
+  errorDiv.style.display = "none";
+  if(!url){
+    errorDiv.textContent = "Please paste a YouTube video URL first.";
+    errorDiv.style.display = "block";
+    return;
+  }
+  var videoId = null;
+  var patterns = [
+    /(?:youtube\.com\/watch\?v=)([a-zA-Z0-9_-]{11})/,
+    /(?:youtu\.be\/)([a-zA-Z0-9_-]{11})/,
+    /(?:youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+    /(?:youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/
+  ];
+  for(var i = 0; i < patterns.length; i++){
+    var match = url.match(patterns[i]);
+    if(match){ videoId = match[1]; break; }
+  }
+  if(!videoId){
+    errorDiv.textContent = "Couldn't find a valid YouTube video in that link. Please check the URL and try again.";
+    errorDiv.style.display = "block";
+    return;
+  }
+  var thumbUrl = "https://img.youtube.com/vi/"+videoId+"/maxresdefault.jpg";
+  var img = document.getElementById("thumbnail-preview");
+  img.onerror = function(){
+    thumbUrl = "https://img.youtube.com/vi/"+videoId+"/hqdefault.jpg";
+    img.src = thumbUrl;
+    document.getElementById("thumbnail-download-link").href = thumbUrl;
+    img.onerror = null;
+  };
+  img.src = thumbUrl;
+  document.getElementById("thumbnail-download-link").href = thumbUrl;
+  document.getElementById("thumbnail-download-link").download = "audlabs_thumbnail_"+videoId+".jpg";
+  resultDiv.style.display = "block";
+};
+window.translateScript = async function(){
 window.translateScript = async function(){
   var text = document.getElementById("translator-input").value.trim();
   var targetLang = document.getElementById("translator-lang").value;
