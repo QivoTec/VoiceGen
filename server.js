@@ -2748,9 +2748,10 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
 
 
 
-    if(!response?.data?.data?.audio){
+        if(!response?.data?.data?.audio){
       const errMsg400 = response?.data?.base_resp?.status_msg || "Generation failed";
-      console.error("Final generation failure — actual MiniMax error:", errMsg400);
+      const userAgent = req.headers["user-agent"] || "unknown";
+      console.error("Final generation failure — actual MiniMax error:", errMsg400, "| User-Agent:", userAgent, "| UID:", user.uid);
       const isCapacityIssue = errMsg400.includes("limit") || errMsg400.includes("quota") || errMsg400.includes("exceeded") || errMsg400.includes("Token Plan") || errMsg400.includes("Credits");
       const isVoiceIssue = errMsg400.includes("voice_id") || errMsg400.includes("access") || errMsg400.includes("not found");
       if(isCapacityIssue){
@@ -2793,8 +2794,9 @@ var voiceId10 = voiceIdMap10[voiceId] || voiceId;
       errMsg400 = friendlyMsg;
     }
     return res.status(400).json({ error: errMsg400 });
-  } catch(e) {
-    console.error("Generate error:", e.response?.data || e.message);
+    } catch(e) {
+    const userAgentErr = req.headers["user-agent"] || "unknown";
+    console.error("Generate error:", e.response?.data || e.message, "| User-Agent:", userAgentErr, "| UID:", user.uid);
     var errMsg = e.response?.data?.base_resp?.status_msg || e.message || "";
     if(errMsg400?.includes("access") || errMsg400?.includes("voice_id") || errMsg?.includes("access") || errMsg?.includes("voice_id")){
       return res.status(400).json({ error:"⚠️ Your cloned voice is not available on the current server. Please delete your cloned voice and re-clone it to fix this permanently." });
