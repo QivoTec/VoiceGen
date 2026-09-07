@@ -1748,7 +1748,7 @@ var response = await fetch(pl.src);
 var blob = await response.blob();
 var a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="audlabs_"+Date.now()+".mp3";
+a.download="audlabs_"+Date.now()+".wav";
 a.style.display="none";
 document.body.appendChild(a);
 a.click();
@@ -1763,8 +1763,8 @@ showStatus("Download failed. Please try again.", "err");
     try {
       var reader = new FileReader();
       reader.onloadend = async function(){
-        var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".mp3";
+                var base64data = reader.result.split(",")[1];
+        var fileName = "audlabs_"+Date.now()+".wav";
         var Filesystem = window.Capacitor.Plugins.Filesystem;
         var Share = window.Capacitor.Plugins.Share;
         var savedFile = await Filesystem.writeFile({
@@ -1783,10 +1783,10 @@ showStatus("Download failed. Please try again.", "err");
     } catch(nativeErr){
       showStatus("Download failed: "+nativeErr.message, "err");
     }
-  } else {
+    } else {
     var a=document.createElement("a");
     a.href=URL.createObjectURL(lastBlob);
-    a.download="audlabs_"+Date.now()+".mp3";
+    a.download="audlabs_"+Date.now()+".wav";
     a.click();
   }
 }
@@ -1994,7 +1994,7 @@ window.downloadHistory = async function(url, i){
     var blob = await response.blob();
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "AudLabs_"+Date.now()+".mp3";
+    a.download = "AudLabs_"+Date.now()+".wav";
     a.style.display = "none";
     document.body.appendChild(a);
     a.click();
