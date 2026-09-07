@@ -1461,11 +1461,70 @@ throw e;
 }
 
 
-function mergeUint8Arrays(arrays) {
-var total = arrays.reduce(function(s,a){return s+a.length;}, 0);
-var out = new Uint8Array(total), offset = 0;
-arrays.forEach(function(a){out.set(a, offset); offset += a.length;});
-return out;
+async function mergeAudioChunksProperly(arrays) {
+  var audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  var decodedBuffers = [];
+  for(var i = 0; i < arrays.length; i++){
+    try {
+      var arrayBuffer = arrays[i].buffer.slice(arrays[i].byteOffset, arrays[i].byteOffset + arrays[i].byteLength);
+      var decoded = await audioContext.decodeAudioData(arrayBuffer);
+      decodedBuffers.push(decoded);
+    } catch(decodeErr){
+      console.error("Failed to decode chunk " + i + ":", decodeErr.message);
+      throw new Error("Failed to process audio part " + (i+1) + ". Please try generating again.");
+    }
+  }
+  var numChannels = decodedBuffers[0].numberOfChannels;
+  var sampleRate = decodedBuffers[0].sampleRate;
+  var totalLength = decodedBuffers.reduce(function(sum, buf){ return sum + buf.length; }, 0);
+  var outputBuffer = audioContext.createBuffer(numChannels, totalLength, sampleRate);
+  var offset = 0;
+  for(var j = 0; j < decodedBuffers.length; j++){
+    for(var ch = 0; ch < numChannels; ch++){
+      var channelData = decodedBuffers[j].numberOfChannels > ch ? decodedBuffers[j].getChannelData(ch) : decodedBuffers[j].getChannelData(0);
+      outputBuffer.getChannelData(ch).set(channelData, offset);
+    }
+    offset += decodedBuffers[j].length;
+  }
+  return audioBufferToWav(outputBuffer);
+}
+function audioBufferToWav(buffer) {
+  var numChannels = buffer.numberOfChannels;
+  var sampleRate = buffer.sampleRate;
+  var format = 1;
+  var bitDepth = 16;
+  var bytesPerSample = bitDepth / 8;
+  var blockAlign = numChannels * bytesPerSample;
+  var dataLength = buffer.length * blockAlign;
+  var bufferLength = 44 + dataLength;
+  var arrayBuffer = new ArrayBuffer(bufferLength);
+  var view = new DataView(arrayBuffer);
+  function writeString(offset, str){ for(var i=0;i<str.length;i++){ view.setUint8(offset+i, str.charCodeAt(i)); } }
+  writeString(0, "RIFF");
+  view.setUint32(4, 36 + dataLength, true);
+  writeString(8, "WAVE");
+  writeString(12, "fmt ");
+  view.setUint32(16, 16, true);
+  view.setUint16(20, format, true);
+  view.setUint16(22, numChannels, true);
+  view.setUint32(24, sampleRate, true);
+  view.setUint32(28, sampleRate * blockAlign, true);
+  view.setUint16(32, blockAlign, true);
+  view.setUint16(34, bitDepth, true);
+  writeString(36, "data");
+  view.setUint32(40, dataLength, true);
+  var offset = 44;
+  var channels = [];
+  for(var ch = 0; ch < numChannels; ch++){ channels.push(buffer.getChannelData(ch)); }
+  for(var i = 0; i < buffer.length; i++){
+    for(var ch2 = 0; ch2 < numChannels; ch2++){
+      var sample = Math.max(-1, Math.min(1, channels[ch2][i]));
+      sample = sample < 0 ? sample * 0x8000 : sample * 0x7FFF;
+      view.setInt16(offset, sample, true);
+      offset += 2;
+    }
+  }
+  return new Uint8Array(arrayBuffer);
 }
 $("vg-genbtn").onclick = async function(){
 var text = $("vg-script").value.trim();
