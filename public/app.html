@@ -1616,8 +1616,9 @@ if(failedChunks.length > 0){
 
 
 
-var merged = mergeUint8Arrays(audioArrays);
-lastBlob = new Blob([merged], {type:"audio/mp3"});
+if(progressText) progressText.textContent = "Finalizing your audio...";
+var merged = await mergeAudioChunksProperly(audioArrays);
+lastBlob = new Blob([merged], {type:"audio/wav"});
 var audioUrl = URL.createObjectURL(lastBlob);
 var audioFilename = "";
 var vn = VOICES.concat(cloned.map(function(v){return{id:v.vid,name:v.name};})).find(function(v){return v.id===selVoice;});
