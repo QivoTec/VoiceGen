@@ -3,7 +3,7 @@ const cors = require("cors");
 const axios = require("axios");
 const crypto = require("crypto");
 const path = require("path");
-
+const fs = require("fs");
 const app = express();
 app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
@@ -1712,7 +1712,6 @@ app.post("/api/clone-voice", async (req,res) => {
   if (!user) return;
   try {
     const { IncomingForm } = require("formidable");
-    const fs = require("fs");
     const FormData = require("form-data");
     const form = new IncomingForm({ maxFileSize: 20 * 1024 * 1024 });
     form.parse(req, async (err, fields, files) => {
@@ -2336,6 +2335,62 @@ async function tempCloneAndGenerate(minimaxVoiceId, storageFilename, apiKey, tex
   }
 }
 
+// ── MERGE AUDIO CHUNKS (SERVER-SIDE, PROPER RE-ENCODE) ──
+const ffmpegPath = require("ffmpeg-static");
+const { spawn } = require("child_process");
+const os = require("os");
+app.post("/api/merge-audio-chunks", async (req,res) => {
+  const user = await verifyUser(req,res);
+  if (!user) return;
+  const { chunks } = req.body;
+  if (!chunks || !Array.isArray(chunks) || chunks.length === 0) {
+    return res.status(400).json({ error: "chunks array is required" });
+  }
+  const tempDir = path.join(os.tmpdir(), "audlabs-merge-" + Date.now());
+  try {
+    fs.mkdirSync(tempDir, { recursive: true });
+    const inputFiles = [];
+    for (let i = 0; i < chunks.length; i++) {
+      const filePath = path.join(tempDir, "chunk" + i + ".mp3");
+      const buffer = Buffer.from(chunks[i], "base64");
+      fs.writeFileSync(filePath, buffer);
+      inputFiles.push(filePath);
+    }
+    const listFilePath = path.join(tempDir, "list.txt");
+    const listContent = inputFiles.map(function(f){ return "file '" + f.replace(/'/g, "'\\''") + "'"; }).join("\n");
+    fs.writeFileSync(listFilePath, listContent);
+    const outputPath = path.join(tempDir, "output.mp3");
+    await new Promise(function(resolve, reject){
+      const ffmpegArgs = [
+        "-f", "concat",
+        "-safe", "0",
+        "-i", listFilePath,
+        "-acodec", "libmp3lame",
+        "-ar", "32000",
+        "-ab", "128k",
+        "-y",
+        outputPath
+      ];
+      const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
+      let stderrOutput = "";
+      ffmpegProcess.stderr.on("data", function(data){ stderrOutput += data.toString(); });
+      ffmpegProcess.on("close", function(code){
+        if (code === 0) resolve();
+        else reject(new Error("ffmpeg exited with code " + code + ": " + stderrOutput.slice(-500)));
+      });
+      ffmpegProcess.on("error", function(err){ reject(err); });
+    });
+    const mergedBuffer = fs.readFileSync(outputPath);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+    res.set("Content-Type", "audio/mpeg");
+    res.set("Content-Length", mergedBuffer.length);
+    return res.send(mergedBuffer);
+  } catch (e) {
+    console.error("Audio merge failed:", e.message);
+    try { fs.rmSync(tempDir, { recursive: true, force: true }); } catch(cleanupErr){}
+    return res.status(500).json({ error: "Failed to merge audio: " + e.message });
+  }
+});
 app.post("/api/generate-voice", async (req,res) => {
   const user = await verifyUser(req,res);
   if (!user) return;
