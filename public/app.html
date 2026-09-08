@@ -239,8 +239,8 @@ Continue with Google
 <div id="vg-progress-bar" style="height:100%;background:linear-gradient(90deg,#27ae60,#2ecc71);border-radius:10px;width:0%;transition:width 0.5s;"></div>
 </div>
 </div>
-<div class="vg-audiores" id="vg-audiores"><div class="vg-audiolabel">Output Ready</div><audio id="vg-player" controls></audio><button class="vg-dlbtn" id="vg-dlbtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
- Download Audio
+<button class="vg-dlbtn" id="vg-dlbtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+ Download MP3
  </button><a id="vg-sharebtn" href="#" target="_blank" class="vg-dlbtn" style="margin-left:8px;background:#000;border-color:#000;color:#fff;" onclick="shareOnX()">
 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
 Share on X
@@ -1799,7 +1799,7 @@ var response = await fetch(pl.src);
 var blob = await response.blob();
 var a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="audlabs_"+Date.now()+".wav";
+a.download="audlabs_"+Date.now()+".mp3";
 a.style.display="none";
 document.body.appendChild(a);
 a.click();
@@ -1814,8 +1814,8 @@ showStatus("Download failed. Please try again.", "err");
     try {
       var reader = new FileReader();
       reader.onloadend = async function(){
-                var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".wav";
+                        var base64data = reader.result.split(",")[1];
+        var fileName = "audlabs_"+Date.now()+".mp3";
         var Filesystem = window.Capacitor.Plugins.Filesystem;
         var Share = window.Capacitor.Plugins.Share;
         var savedFile = await Filesystem.writeFile({
@@ -1837,7 +1837,7 @@ showStatus("Download failed. Please try again.", "err");
     } else {
     var a=document.createElement("a");
     a.href=URL.createObjectURL(lastBlob);
-    a.download="audlabs_"+Date.now()+".wav";
+    a.download="audlabs_"+Date.now()+".mp3";
     a.click();
   }
 }
@@ -2045,7 +2045,7 @@ window.downloadHistory = async function(url, i){
     var blob = await response.blob();
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "AudLabs_"+Date.now()+".wav";
+    a.download = "AudLabs_"+Date.now()+".mp3";
     a.style.display = "none";
     document.body.appendChild(a);
     a.click();
