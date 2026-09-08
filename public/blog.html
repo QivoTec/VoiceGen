@@ -82,13 +82,13 @@ body{background:#fff;color:#1a1a1a;font-family:Inter,sans-serif;}
   <div class="hero-tag">AudLabs Blog</div>
   <h1>Tips for YouTube Creators</h1>
   <p>Guides, strategies and insights to help you create better content faster with AI voice generation.</p>
+  <div style="max-width:500px;margin:28px auto 0;position:relative;">
+    <input type="text" id="blog-search" placeholder="🔍 Search articles by topic or keyword..." oninput="filterPosts(this.value)" style="width:100%;padding:14px 18px;border:none;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:#1a1a1a;background:#fff;outline:none;box-sizing:border-box;box-shadow:0 4px 16px rgba(0,0,0,0.15);">
+  </div>
 </div>
 
 <div class="container">
   <div class="section-label">Latest Articles</div>
-  <div style="max-width:500px;margin:0 auto 32px;position:relative;">
-    <input type="text" id="blog-search" placeholder="🔍 Search articles by topic or keyword..." oninput="filterPosts(this.value)" style="width:100%;padding:14px 18px;border:1.5px solid #ebebeb;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:#1a1a1a;background:#fafafa;outline:none;box-sizing:border-box;transition:border-color 0.15s;">
-  </div>
   <div class="posts-grid" id="posts-grid">
     <div class="loading">Loading articles...</div>
   </div>
