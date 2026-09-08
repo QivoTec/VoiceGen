@@ -2853,7 +2853,14 @@ setTimeout(function(){
   }
 
   var tabRoutes={generate:"text-to-speech",transcript:"transcript-extractor",translator:"language-translator",thumbnail:"thumbnail-grabber",analytics:"analytics",scriptvideos:"script-to-videos",team:"create-team", clone:"clone-voices",history:"history",topup:"buy-credits",crypto:"buy-with-crypto",card:"buy-with-card",referral:"refer-earn",transactions:"transactions"};
-  var routeTabs={};Object.keys(tabRoutes).forEach(function(k){routeTabs[tabRoutes[k]]=k;});
+    var routeTabs={};Object.keys(tabRoutes).forEach(function(k){routeTabs[tabRoutes[k]]=k;});
+  var currentPath = window.location.pathname.replace(/^\/+/, "");
+  var initialTab = routeTabs[currentPath];
+  if(initialTab){
+    document.querySelectorAll(".vg-tc").forEach(function(c){c.classList.remove("active");});
+    var initialTc = document.getElementById("vg-tc-"+initialTab);
+    if(initialTc) initialTc.classList.add("active");
+  }
   var pageTitlesMap={generate:"Text to Speech",transcript:"Transcript Extractor",translator:"Language Translator",analytics:"Analytics",scriptvideos:"Script To Videos",thumbnail:"Thumbnail Grabber",clone:"Clone Voices",history:"History",topup:"Buy Credits",crypto:"Buy Credits",card:"Buy Credits",referral:"Affiliate Program",transactions:"Transactions",team:"Team"};
 var pageSubMap={generate:"",transcript:"",analytics:"",scriptvideos:"",thumbnail:"",clone:"",history:"",topup:"",crypto:"",card:"",referral:"",transactions:"",team:""};
 
