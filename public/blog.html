@@ -86,13 +86,18 @@ body{background:#fff;color:#1a1a1a;font-family:Inter,sans-serif;}
 
 <div class="container">
   <div class="section-label">Latest Articles</div>
+  <div style="max-width:500px;margin:0 auto 32px;position:relative;">
+    <input type="text" id="blog-search" placeholder="🔍 Search articles by topic or keyword..." oninput="filterPosts(this.value)" style="width:100%;padding:14px 18px;border:1.5px solid #ebebeb;border-radius:10px;font-family:'Inter',sans-serif;font-size:14px;color:#1a1a1a;background:#fafafa;outline:none;box-sizing:border-box;transition:border-color 0.15s;">
+  </div>
   <div class="posts-grid" id="posts-grid">
     <div class="loading">Loading articles...</div>
   </div>
-
+  <div id="no-results" style="display:none;text-align:center;padding:60px 20px;color:#999;">
+    <p style="font-size:16px;">No articles found matching your search.</p>
+  </div>
   <div class="cta-section">
     <h2>Ready to generate professional voiceovers?</h2>
-    <p>Join 1,000+ YouTube creators using AudLabs to create better content faster.</p>
+    <p>Join 1,500+ YouTube creators using AudLabs to create better content faster.</p>
     <a href="https://app.audlabs.io" class="cta-btn">Try AudLabs Free — No Card Needed</a>
   </div>
 </div>
@@ -103,7 +108,43 @@ body{background:#fff;color:#1a1a1a;font-family:Inter,sans-serif;}
 
 <script>
 const emojis = ["🎙","📝","🎬","🔊","🤖","💡","📱","🎯","✨","🚀"];
-
+var allPosts = [];
+function renderPostCards(posts){
+  const grid = document.getElementById("posts-grid");
+  const noResults = document.getElementById("no-results");
+  if(!posts.length){
+    grid.style.display = "none";
+    noResults.style.display = "block";
+    return;
+  }
+  grid.style.display = "";
+  noResults.style.display = "none";
+  grid.innerHTML = posts.map(function(post, i){
+    const emoji = emojis[i % emojis.length];
+    const thumbContent = post.image ? '<img src="'+post.image+'" alt="'+post.title+'" style="width:100%;height:100%;object-fit:cover;">' : emoji;
+    const date = post.createdAt ? new Date(post.createdAt._seconds * 1000).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "";
+    const tags = (post.tags||[]).slice(0,2).map(function(t){ return '<span class="post-tag">'+t+'</span>'; }).join("");
+    return '<a href="/blog/'+post.slug+'" class="post-card">'+
+      '<div class="post-thumb">'+thumbContent+'</div>'+
+      '<div class="post-body">'+
+      '<div class="post-tags">'+tags+'</div>'+
+      '<div class="post-title">'+post.title+'</div>'+
+      '<div class="post-excerpt">'+post.excerpt+'</div>'+
+      '<div class="post-meta"><span>📅 '+date+'</span><span>· 5 min read</span></div>'+
+      '</div></a>';
+  }).join("");
+}
+window.filterPosts = function(query){
+  const q = query.trim().toLowerCase();
+  if(!q){ renderPostCards(allPosts); return; }
+  const filtered = allPosts.filter(function(post){
+    const inTitle = (post.title||"").toLowerCase().includes(q);
+    const inExcerpt = (post.excerpt||"").toLowerCase().includes(q);
+    const inTags = (post.tags||[]).some(function(t){ return t.toLowerCase().includes(q); });
+    return inTitle || inExcerpt || inTags;
+  });
+  renderPostCards(filtered);
+};
 async function loadPosts(){
   try {
     const res = await fetch("/api/blog-posts");
@@ -113,20 +154,8 @@ async function loadPosts(){
       grid.innerHTML = '<div class="empty-state"><h2>Articles coming soon</h2><p>We are working on helpful content for YouTube creators.</p></div>';
       return;
     }
-    grid.innerHTML = data.posts.map(function(post, i){
-      const emoji = emojis[i % emojis.length];
-      const thumbContent = post.image ? '<img src="'+post.image+'" alt="'+post.title+'" style="width:100%;height:100%;object-fit:cover;">' : emoji;
-      const date = post.createdAt ? new Date(post.createdAt._seconds * 1000).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}) : "";
-      const tags = (post.tags||[]).slice(0,2).map(function(t){ return '<span class="post-tag">'+t+'</span>'; }).join("");
-      return '<a href="/blog/'+post.slug+'" class="post-card">'+
-        '<div class="post-thumb">'+thumbContent+'</div>'+
-        '<div class="post-body">'+
-        '<div class="post-tags">'+tags+'</div>'+
-        '<div class="post-title">'+post.title+'</div>'+
-        '<div class="post-excerpt">'+post.excerpt+'</div>'+
-        '<div class="post-meta"><span>📅 '+date+'</span><span>· 5 min read</span></div>'+
-        '</div></a>';
-    }).join("");
+    allPosts = data.posts;
+    renderPostCards(allPosts);
   } catch(e){
     document.getElementById("posts-grid").innerHTML = '<div class="empty-state"><h2>Unable to load articles</h2><p>Please try again later.</p></div>';
   }
