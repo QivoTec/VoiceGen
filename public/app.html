@@ -240,12 +240,11 @@ Continue with Google
 </div>
 </div>
 <div class="vg-audiores" id="vg-audiores"><div class="vg-audiolabel">Output Ready</div><audio id="vg-player" controls></audio><button class="vg-dlbtn" id="vg-dlbtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
- Download MP3
+ Download Audio
  </button><a id="vg-sharebtn" href="#" target="_blank" class="vg-dlbtn" style="margin-left:8px;background:#000;border-color:#000;color:#fff;" onclick="shareOnX()">
 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
 Share on X
 </a>
-</div>
 </div></div><!-- CLONE --><div id="vg-tc-clone" class="vg-tc"><div class="vg-card"><div class="vg-card-title"><span class="dot"></span>Clone a Voice</div><div style="background:#fffdf7;border:1.5px solid #f0e5c0;border-radius:8px;padding:12px 16px;margin-bottom:16px;font-size:13px;color:#7a6230;">⚠️ You can only have <strong>1 cloned voice</strong> at a time. Delete your existing clone before creating a new one.</div><div style="background:#f0f8ff;border:1.5px solid #c0d8f0;border-radius:8px;padding:12px 16px;margin-bottom:14px;font-size:12px;color:#555;line-height:1.7;">
 <strong>Supported formats:</strong> MP3, WAV, M4A only<br>
 <strong>Duration:</strong> 10 seconds minimum — 5 minutes maximum<br>
@@ -1654,23 +1653,8 @@ if(failedChunks.length > 0){
 
 
 if(progressText) progressText.textContent = "Finalizing your audio...";
-var base64Chunks = audioArrays.map(function(arr){
-  var binary = "";
-  for(var b = 0; b < arr.length; b++){ binary += String.fromCharCode(arr[b]); }
-  return btoa(binary);
-});
-var mergeToken = await getToken();
-var mergeRes = await fetch(BACKEND+"/api/merge-audio-chunks", {
-  method: "POST",
-  headers: {"Content-Type":"application/json","Authorization":"Bearer "+mergeToken},
-  body: JSON.stringify({ chunks: base64Chunks })
-});
-if(!mergeRes.ok){
-  var mergeErrData = await mergeRes.json().catch(function(){return {};});
-  throw new Error(mergeErrData.error || "Failed to finalize your audio. Please try again.");
-}
-var mergedArrayBuffer = await mergeRes.arrayBuffer();
-lastBlob = new Blob([mergedArrayBuffer], {type:"audio/mpeg"});
+var merged = await mergeAudioChunksProperly(audioArrays);
+lastBlob = new Blob([merged], {type:"audio/wav"});
 var audioUrl = URL.createObjectURL(lastBlob);
 var audioFilename = "";
 var vn = VOICES.concat(cloned.map(function(v){return{id:v.vid,name:v.name};})).find(function(v){return v.id===selVoice;});
@@ -1800,7 +1784,7 @@ var response = await fetch(pl.src);
 var blob = await response.blob();
 var a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="audlabs_"+Date.now()+".mp3";
+a.download="audlabs_"+Date.now()+".wav";
 a.style.display="none";
 document.body.appendChild(a);
 a.click();
@@ -1815,8 +1799,8 @@ showStatus("Download failed. Please try again.", "err");
     try {
       var reader = new FileReader();
       reader.onloadend = async function(){
-                        var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".mp3";
+                var base64data = reader.result.split(",")[1];
+        var fileName = "audlabs_"+Date.now()+".wav";
         var Filesystem = window.Capacitor.Plugins.Filesystem;
         var Share = window.Capacitor.Plugins.Share;
         var savedFile = await Filesystem.writeFile({
@@ -1838,7 +1822,7 @@ showStatus("Download failed. Please try again.", "err");
     } else {
     var a=document.createElement("a");
     a.href=URL.createObjectURL(lastBlob);
-    a.download="audlabs_"+Date.now()+".mp3";
+    a.download="audlabs_"+Date.now()+".wav";
     a.click();
   }
 }
@@ -2046,7 +2030,7 @@ window.downloadHistory = async function(url, i){
     var blob = await response.blob();
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "AudLabs_"+Date.now()+".mp3";
+    a.download = "AudLabs_"+Date.now()+".wav";
     a.style.display = "none";
     document.body.appendChild(a);
     a.click();
