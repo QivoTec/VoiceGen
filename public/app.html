@@ -1209,6 +1209,24 @@ sb.classList.remove("open");
 document.getElementById("vg-main-wrap").classList.remove("shifted");
 }
 });
+var pageTitles={generate:["Text to Speech","Paste your script, pick a voice and generate"],clone:["Clone Voices","Upload a sample to create your own custom voice"],history:["Generation History","Your past voiceover generations"],topup:["Buy Credits with Transfer","Top up via Nigerian bank transfer"],crypto:["Buy Credits with Crypto","Pay with USDT — instant global credit top-up"],referral:["Affiliate Program","Earn lifetime commission on every referral"]};
+document.querySelectorAll(".vg-sb-item[data-tab]").forEach(function(btn){
+btn.onclick=function(){
+var tab=btn.dataset.tab;
+document.querySelectorAll(".vg-sb-item").forEach(function(b){b.classList.remove("active");});
+document.querySelectorAll(".vg-tc").forEach(function(c){c.classList.remove("active");});
+btn.classList.add("active");
+$("vg-tc-"+tab).classList.add("active");
+var info=pageTitles[tab]||[pageTitlesMap[tab]||"AudLabs", pageSubMap[tab]||""];
+$("vg-pagetitle").textContent=info[0];
+$("vg-pagesub").textContent=info[1];
+if(tab==="history")renderHistory();
+if(tab==="clone")renderCloned();
+$("vg-sidebar").classList.remove("open");
+$("vg-overlay").classList.remove("show");
+if(!isMobile()) document.getElementById("vg-main-wrap").classList.remove("shifted");
+};
+});
 var previewCache = {};
 var previewAudio = null;
 var PREVIEW_TEXTS = {
@@ -2852,10 +2870,10 @@ setTimeout(function(){
     }catch(e){list.innerHTML='<div class="vg-empty"><p>Failed to load.</p></div>';}
   }
 
-  var tabRoutes={generate:"text-to-speech",transcript:"transcript-extractor",translator:"language-translator",thumbnail:"thumbnail-grabber",analytics:"analytics",scriptvideos:"script-to-videos",team:"create-team", clone:"clone-voices",history:"history",topup:"buy-credits",crypto:"buy-with-crypto",card:"buy-with-card",referral:"refer-earn",transactions:"transactions"};
+  var tabRoutes={generate:"text-to-speech",transcript:"transcript-extractor",translator:"language-translator",analytics:"analytics",scriptvideos:"script-to-videos",team:"create-team", clone:"clone-voices",history:"history",topup:"buy-credits",crypto:"buy-with-crypto",card:"buy-with-card",referral:"refer-earn",transactions:"transactions"};
   var routeTabs={};Object.keys(tabRoutes).forEach(function(k){routeTabs[tabRoutes[k]]=k;});
-  var pageTitlesMap={generate:"Text to Speech",transcript:"Transcript Extractor",translator:"Language Translator",analytics:"Analytics",scriptvideos:"Script To Videos",thumbnail:"Thumbnail Grabber",clone:"Clone Voices",history:"History",topup:"Buy Credits",crypto:"Buy Credits",card:"Buy Credits",referral:"Affiliate Program",transactions:"Transactions",team:"Team"};
-var pageSubMap={generate:"",transcript:"",analytics:"",scriptvideos:"",thumbnail:"",clone:"",history:"",topup:"",crypto:"",card:"",referral:"",transactions:"",team:""};
+  var pageTitlesMap={generate:"Text to Speech",transcript:"Transcript Extractor",translator:"Language Translator",analytics:"Analytics",clone:"Clone Voices",history:"History",topup:"Buy Credits",crypto:"Buy Credits",card:"Buy Credits",referral:"Affiliate Program",transactions:"Transactions",team:"Team"};
+  var pageSubMap={generate:"",transcript:"",analytics:"",scriptvideos:"",clone:"",history:"",topup:"",crypto:"",card:"",referral:"",transactions:"",team:""};
 
   function switchTab(tab){
     document.querySelectorAll(".vg-sb-item").forEach(function(b){b.classList.remove("active");});
@@ -2864,7 +2882,7 @@ var pageSubMap={generate:"",transcript:"",analytics:"",scriptvideos:"",thumbnail
     if(btn)btn.classList.add("active");
     var tc=document.getElementById("vg-tc-"+tab);
     if(tc)tc.classList.add("active");
-    document.getElementById("vg-pagetitle").textContent=pageTitlesMap[tab]||"AudLabs";
+    document.getElementById("vg-pagetitle").textContent=pageTitlesMap[tab]||"Script To Videos";
     document.getElementById("vg-pagesub").textContent="";
     if(tab==="history")renderHistory();
     if(tab==="clone")renderCloned();
