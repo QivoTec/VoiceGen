@@ -240,7 +240,7 @@ Continue with Google
 </div>
 </div>
 <div class="vg-audiores" id="vg-audiores"><div class="vg-audiolabel">Output Ready</div><audio id="vg-player" controls></audio><button class="vg-dlbtn" id="vg-dlbtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
- Download Audio
+ Download MP3
  </button><a id="vg-sharebtn" href="#" target="_blank" class="vg-dlbtn" style="margin-left:8px;background:#000;border-color:#000;color:#fff;" onclick="shareOnX()">
 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
 Share on X
@@ -1209,6 +1209,24 @@ sb.classList.remove("open");
 document.getElementById("vg-main-wrap").classList.remove("shifted");
 }
 });
+var pageTitles={generate:["Text to Speech","Paste your script, pick a voice and generate"],clone:["Clone Voices","Upload a sample to create your own custom voice"],history:["Generation History","Your past voiceover generations"],topup:["Buy Credits with Transfer","Top up via Nigerian bank transfer"],crypto:["Buy Credits with Crypto","Pay with USDT — instant global credit top-up"],referral:["Affiliate Program","Earn lifetime commission on every referral"]};
+document.querySelectorAll(".vg-sb-item[data-tab]").forEach(function(btn){
+btn.onclick=function(){
+var tab=btn.dataset.tab;
+document.querySelectorAll(".vg-sb-item").forEach(function(b){b.classList.remove("active");});
+document.querySelectorAll(".vg-tc").forEach(function(c){c.classList.remove("active");});
+btn.classList.add("active");
+$("vg-tc-"+tab).classList.add("active");
+var info=pageTitles[tab]||[pageTitlesMap[tab]||"AudLabs", pageSubMap[tab]||""];
+$("vg-pagetitle").textContent=info[0];
+$("vg-pagesub").textContent=info[1];
+if(tab==="history")renderHistory();
+if(tab==="clone")renderCloned();
+$("vg-sidebar").classList.remove("open");
+$("vg-overlay").classList.remove("show");
+if(!isMobile()) document.getElementById("vg-main-wrap").classList.remove("shifted");
+};
+});
 var previewCache = {};
 var previewAudio = null;
 var PREVIEW_TEXTS = {
@@ -1636,8 +1654,23 @@ if(failedChunks.length > 0){
 
 
 if(progressText) progressText.textContent = "Finalizing your audio...";
-var merged = await mergeAudioChunksProperly(audioArrays);
-lastBlob = new Blob([merged], {type:"audio/wav"});
+var base64Chunks = audioArrays.map(function(arr){
+  var binary = "";
+  for(var b = 0; b < arr.length; b++){ binary += String.fromCharCode(arr[b]); }
+  return btoa(binary);
+});
+var mergeToken = await getToken();
+var mergeRes = await fetch(BACKEND+"/api/merge-audio-chunks", {
+  method: "POST",
+  headers: {"Content-Type":"application/json","Authorization":"Bearer "+mergeToken},
+  body: JSON.stringify({ chunks: base64Chunks })
+});
+if(!mergeRes.ok){
+  var mergeErrData = await mergeRes.json().catch(function(){return {};});
+  throw new Error(mergeErrData.error || "Failed to finalize your audio. Please try again.");
+}
+var mergedArrayBuffer = await mergeRes.arrayBuffer();
+lastBlob = new Blob([mergedArrayBuffer], {type:"audio/mpeg"});
 var audioUrl = URL.createObjectURL(lastBlob);
 var audioFilename = "";
 var vn = VOICES.concat(cloned.map(function(v){return{id:v.vid,name:v.name};})).find(function(v){return v.id===selVoice;});
@@ -1767,7 +1800,7 @@ var response = await fetch(pl.src);
 var blob = await response.blob();
 var a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="audlabs_"+Date.now()+".wav";
+a.download="audlabs_"+Date.now()+".mp3";
 a.style.display="none";
 document.body.appendChild(a);
 a.click();
@@ -1782,8 +1815,8 @@ showStatus("Download failed. Please try again.", "err");
     try {
       var reader = new FileReader();
       reader.onloadend = async function(){
-                                var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".wav";
+                        var base64data = reader.result.split(",")[1];
+        var fileName = "audlabs_"+Date.now()+".mp3";
         var Filesystem = window.Capacitor.Plugins.Filesystem;
         var Share = window.Capacitor.Plugins.Share;
         var savedFile = await Filesystem.writeFile({
@@ -1802,10 +1835,10 @@ showStatus("Download failed. Please try again.", "err");
     } catch(nativeErr){
       showStatus("Download failed: "+nativeErr.message, "err");
     }
-        } else {
+    } else {
     var a=document.createElement("a");
     a.href=URL.createObjectURL(lastBlob);
-    a.download="audlabs_"+Date.now()+".wav";
+    a.download="audlabs_"+Date.now()+".mp3";
     a.click();
   }
 }
@@ -2013,7 +2046,7 @@ window.downloadHistory = async function(url, i){
     var blob = await response.blob();
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "AudLabs_"+Date.now()+".wav";
+    a.download = "AudLabs_"+Date.now()+".mp3";
     a.style.display = "none";
     document.body.appendChild(a);
     a.click();
@@ -2852,17 +2885,10 @@ setTimeout(function(){
     }catch(e){list.innerHTML='<div class="vg-empty"><p>Failed to load.</p></div>';}
   }
 
-  var tabRoutes={generate:"text-to-speech",transcript:"transcript-extractor",translator:"language-translator",thumbnail:"thumbnail-grabber",analytics:"analytics",scriptvideos:"script-to-videos",team:"create-team", clone:"clone-voices",history:"history",topup:"buy-credits",crypto:"buy-with-crypto",card:"buy-with-card",referral:"refer-earn",transactions:"transactions"};
-    var routeTabs={};Object.keys(tabRoutes).forEach(function(k){routeTabs[tabRoutes[k]]=k;});
-  var currentPath = window.location.pathname.replace(/^\/+/, "");
-  var initialTab = routeTabs[currentPath];
-  if(initialTab){
-    document.querySelectorAll(".vg-tc").forEach(function(c){c.classList.remove("active");});
-    var initialTc = document.getElementById("vg-tc-"+initialTab);
-    if(initialTc) initialTc.classList.add("active");
-  }
-  var pageTitlesMap={generate:"Text to Speech",transcript:"Transcript Extractor",translator:"Language Translator",analytics:"Analytics",scriptvideos:"Script To Videos",thumbnail:"Thumbnail Grabber",clone:"Clone Voices",history:"History",topup:"Buy Credits",crypto:"Buy Credits",card:"Buy Credits",referral:"Affiliate Program",transactions:"Transactions",team:"Team"};
-var pageSubMap={generate:"",transcript:"",analytics:"",scriptvideos:"",thumbnail:"",clone:"",history:"",topup:"",crypto:"",card:"",referral:"",transactions:"",team:""};
+  var tabRoutes={generate:"text-to-speech",transcript:"transcript-extractor",translator:"language-translator",analytics:"analytics",scriptvideos:"script-to-videos",team:"create-team", clone:"clone-voices",history:"history",topup:"buy-credits",crypto:"buy-with-crypto",card:"buy-with-card",referral:"refer-earn",transactions:"transactions"};
+  var routeTabs={};Object.keys(tabRoutes).forEach(function(k){routeTabs[tabRoutes[k]]=k;});
+  var pageTitlesMap={generate:"Text to Speech",transcript:"Transcript Extractor",translator:"Language Translator",analytics:"Analytics",clone:"Clone Voices",history:"History",topup:"Buy Credits",crypto:"Buy Credits",card:"Buy Credits",referral:"Affiliate Program",transactions:"Transactions",team:"Team"};
+  var pageSubMap={generate:"",transcript:"",analytics:"",scriptvideos:"",clone:"",history:"",topup:"",crypto:"",card:"",referral:"",transactions:"",team:""};
 
   function switchTab(tab){
     document.querySelectorAll(".vg-sb-item").forEach(function(b){b.classList.remove("active");});
@@ -2871,19 +2897,16 @@ var pageSubMap={generate:"",transcript:"",analytics:"",scriptvideos:"",thumbnail
     if(btn)btn.classList.add("active");
     var tc=document.getElementById("vg-tc-"+tab);
     if(tc)tc.classList.add("active");
-    document.getElementById("vg-pagetitle").textContent=pageTitlesMap[tab]||"AudLabs";
+    document.getElementById("vg-pagetitle").textContent=pageTitlesMap[tab]||"Script To Videos";
     document.getElementById("vg-pagesub").textContent="";
     if(tab==="history")renderHistory();
     if(tab==="clone")renderCloned();
     if(tab==="topup"){loadBalance().then(function(){renderTopup();});fetchLiveRate();setTimeout(function(){updateTopupNGNPrices();updateTopupSelectedBox();},1500);}
     if(tab==="referral"){renderReferralTab();fetchLiveRate();}
     if(tab==="transactions")renderTransactions();if(tab==="team"){ loadMyTeam(); setTeamPayment("card"); }
-        document.getElementById("vg-sidebar").classList.remove("open");
+    document.getElementById("vg-sidebar").classList.remove("open");
     document.getElementById("vg-overlay").classList.remove("show");
     if(!isMobile())document.getElementById("vg-main-wrap").classList.remove("shifted");
-    window.scrollTo(0, 0);
-    var mainWrapScroll = document.getElementById("vg-main-wrap");
-    if(mainWrapScroll) mainWrapScroll.scrollTop = 0;
     window.history.pushState({tab:tab},"","/"+tabRoutes[tab]);
   }
  window.addEventListener("popstate",function(e){if(e.state&&e.state.tab)switchTab(e.state.tab);});window.switchToTopup = function(){switchTab("topup");};
