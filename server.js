@@ -2995,7 +2995,9 @@ app.get("/__/auth/action", (req,res) => {
 app.get("/privacy-policy", (req,res) => {
   res.sendFile(path.join(__dirname, "public", "privacy.html"));
 });
-
+app.get("/seyi", (req,res) => {
+  res.sendFile(path.join(__dirname, "public", "seyi.html"));
+});
 // ── SITEMAP ──
 app.get("/sitemap.xml", async (req,res) => {
   try {
