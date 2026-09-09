@@ -188,70 +188,6 @@ const bucket = admin.storage().bucket("voicegene.firebasestorage.app");
 const ffmpegPath = require("ffmpeg-static");
 const { spawn } = require("child_process");
 const os = require("os");
-// ── UPLOAD TEMP AUDIO CHUNK ──
-app.post("/api/upload-audio-chunk", async (req,res) => {
-  const user = await verifyUser(req,res);
-  if (!user) return;
-  try {
-    const { sessionId, chunkIndex, audioBase64 } = req.body;
-    if(!sessionId || chunkIndex === undefined || !audioBase64) return res.status(400).json({ error:"sessionId, chunkIndex, and audioBase64 are required" });
-    const buffer = Buffer.from(audioBase64, "base64");
-    const filename = "temp-chunks/" + user.uid + "/" + sessionId + "/chunk" + chunkIndex + ".mp3";
-    const file = bucket.file(filename);
-    await file.save(buffer, { metadata: { contentType: "audio/mpeg" } });
-    return res.json({ success:true });
-  } catch(e){
-    console.error("Chunk upload failed:", e.message);
-    return res.status(500).json({ error:"Failed to upload audio chunk: " + e.message });
-  }
-});
-// ── MERGE UPLOADED CHUNKS (SERVER-SIDE, VIA STORAGE) ──
-app.post("/api/merge-uploaded-chunks", async (req,res) => {
-  const user = await verifyUser(req,res);
-  if (!user) return;
-  const { sessionId, totalChunks } = req.body;
-  if(!sessionId || !totalChunks) return res.status(400).json({ error:"sessionId and totalChunks are required" });
-  const tempDir = path.join(os.tmpdir(), "audlabs-merge-" + sessionId);
-  const storagePrefix = "temp-chunks/" + user.uid + "/" + sessionId + "/";
-  try {
-    fs.mkdirSync(tempDir, { recursive: true });
-    const inputFiles = [];
-    for(let i = 0; i < totalChunks; i++){
-      const storagePath = storagePrefix + "chunk" + i + ".mp3";
-      const localPath = path.join(tempDir, "chunk" + i + ".mp3");
-      await bucket.file(storagePath).download({ destination: localPath });
-      inputFiles.push(localPath);
-    }
-    const listFilePath = path.join(tempDir, "list.txt");
-    const listContent = inputFiles.map(function(f){ return "file '" + f.replace(/'/g, "'\\''") + "'"; }).join("\n");
-    fs.writeFileSync(listFilePath, listContent);
-    const outputPath = path.join(tempDir, "output.mp3");
-    await new Promise(function(resolve, reject){
-      const ffmpegArgs = ["-f","concat","-safe","0","-i",listFilePath,"-acodec","libmp3lame","-ar","32000","-ab","128k","-y",outputPath];
-      const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
-      let stderrOutput = "";
-      ffmpegProcess.stderr.on("data", function(data){ stderrOutput += data.toString(); });
-      ffmpegProcess.on("close", function(code){
-        if(code === 0) resolve();
-        else reject(new Error("ffmpeg exited with code " + code + ": " + stderrOutput.slice(-500)));
-      });
-      ffmpegProcess.on("error", function(err){ reject(err); });
-    });
-    const mergedBuffer = fs.readFileSync(outputPath);
-    fs.rmSync(tempDir, { recursive: true, force: true });
-    try {
-      const [files] = await bucket.getFiles({ prefix: storagePrefix });
-      await Promise.all(files.map(function(f){ return f.delete().catch(function(){}); }));
-    } catch(cleanupErr){ console.warn("Storage cleanup failed:", cleanupErr.message); }
-    res.set("Content-Type", "audio/mpeg");
-    res.set("Content-Length", mergedBuffer.length);
-    return res.send(mergedBuffer);
-  } catch(e){
-    console.error("Merge from storage failed:", e.message);
-    try { fs.rmSync(tempDir, { recursive: true, force: true }); } catch(cleanupErr2){}
-    return res.status(500).json({ error:"Failed to merge audio: " + e.message });
-  }
-});
 // ── HELPERS ──
 async function uploadAudioToStorage(audioBuffer, uid, mimeType){
   try {
@@ -318,7 +254,70 @@ app.use((req,res,next) => {
   express.json({ limit: "10mb" })(req,res,next);
 });
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
-
+// ── UPLOAD TEMP AUDIO CHUNK ──
+app.post("/api/upload-audio-chunk", async (req,res) => {
+  const user = await verifyUser(req,res);
+  if (!user) return;
+  try {
+    const { sessionId, chunkIndex, audioBase64 } = req.body;
+    if(!sessionId || chunkIndex === undefined || !audioBase64) return res.status(400).json({ error:"sessionId, chunkIndex, and audioBase64 are required" });
+    const buffer = Buffer.from(audioBase64, "base64");
+    const filename = "temp-chunks/" + user.uid + "/" + sessionId + "/chunk" + chunkIndex + ".mp3";
+    const file = bucket.file(filename);
+    await file.save(buffer, { metadata: { contentType: "audio/mpeg" } });
+    return res.json({ success:true });
+  } catch(e){
+    console.error("Chunk upload failed:", e.message);
+    return res.status(500).json({ error:"Failed to upload audio chunk: " + e.message });
+  }
+});
+// ── MERGE UPLOADED CHUNKS (SERVER-SIDE, VIA STORAGE) ──
+app.post("/api/merge-uploaded-chunks", async (req,res) => {
+  const user = await verifyUser(req,res);
+  if (!user) return;
+  const { sessionId, totalChunks } = req.body;
+  if(!sessionId || !totalChunks) return res.status(400).json({ error:"sessionId and totalChunks are required" });
+  const tempDir = path.join(os.tmpdir(), "audlabs-merge-" + sessionId);
+  const storagePrefix = "temp-chunks/" + user.uid + "/" + sessionId + "/";
+  try {
+    fs.mkdirSync(tempDir, { recursive: true });
+    const inputFiles = [];
+    for(let i = 0; i < totalChunks; i++){
+      const storagePath = storagePrefix + "chunk" + i + ".mp3";
+      const localPath = path.join(tempDir, "chunk" + i + ".mp3");
+      await bucket.file(storagePath).download({ destination: localPath });
+      inputFiles.push(localPath);
+    }
+    const listFilePath = path.join(tempDir, "list.txt");
+    const listContent = inputFiles.map(function(f){ return "file '" + f.replace(/'/g, "'\\''") + "'"; }).join("\n");
+    fs.writeFileSync(listFilePath, listContent);
+    const outputPath = path.join(tempDir, "output.mp3");
+    await new Promise(function(resolve, reject){
+      const ffmpegArgs = ["-f","concat","-safe","0","-i",listFilePath,"-acodec","libmp3lame","-ar","32000","-ab","128k","-y",outputPath];
+      const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
+      let stderrOutput = "";
+      ffmpegProcess.stderr.on("data", function(data){ stderrOutput += data.toString(); });
+      ffmpegProcess.on("close", function(code){
+        if(code === 0) resolve();
+        else reject(new Error("ffmpeg exited with code " + code + ": " + stderrOutput.slice(-500)));
+      });
+      ffmpegProcess.on("error", function(err){ reject(err); });
+    });
+    const mergedBuffer = fs.readFileSync(outputPath);
+    fs.rmSync(tempDir, { recursive: true, force: true });
+    try {
+      const [files] = await bucket.getFiles({ prefix: storagePrefix });
+      await Promise.all(files.map(function(f){ return f.delete().catch(function(){}); }));
+    } catch(cleanupErr){ console.warn("Storage cleanup failed:", cleanupErr.message); }
+    res.set("Content-Type", "audio/mpeg");
+    res.set("Content-Length", mergedBuffer.length);
+    return res.send(mergedBuffer);
+  } catch(e){
+    console.error("Merge from storage failed:", e.message);
+    try { fs.rmSync(tempDir, { recursive: true, force: true }); } catch(cleanupErr2){}
+    return res.status(500).json({ error:"Failed to merge audio: " + e.message });
+  }
+});
 // ── TRACK SIGNUP LOCATION ──
 app.post("/api/track-signup-source", async (req,res) => {
   const user = await verifyUser(req,res);
