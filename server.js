@@ -4331,11 +4331,12 @@ app.post("/api/contact-form", async (req,res) => {
   try {
     const { name, email, message } = req.body;
     if(!name || !email || !message) return res.status(400).json({ error:"All fields are required" });
-        await audlabsTransporter.sendMail({
+    const ticketId = "AUD-" + Date.now().toString().slice(-8);
+    await audlabsTransporter.sendMail({
       from: 'AudLabs Contact Form <hello@audlabs.io>',
       to: 'demolaadeyemo0@gmail.com',
       replyTo: email,
-      subject: `New contact form message from ${name}`,
+      subject: `[${ticketId}] New contact form message from ${name}`,
       html: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
 <table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:20px 0;">
 <tr><td align="center">
@@ -4345,6 +4346,10 @@ app.post("/api/contact-form", async (req,res) => {
 <span style="font-size:12px;color:rgba(255,255,255,0.5);margin-left:8px;">Contact Form</span>
 </td></tr>
 <tr><td style="padding:32px;">
+<div style="background:#f8f9fa;border-left:4px solid #c9a84c;border-radius:4px;padding:16px 20px;margin-bottom:20px;">
+<div style="font-size:13px;color:#888;margin-bottom:4px;">Ticket ID</div>
+<div style="font-size:15px;font-weight:700;color:#c9a84c;font-family:'Courier New',monospace;">${ticketId}</div>
+</div>
 <div style="background:#f8f9fa;border-left:4px solid #c9a84c;border-radius:4px;padding:16px 20px;margin-bottom:20px;">
 <div style="font-size:13px;color:#888;margin-bottom:4px;">From</div>
 <div style="font-size:15px;font-weight:700;color:#1a1a1a;">${name} — ${email}</div>
@@ -4356,7 +4361,47 @@ app.post("/api/contact-form", async (req,res) => {
 </table>
 </body></html>`
     });
-    return res.json({ success:true });
+    try {
+      await audlabsTransporter.sendMail({
+        from: '"AudLabs Support" <hello@audlabs.io>',
+        to: email,
+        subject: `We've received your message [Ticket ${ticketId}]`,
+        html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:20px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+<tr><td style="background:#0a1628;padding:24px 32px;text-align:left;">
+<span style="font-size:22px;font-weight:700;color:#c9a84c;letter-spacing:1px;">AudLabs</span>
+<span style="font-size:12px;color:rgba(255,255,255,0.5);margin-left:8px;">Support</span>
+</td></tr>
+<tr><td style="padding:32px;">
+<p style="font-size:15px;color:#333;line-height:1.7;margin:0 0 16px;">Hi ${name.split(" ")[0]},</p>
+<p style="font-size:14px;color:#555;line-height:1.8;margin:0 0 16px;">Thanks for reaching out. We've received your message and a member of our team will get back to you as soon as possible.</p>
+<div style="background:#fffdf7;border:1.5px solid #f0e5c0;border-radius:8px;padding:16px 20px;margin-bottom:20px;">
+<div style="font-size:12px;color:#888;margin-bottom:4px;">Your Ticket ID</div>
+<div style="font-size:18px;font-weight:700;color:#c9a84c;font-family:'Courier New',monospace;">${ticketId}</div>
+</div>
+<p style="font-size:14px;color:#555;line-height:1.8;margin:0 0 16px;">Please keep this ticket ID for reference. If you need to follow up on this message, simply reply to this email.</p>
+<p style="font-size:14px;color:#555;line-height:1.7;margin:0 0 4px;">Regards,</p>
+<p style="font-size:15px;color:#333;margin:0;"><strong>The AudLabs Team</strong></p>
+</td></tr>
+<tr><td style="padding:0 32px 24px;">
+<table cellpadding="0" cellspacing="0"><tr>
+<td style="padding-right:12px;"><a href="https://x.com/AudLabs"><img src="https://audlabs.io/x-icon.jpg" width="24" height="24" alt="X" style="display:block;border-radius:6px;"></a></td>
+<td style="padding-right:12px;"><a href="https://t.me/audlabs"><img src="https://audlabs.io/telegram-icon.jpg" width="24" height="24" alt="Telegram" style="display:block;border-radius:6px;"></a></td>
+<td><a href="https://youtube.com/@AudLabs"><img src="https://audlabs.io/youtube-icon.jpg" width="24" height="24" alt="YouTube" style="display:block;border-radius:6px;"></a></td>
+</tr></table>
+</td></tr>
+<tr><td style="background:#f8f9fa;padding:16px 32px;border-top:1px solid #eee;">
+<p style="font-size:11px;color:#bbb;margin:0;text-align:center;">AudLabs · audlabs.io</p>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`
+      });
+    } catch(autoReplyErr){ console.warn("Auto-reply failed:", autoReplyErr.message); }
+    return res.json({ success:true, ticketId: ticketId });
   } catch(e){
     console.error("Contact form error:", e.message);
     return res.status(500).json({ error:"Failed to send message. Please try again." });
