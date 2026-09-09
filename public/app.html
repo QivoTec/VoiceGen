@@ -40,7 +40,7 @@
 #vg-vgrid-wrap::-webkit-scrollbar-track{background:transparent;}
 #vg-vgrid-wrap::-webkit-scrollbar-thumb{background:#ddd;border-radius:4px;}
 .vg-tc{display:none;}.vg-tc.active{display:block;}
-#vg-tc-scriptvideos.active,#vg-tc-transcript.active,#vg-tc-translator.active,#vg-tc-thumbnail.active,#vg-tc-referral.active,#vg-tc-topup.active,#vg-tc-card.active,#vg-tc-crypto.active,#vg-tc-history.active,#vg-tc-transactions.active,#vg-tc-analytics.active{padding:0 28px;}
+
 .vg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:150;}.vg-overlay.show{display:block;}.vg-sidebar.open{transform:translateX(0);}@media(max-width:768px){
 .vg-topbar{padding:14px 16px;}
 .vg-content{padding:16px;}
@@ -275,7 +275,7 @@ Share on X
  </button></div><!-- Payment Instructions (shown after clicking pay) --><div class="vg-card" id="crypto-payment-box" style="display:none;"><div class="vg-card-title"><span class="dot"></span>Send Payment</div><div style="text-align:center;padding:10px 0 20px;"><div style="font-size:12px;color:#999;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:8px;">Send exactly</div><div style="font-size:36px;font-weight:700;color:#c9a84c;" id="crypto-amount-display">—</div><div style="font-size:13px;color:#999;margin-bottom:20px;">TRC20</div><div style="background:#f5f5f5;border-radius:8px;padding:14px;word-break:break-all;font-family:Space Mono,monospace;font-size:12px;color:#1a1a1a;margin-bottom:10px;" id="crypto-address-display">Loading address...</div><div style="display:flex;gap:8px;justify-content:center;margin-bottom:16px;"> <button onclick="copyCryptoAddress()" style="background:#1a1a1a;border:none;color:#fff;padding:8px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">📋 Copy Address</button> <button onclick="copyCryptoAmount()" style="background:#c9a84c;border:none;color:#111;padding:8px 20px;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;">📋 Copy Amount</button> </div><div style="background:#fff8e6;border:1px solid #f0d080;border-radius:8px;padding:12px;font-size:12px;color:#7a6230;line-height:1.6;text-align:left;">
  ⚠️ <strong>Important:</strong> Send ONLY USDT on the <strong>TRC20 network</strong>. Sending other coins or using wrong network will result in permanent loss. Credits are added automatically within 1-30 minutes after network confirmation.
  </div></div><div style="display:flex;gap:10px;margin-top:12px;"><button onclick="checkCryptoStatus()" style="flex:1;background:#f5f5f5;border:1.5px solid #ebebeb;color:#555;padding:11px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;">↻ Check Status</button><button onclick="cancelCryptoPayment()" style="flex:1;background:transparent;border:1.5px solid #ebebeb;color:#999;padding:11px;border-radius:8px;font-size:13px;cursor:pointer;">Cancel</button></div></div></div><!-- REFERRAL TAB -->
-</div>
+
 <div id="vg-tc-card" class="vg-tc">
 <div class="vg-card">
 <div class="vg-card-title"><span class="dot"></span>Buy Credits with Card or Mobile Money.</div>
