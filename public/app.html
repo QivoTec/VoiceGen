@@ -2782,6 +2782,12 @@ applyTheme();
 renderCreditsBar();
 var bc=document.getElementById("vg-big-credits");
 if(bc && bc.textContent!=="—") bc.style.color = isDark?"#f0ece0":"#1a1a1a";
+var themeBtn = document.getElementById("vg-theme-btn");
+if(themeBtn){
+  themeBtn.style.animation = "none";
+  void themeBtn.offsetHeight;
+  themeBtn.style.animation = "";
+}
 };
 applyTheme();
 
