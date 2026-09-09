@@ -667,6 +667,7 @@ Share on X
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script>document.addEventListener('DOMContentLoaded', function(){
 (function(){
 var FC={apiKey:"AIzaSyCJ12GtdhXTzfB0h0buHkjzsqZtRxzfxS8",authDomain:"voicegene.firebaseapp.com",projectId:"voicegene",storageBucket:"voicegene.firebasestorage.app",messagingSenderId:"1040481136250",appId:"1:1040481136250:web:7a47e5993510d3ac07d5c3"};
@@ -675,7 +676,7 @@ var userCredits = 0;var userTeamId = "";
 var awaitingOtpVerification = false;
 var userVirtualAccounts = [];
 firebase.initializeApp(FC);
-var auth=firebase.auth(),db=firebase.firestore(),prov=new firebase.auth.GoogleAuthProvider(),userVirtualAccounts=[];
+var auth=firebase.auth(),db=firebase.firestore(),storage=firebase.storage(),prov=new firebase.auth.GoogleAuthProvider(),userVirtualAccounts=[];
 auth.getRedirectResult().then(function(result){
 if(result && result.user){
 console.log("Redirect sign-in successful:", result.user.email);
@@ -1619,16 +1620,8 @@ btn.innerHTML = '<span class="vg-spinner" style="width:14px;height:14px;border-w
 async function processChunkAt(idx){
   try {
     var arr = await generateChunk(chunks[idx], selVoice, speed, vol, pitch);
-    var chunkBinary = "";
-    for(var cb = 0; cb < arr.length; cb++){ chunkBinary += String.fromCharCode(arr[cb]); }
-    var chunkBase64 = btoa(chunkBinary);
-    var uploadToken = await getToken();
-    var uploadRes = await fetch(BACKEND+"/api/upload-audio-chunk", {
-      method: "POST",
-      headers: {"Content-Type":"application/json","Authorization":"Bearer "+uploadToken},
-      body: JSON.stringify({ sessionId: genSessionId, chunkIndex: idx, audioBase64: chunkBase64 })
-    });
-    if(!uploadRes.ok){ throw new Error("Failed to upload audio part " + (idx+1)); }
+    var storageRef = storage.ref("temp-chunks/" + user.uid + "/" + genSessionId + "/chunk" + idx + ".mp3");
+    await storageRef.put(new Blob([arr], {type:"audio/mpeg"}));
     audioArrays[idx] = true;
   } catch(chunkErr){
     console.warn("Chunk "+idx+" permanently failed:", chunkErr.message);
