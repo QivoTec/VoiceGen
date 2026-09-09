@@ -305,7 +305,7 @@ app.post("/api/merge-uploaded-chunks", async (req,res) => {
     });
     const mergedBuffer = fs.readFileSync(outputPath);
     fs.rmSync(tempDir, { recursive: true, force: true });
-    try {
+
           try {
       const [files] = await bucket.getFiles({ prefix: storagePrefix });
       console.log("Cleanup found", files.length, "files for prefix:", storagePrefix);
