@@ -3025,8 +3025,10 @@ app.get("/", (req,res) => {
     res.redirect("https://app.audlabs.io/login");
   } else if(host.startsWith("platform.")){
     res.sendFile(path.join(__dirname, "public", "platform.html"));
-  } else if(host.startsWith("mail.")){
+    } else if(host.startsWith("mail.")){
     res.sendFile(path.join(__dirname, "public", "mail.html"));
+  } else if(host.startsWith("reply.")){
+    res.sendFile(path.join(__dirname, "public", "reply.html"));
   } else {
     res.sendFile(path.join(__dirname, "landing.html"));
   }
@@ -4332,6 +4334,19 @@ app.post("/api/contact-form", async (req,res) => {
     const { name, email, message } = req.body;
     if(!name || !email || !message) return res.status(400).json({ error:"All fields are required" });
     const ticketId = "AUD-" + Date.now().toString().slice(-8);
+    try {
+      await db.collection("supportTickets").doc(ticketId).set({
+        ticketId: ticketId,
+        name: name,
+        email: email,
+        status: "open",
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+        messages: [
+          { from: "user", body: message, timestamp: new Date().toISOString() }
+        ]
+      });
+    } catch(ticketSaveErr){ console.warn("Ticket save failed:", ticketSaveErr.message); }
     await audlabsTransporter.sendMail({
       from: 'AudLabs Contact Form <hello@audlabs.io>',
       to: 'demolaadeyemo0@gmail.com',
@@ -4401,10 +4416,84 @@ app.post("/api/contact-form", async (req,res) => {
 </body></html>`
       });
     } catch(autoReplyErr){ console.warn("Auto-reply failed:", autoReplyErr.message); }
-    return res.json({ success:true, ticketId: ticketId });
+        return res.json({ success:true, ticketId: ticketId });
   } catch(e){
     console.error("Contact form error:", e.message);
     return res.status(500).json({ error:"Failed to send message. Please try again." });
+  }
+});
+// ── ADMIN: LIST SUPPORT TICKETS ──
+app.get("/api/admin/tickets-list", async (req,res) => {
+  const isAdmin = req.headers["x-admin-secret"] === "audlabs-admin-2026";
+  if(!isAdmin) return res.status(401).json({ error:"Unauthorized" });
+  try {
+    const snap = await db.collection("supportTickets").orderBy("updatedAt","desc").limit(100).get();
+    const tickets = snap.docs.map(function(d){
+      const data = d.data();
+      return {
+        ticketId: data.ticketId,
+        name: data.name,
+        email: data.email,
+        status: data.status || "open",
+        messages: data.messages || [],
+        createdAt: data.createdAt ? new Date(data.createdAt._seconds*1000).toISOString() : null,
+        updatedAt: data.updatedAt ? new Date(data.updatedAt._seconds*1000).toISOString() : null
+      };
+    });
+    return res.json({ success:true, tickets: tickets });
+  } catch(e){
+    return res.status(500).json({ error:e.message });
+  }
+});
+// ── ADMIN: REPLY TO SUPPORT TICKET ──
+app.post("/api/admin/reply-ticket", async (req,res) => {
+  const isAdmin = req.headers["x-admin-secret"] === "audlabs-admin-2026";
+  if(!isAdmin) return res.status(401).json({ error:"Unauthorized" });
+  try {
+    const { ticketId, replyBody, markResolved } = req.body;
+    if(!ticketId || !replyBody) return res.status(400).json({ error:"ticketId and replyBody are required" });
+    const ticketDoc = await db.collection("supportTickets").doc(ticketId).get();
+    if(!ticketDoc.exists) return res.status(404).json({ error:"Ticket not found" });
+    const ticket = ticketDoc.data();
+    await audlabsTransporter.sendMail({
+      from: '"AudLabs Support" <hello@audlabs.io>',
+      to: ticket.email,
+      subject: `Re: Your AudLabs support request [Ticket ${ticketId}]`,
+      html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head><body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f4;padding:20px 0;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+<tr><td style="background:#0a1628;padding:24px 32px;text-align:left;">
+<span style="font-size:22px;font-weight:700;color:#c9a84c;letter-spacing:1px;">AudLabs</span>
+<span style="font-size:12px;color:rgba(255,255,255,0.5);margin-left:8px;">Support</span>
+</td></tr>
+<tr><td style="padding:32px;">
+<p style="font-size:15px;color:#333;line-height:1.7;margin:0 0 16px;">Hi ${ticket.name.split(" ")[0]},</p>
+<div style="font-size:14px;color:#333;line-height:1.8;white-space:pre-wrap;margin:0 0 24px;">${replyBody.replace(/</g,"&lt;")}</div>
+<div style="background:#fffdf7;border:1.5px solid #f0e5c0;border-radius:8px;padding:14px 18px;margin-bottom:20px;">
+<div style="font-size:11px;color:#888;margin-bottom:2px;">Ticket ID</div>
+<div style="font-size:14px;font-weight:700;color:#c9a84c;font-family:'Courier New',monospace;">${ticketId}</div>
+</div>
+<p style="font-size:13px;color:#888;line-height:1.7;margin:0;">If you need further help, just reply to this email.</p>
+</td></tr>
+<tr><td style="background:#f8f9fa;padding:16px 32px;border-top:1px solid #eee;">
+<p style="font-size:11px;color:#bbb;margin:0;text-align:center;">AudLabs · audlabs.io</p>
+</td></tr>
+</table>
+</td></tr>
+</table>
+</body></html>`
+    });
+    const updatedMessages = (ticket.messages || []).concat([{ from: "admin", body: replyBody, timestamp: new Date().toISOString() }]);
+    await db.collection("supportTickets").doc(ticketId).update({
+      messages: updatedMessages,
+      status: markResolved ? "resolved" : "open",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    });
+    return res.json({ success:true });
+  } catch(e){
+    console.error("Reply ticket error:", e.message);
+    return res.status(500).json({ error:e.message });
   }
 });
 
