@@ -306,8 +306,11 @@ app.post("/api/merge-uploaded-chunks", async (req,res) => {
     const mergedBuffer = fs.readFileSync(outputPath);
     fs.rmSync(tempDir, { recursive: true, force: true });
     try {
+          try {
       const [files] = await bucket.getFiles({ prefix: storagePrefix });
-      await Promise.all(files.map(function(f){ return f.delete().catch(function(){}); }));
+      console.log("Cleanup found", files.length, "files for prefix:", storagePrefix);
+      await Promise.all(files.map(function(f){ return f.delete().catch(function(delErr){ console.warn("Failed to delete", f.name, ":", delErr.message); }); }));
+      console.log("Cleanup completed for session:", sessionId);
     } catch(cleanupErr){ console.warn("Storage cleanup failed:", cleanupErr.message); }
     res.set("Content-Type", "audio/mpeg");
     res.set("Content-Length", mergedBuffer.length);
