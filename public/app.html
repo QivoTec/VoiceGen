@@ -240,7 +240,7 @@ Continue with Google
 </div>
 </div>
 <div class="vg-audiores" id="vg-audiores"><div class="vg-audiolabel">Output Ready</div><audio id="vg-player" controls></audio><button class="vg-dlbtn" id="vg-dlbtn"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2v7M4 6l3 3 3-3M2 11h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
- Download Audio
+ Download Mp3
  </button><a id="vg-sharebtn" href="#" target="_blank" class="vg-dlbtn" style="margin-left:8px;background:#000;border-color:#000;color:#fff;" onclick="shareOnX()">
 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
 Share on X
@@ -1611,12 +1611,23 @@ var isClonedVoice = selVoice.startsWith("clone_") || cloned.some(function(v){ re
 var CONCURRENCY = 3;
 var completedCount = 0;
 var failedChunks = [];
+var genSessionId = "s" + Date.now() + Math.random().toString(36).slice(2,8);
 audioArrays = new Array(chunks.length);
 btn.innerHTML = '<span class="vg-spinner" style="width:14px;height:14px;border-width:2px;"></span>';
 async function processChunkAt(idx){
   try {
     var arr = await generateChunk(chunks[idx], selVoice, speed, vol, pitch);
-    audioArrays[idx] = arr;
+    var chunkBinary = "";
+    for(var cb = 0; cb < arr.length; cb++){ chunkBinary += String.fromCharCode(arr[cb]); }
+    var chunkBase64 = btoa(chunkBinary);
+    var uploadToken = await getToken();
+    var uploadRes = await fetch(BACKEND+"/api/upload-audio-chunk", {
+      method: "POST",
+      headers: {"Content-Type":"application/json","Authorization":"Bearer "+uploadToken},
+      body: JSON.stringify({ sessionId: genSessionId, chunkIndex: idx, audioBase64: chunkBase64 })
+    });
+    if(!uploadRes.ok){ throw new Error("Failed to upload audio part " + (idx+1)); }
+    audioArrays[idx] = true;
   } catch(chunkErr){
     console.warn("Chunk "+idx+" permanently failed:", chunkErr.message);
     failedChunks.push({ index: idx, error: chunkErr.message });
@@ -1653,8 +1664,18 @@ if(failedChunks.length > 0){
 
 
 if(progressText) progressText.textContent = "Finalizing your audio...";
-var merged = await mergeAudioChunksProperly(audioArrays);
-lastBlob = new Blob([merged], {type:"audio/wav"});
+var finalMergeToken = await getToken();
+var finalMergeRes = await fetch(BACKEND+"/api/merge-uploaded-chunks", {
+  method: "POST",
+  headers: {"Content-Type":"application/json","Authorization":"Bearer "+finalMergeToken},
+  body: JSON.stringify({ sessionId: genSessionId, totalChunks: chunks.length })
+});
+if(!finalMergeRes.ok){
+  var finalMergeErrData = await finalMergeRes.json().catch(function(){return {};});
+  throw new Error(finalMergeErrData.error || "Failed to finalize your audio. Please try again.");
+}
+var mergedArrayBuffer = await finalMergeRes.arrayBuffer();
+lastBlob = new Blob([mergedArrayBuffer], {type:"audio/mpeg"});
 var audioUrl = URL.createObjectURL(lastBlob);
 var audioFilename = "";
 var vn = VOICES.concat(cloned.map(function(v){return{id:v.vid,name:v.name};})).find(function(v){return v.id===selVoice;});
@@ -1784,7 +1805,7 @@ var response = await fetch(pl.src);
 var blob = await response.blob();
 var a=document.createElement("a");
 a.href=URL.createObjectURL(blob);
-a.download="audlabs_"+Date.now()+".wav";
+a.download="audlabs_"+Date.now()+".mp3";
 a.style.display="none";
 document.body.appendChild(a);
 a.click();
@@ -1799,8 +1820,8 @@ showStatus("Download failed. Please try again.", "err");
     try {
       var reader = new FileReader();
       reader.onloadend = async function(){
-                var base64data = reader.result.split(",")[1];
-        var fileName = "audlabs_"+Date.now()+".wav";
+                        var base64data = reader.result.split(",")[1];
+        var fileName = "audlabs_"+Date.now()+".mp3";
         var Filesystem = window.Capacitor.Plugins.Filesystem;
         var Share = window.Capacitor.Plugins.Share;
         var savedFile = await Filesystem.writeFile({
@@ -1819,10 +1840,10 @@ showStatus("Download failed. Please try again.", "err");
     } catch(nativeErr){
       showStatus("Download failed: "+nativeErr.message, "err");
     }
-    } else {
+        } else {
     var a=document.createElement("a");
     a.href=URL.createObjectURL(lastBlob);
-    a.download="audlabs_"+Date.now()+".wav";
+    a.download="audlabs_"+Date.now()+".mp3";
     a.click();
   }
 }
@@ -2030,7 +2051,7 @@ window.downloadHistory = async function(url, i){
     var blob = await response.blob();
     var a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "AudLabs_"+Date.now()+".wav";
+    a.download = "AudLabs_"+Date.now()+".mp3";
     a.style.display = "none";
     document.body.appendChild(a);
     a.click();
