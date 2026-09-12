@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1040481136250-u5i9rka2rbd10fqqn2vkflbmchscn2fk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.audlabs.app",
+            "certificate_hash": "eeb95da0df7a61235c1dd85c3337fcc758812125"
+          }
+        },
+        {
           "client_id": "1040481136250-e9mc8tf3lbrv4ibmctv5pailhprh0do0.apps.googleusercontent.com",
           "client_type": 3
         }
