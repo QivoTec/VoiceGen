@@ -4126,10 +4126,10 @@ app.get("/api/minimax-quota", async (req,res) => {
       { name: "Account 4", email: "Demolaadeyemo1@gmail.com", key: process.env.MINIMAX_API_KEY_4 },
       { name: "Account 5", email: "Demolaadeyemo2@gmail.com", key: process.env.MINIMAX_API_KEY_5 },
       { name: "Account 6", email: "audlabsapi6@gmail.com", key: process.env.MINIMAX_API_KEY_7 },
-      { name: "Account 7", email: "calmrevengev@gmail.com", key: process.env.MINIMAX_API_KEY_6 },
+      { name: "Account 7", email: "audlabsapi7@gmail.com", key: process.env.MINIMAX_API_KEY_6 },
       { name: "Account 8", email: "Demolaadeyemo3@gmail.com", key: process.env.MINIMAX_API_KEY_8 },
       { name: "Account 9", email: "audlabsapi9@gmail.com", key: process.env.MINIMAX_API_KEY_9 },
-      { name: "Account 10", email: "revengemaplev@gmail.com", key: process.env.MINIMAX_API_KEY_10 }
+      { name: "Account 10", email: "audlabsapi10@gmail.com", key: process.env.MINIMAX_API_KEY_10 }
     ];
 
 
