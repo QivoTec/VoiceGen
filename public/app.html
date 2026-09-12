@@ -151,7 +151,13 @@ Continue with Google
 <div style="flex:2;min-width:0;display:flex;flex-direction:column;">
 <div class="vg-card" style="margin-bottom:16px;min-height:300px;"><div class="vg-card-title"><span class="dot"></span>Your Script</div>
 <textarea class="vg-textarea" id="vg-script" maxlength="60000" style="height:calc(100vh - 280px);min-height:300px;resize:none;overflow-y:auto;" placeholder="Paste your narration, documentary script, or podcast intro here…💡Insert (e.g: <#0.5#>, <#2#> to pause 0.5 second, 2 seconds) in between your scripts."></textarea><div style="display:flex;align-items:center;justify-content:space-between;margin-top:6px;">
+<div style="display:flex;align-items:center;gap:10px;">
 <div class="vg-charcount" id="vg-chars" style="margin-top:0;color:#c9a84c;font-weight:700;">0 / 60,000</div>
+<button onclick="pasteFromClipboard()" title="Paste from clipboard" style="display:inline-flex;align-items:center;gap:4px;background:transparent;border:1.5px solid #ebebeb;color:#888;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;cursor:pointer;font-family:Inter,sans-serif;transition:all 0.15s;">
+<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/></svg>
+Paste
+</button>
+</div>
 <div style="display:flex;align-items:center;gap:6px;">
 <a href="https://youtu.be/wUU__WfqFu8" target="_blank" title="Watch how to generate a voiceover" style="display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:#1a1a1a;border:2px solid #c9a84c;color:#c9a84c;font-size:13px;font-weight:700;text-decoration:none;flex-shrink:0;">?</a>
 <button id="vg-genbtn" style="width:40px;height:40px;border-radius:10px;background:linear-gradient(180deg,#e8c97a 0%,#c9a84c 45%,#b8934a 100%);border:1px solid rgba(184,147,74,0.5);color:#111;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.2s;position:relative;overflow:hidden;box-shadow:0 4px 14px rgba(201,168,76,0.35),0 0 0 3px rgba(201,168,76,0.12),inset 0 1px 0 rgba(255,255,255,0.5);" title="Generate Voiceover">
@@ -1417,6 +1423,18 @@ charEl.textContent = len+" / 60,000 — Approaching the limit.";
 } else {
 charEl.style.color = "#c9a84c";
 }
+};
+window.pasteFromClipboard = async function(){
+  try {
+    var text = await navigator.clipboard.readText();
+    if(!text){ showStatus("Clipboard is empty.", "err"); return; }
+    var scriptBox = $("vg-script");
+    scriptBox.value = text.slice(0, 60000);
+    scriptBox.dispatchEvent(new Event("input"));
+    showStatus("Pasted from clipboard!", "ok");
+  } catch(e){
+    showStatus("Could not access clipboard. Please paste manually (Ctrl+V) or check browser permissions.", "err");
+  }
 };
 
 
