@@ -1429,8 +1429,23 @@ window.pasteFromClipboard = async function(){
     var text = await navigator.clipboard.readText();
     if(!text){ showStatus("Clipboard is empty.", "err"); return; }
     var scriptBox = $("vg-script");
-    scriptBox.value = text.slice(0, 60000);
+    var start = scriptBox.selectionStart;
+    var end = scriptBox.selectionEnd;
+    var hasSelection = start !== end;
+    var currentValue = scriptBox.value;
+    var newValue;
+    var newCursorPos;
+    if(hasSelection){
+      newValue = currentValue.slice(0, start) + text + currentValue.slice(end);
+      newCursorPos = start + text.length;
+    } else {
+      newValue = currentValue + text;
+      newCursorPos = newValue.length;
+    }
+    scriptBox.value = newValue.slice(0, 60000);
     scriptBox.dispatchEvent(new Event("input"));
+    scriptBox.focus();
+    scriptBox.setSelectionRange(Math.min(newCursorPos, scriptBox.value.length), Math.min(newCursorPos, scriptBox.value.length));
     showStatus("Pasted from clipboard!", "ok");
   } catch(e){
     showStatus("Could not access clipboard. Please paste manually (Ctrl+V) or check browser permissions.", "err");
